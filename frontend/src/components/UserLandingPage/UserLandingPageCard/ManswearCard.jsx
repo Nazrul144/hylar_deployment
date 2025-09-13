@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import React from 'react'
+import { CiBookmark } from "react-icons/ci";
 
 const ManswearCard = () => {
 
@@ -15,9 +16,9 @@ const ManswearCard = () => {
                     <div key={item.id}>
                         <Image src={item.image} width={400} height={400} alt='Image'/>
                         <h1>{item.description}</h1>
-                        <div>
-                            <Button>Redeem</Button>
-                            <Button></Button>
+                        <div className='flex items-center gap-8 mt-3'>
+                            <Button className='border-2 rounded-none text-lg' variant={'none'}>Redeem {'>>'}</Button>
+                            <Button className='border-2 rounded-none text-lg' variant={'none'}><CiBookmark /></Button>
                         </div>
                     </div>
                 ))

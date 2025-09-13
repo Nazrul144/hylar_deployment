@@ -9,10 +9,22 @@ import { CiBookmark } from "react-icons/ci";
 const ManswearCard = () => {
   return (
     <div className="lg:w-7xl mx-auto mt-8">
+      {/*Heading Text*/}
+      <div className="mt-20">
+        <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
+          Manswear
+        </h1>
+        <h3 className="text-center mb-6">
+          Must see offers from some of Blue Light Card members' best-loved{" "}
+          <br />
+          Fashion & Clothing partners.
+        </h3>
+        {/*Card*/}
+      </div>
       <div>
         <div className="grid lg:grid-cols-3 gap-4">
           {cardInfo?.map((item) => (
-            <div className="shadow-2xl p-4 rounded-sm" key={item.id}>
+            <div className="shadow-xl p-4 rounded-sm" key={item.id}>
               <Image
                 src={item.image}
                 width={400}
@@ -43,11 +55,11 @@ const ManswearCard = () => {
         </div>
         <div className="flex justify-center">
           <Link
-          href={"/fashion"}
-          className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
-        >
-          View All {">>"}
-        </Link>
+            href={"/fashion"}
+            className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
+          >
+            View All {">>"}
+          </Link>
         </div>
       </div>
     </div>

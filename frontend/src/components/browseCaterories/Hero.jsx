@@ -25,18 +25,6 @@ const Hero = () => {
           </h1>
         </div>
       </div>
-
-      {/*Heading Text*/}
-      <div className="mt-20">
-        <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
-          Manswear
-        </h1>
-        <h3 className="text-center mb-6">
-          Must see offers from some of Blue Light Card members' best-loved <br />
-          Fashion & Clothing partners.
-        </h3>
-        {/*Card*/}
-      </div>
     </div>
   );
 };

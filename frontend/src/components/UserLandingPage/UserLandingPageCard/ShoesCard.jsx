@@ -6,16 +6,17 @@ import Link from "next/link";
 import React from "react";
 import { CiBookmark } from "react-icons/ci";
 
-const WomenswearCard = () => {
+const ShoesCard = () => {
   return (
-    <div className="lg:w-7xl mx-auto mt-4">
+    <div className="lg:w-7xl mx-auto mt-8">
       {/*Heading Text*/}
-      <div className="mt-14">
+      <div className="mt-20">
         <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
-          Womanswear
+          Shoes
         </h1>
         <h3 className="text-center mb-6">
-          Must see offers from some of Blue Light Card members' best-loved <br />
+          Must see offers from some of Blue Light Card members' best-loved{" "}
+          <br />
           Fashion & Clothing partners.
         </h3>
         {/*Card*/}
@@ -54,48 +55,48 @@ const WomenswearCard = () => {
         </div>
         <div className="flex justify-center">
           <Link
-          href={"/fashion"}
-          className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
-        >
-          View All {">>"}
-        </Link>
+            href={"/fashion"}
+            className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
+          >
+            View All {">>"}
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default WomenswearCard;
+export default ShoesCard;
 
 const cardInfo = [
   {
     id: "1",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "2",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "3",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "4",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "5",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "6",
-    image: "/2.jpg",
+    image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
 ];

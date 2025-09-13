@@ -8,5 +8,4 @@ const FasionPage = () => {
     </div>
   )
 }
-
 export default FasionPage

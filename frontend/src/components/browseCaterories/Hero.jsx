@@ -1,11 +1,11 @@
 import Image from "next/image";
 import React from "react";
-import { Button } from "../ui/button";
+
 
 const Hero = () => {
   return (
     <div>
-      <div className="relative w-full h-[550px] pt-8 flex flex-col items-center justify-center">
+      <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
         <video
           src={"/video/fasion_cover_video.mp4"}
           autoPlay

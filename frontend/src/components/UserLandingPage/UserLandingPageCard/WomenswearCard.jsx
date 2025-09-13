@@ -6,9 +6,20 @@ import Link from "next/link";
 import React from "react";
 import { CiBookmark } from "react-icons/ci";
 
-const ManswearCard = () => {
+const WomenswearCard = () => {
   return (
-    <div className="lg:w-7xl mx-auto mt-8">
+    <div className="lg:w-7xl mx-auto mt-4">
+      {/*Heading Text*/}
+      <div className="mt-14">
+        <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
+          Womanswear
+        </h1>
+        <h3 className="text-center mb-6">
+          Must see offers from some of Blue Light Card members' best-loved <br />
+          Fashion & Clothing partners.
+        </h3>
+        {/*Card*/}
+      </div>
       <div>
         <div className="grid lg:grid-cols-3 gap-4">
           {cardInfo?.map((item) => (
@@ -54,37 +65,37 @@ const ManswearCard = () => {
   );
 };
 
-export default ManswearCard;
+export default WomenswearCard;
 
 const cardInfo = [
   {
     id: "1",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "2",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "3",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "4",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "5",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "6",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
 ];

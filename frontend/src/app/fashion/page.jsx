@@ -1,9 +1,12 @@
+import Fashion from '@/components/browseCaterories/Fashion'
+import ManswearCard from '@/components/UserLandingPage/UserLandingPageCard/ManswearCard'
 import React from 'react'
 
 const FasionPage = () => {
   return (
     <div>
-      This is fashion page
+      <Fashion/>
+      <ManswearCard/>
     </div>
   )
 }

@@ -443,7 +443,7 @@ const Faq = () => {
     <Link className='underline font-bold text-[#151515]' href={""}>help center</Link>
 </h1>
 <div className='flex justify-center'>
-    <Link className='common-bg text-white text-lg py-2 px-4 rounded-sm montserrat-text font-semibold hover:scale-105 transition-all duration-300' href={""}>Click Here To Submit Your Offer</Link>
+    <Link href={'/submit_form'} className='common-bg text-white text-lg py-2 px-4 rounded-sm montserrat-text font-semibold hover:scale-105 transition-all duration-300'>Click Here To Submit Your Offer</Link>
 </div>
     </div>
   )

@@ -1,10 +1,11 @@
 
+import Faq from '@/components/LandingPage/Faq'
 import React from 'react'
 
 const FAQSPage = () => {
   return (
     <div>
-      <h1>This is FAQ Page</h1>
+      <Faq/>
     </div>
   )
 }

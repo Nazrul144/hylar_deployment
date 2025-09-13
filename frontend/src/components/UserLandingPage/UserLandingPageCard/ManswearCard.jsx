@@ -15,7 +15,7 @@ const ManswearCard = () => {
                 cardInfo?.map((item)=>(
                     <div key={item.id}>
                         <Image src={item.image} width={400} height={400} alt='Image'/>
-                        <h1>{item.description}</h1>
+                        <h1 className='mt-2'><span className='font-bold'>Paucek and Lage</span>{item.description}</h1>
                         <div className='flex items-center gap-8 mt-3'>
                             <Button className='border-2 rounded-none text-lg' variant={'none'}>Redeem {'>>'}</Button>
                             <Button className='border-2 rounded-none text-lg' variant={'none'}><CiBookmark /></Button>
@@ -35,6 +35,6 @@ const cardInfo = [
     {
         id: "1",
         image: '/1.jpg',
-        description: 'Paucek and Lage – Happy World Rainforest Day 🌿'
+        description: ' - Happy World Rainforest Day 🌿'
     }
 ]

@@ -5,30 +5,35 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { CiBookmark } from "react-icons/ci";
-import { Button } from "@/components/ui/button"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination"
 
-type PaginationProps = {
-  currentPage: number
-  totalPages: number
-}
-
-
-
-
-const Manswear = ({
-  currentPage,
-  totalPages,
-}: PaginationProps) => {
-
-   
-
+const Manswear = () => {
   return (
-    <div className="lg:w-7xl mx-auto mt-8">
+    
+    <div>
+      {/*Slider*/}
+      <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
+        <video
+          src={"fashion/cover.mp4"}
+          autoPlay
+          muted
+          loop
+          controls={false}
+          className="absolute w-full h-full  
+                object-cover"
+        />
+        <div className="absolute w-full h-full z-10 bg-gray-800/40" />{" "}
+        {/*Overlay*/}
+        <div className="absolute flex flex-col items-center justify-center gap-4 z-30">
+          <h1
+            className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
+          >
+            FASHION
+          </h1>
+        </div>
+      </div>
+
+      <div className="lg:w-7xl mx-auto mt-8">
+      {/*Banner*/}  
       {/*Heading Text*/}
       <div className="mt-20">
         <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
@@ -64,7 +69,6 @@ const Manswear = ({
                   Redeem {">>"}
                 </Button>
                 <Button
-                onClick={handleButton}
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
@@ -75,62 +79,89 @@ const Manswear = ({
           ))}
         </div>
         {/*Pagination*/}
-        <div className="flex justify-center">
-           <div className="flex items-center justify-between gap-3">
-      <p className="text-muted-foreground grow text-sm" aria-live="polite">
-        Page <span className="text-foreground">{currentPage}</span> of{" "}
-        <span className="text-foreground">{totalPages}</span>
-      </p>
-      <Pagination className="w-auto">
-        <PaginationContent className="gap-3">
-          <PaginationItem>
-            <Button
-              variant="outline"
-              className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-              aria-disabled={currentPage === 1 ? true : undefined}
-              role={currentPage === 1 ? "link" : undefined}
-              asChild
-            >
+        <div className="flex justify-center mt-12">
+          <ul className="flex justify-center gap-1 text-gray-900">
+            <li>
               <a
-                href={
-                  currentPage === 1 ? undefined : `#/page/${currentPage - 1}`
-                }
+                href="#"
+                className="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                aria-label="Previous page"
               >
-                Previous
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </a>
-            </Button>
-          </PaginationItem>
-          <PaginationItem>
-            <Button
-              variant="outline"
-              className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-              aria-disabled={currentPage === totalPages ? true : undefined}
-              role={currentPage === totalPages ? "link" : undefined}
-              asChild
-            >
+            </li>
+
+            <li>
               <a
-                href={
-                  currentPage === totalPages
-                    ? undefined
-                    : `#/page/${currentPage + 1}`
-                }
+                href="#"
+                className="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
               >
-                Next
+                1
               </a>
-            </Button>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
+            </li>
+
+            <li className="block size-8 rounded border border-indigo-600 bg-indigo-600 text-center text-sm/8 font-medium text-white">
+              2
+            </li>
+
+            <li>
+              <a
+                href="#"
+                className="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+              >
+                3
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="#"
+                className="block size-8 rounded border border-gray-200 text-center text-sm/8 font-medium transition-colors hover:bg-gray-50"
+              >
+                4
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="#"
+                className="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                aria-label="Next page"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
     </div>
   );
 };
 
 export default Manswear;
-
-
 
 const cardInfo = [
   {
@@ -193,5 +224,4 @@ const cardInfo = [
     image: "/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
-  
 ];

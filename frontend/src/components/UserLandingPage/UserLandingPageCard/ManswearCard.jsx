@@ -55,7 +55,7 @@ const ManswearCard = () => {
         </div>
         <div className="flex justify-center">
           <Link
-            href={"/fashion"}
+            href={"/manswear"}
             className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
           >
             View All {">>"}
@@ -71,12 +71,12 @@ export default ManswearCard;
 const cardInfo = [
   {
     id: "1",
-    image: "/1.jpg",
+    image: "/3.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "2",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
@@ -86,7 +86,7 @@ const cardInfo = [
   },
   {
     id: "4",
-    image: "/1.jpg",
+    image: "/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
@@ -96,7 +96,7 @@ const cardInfo = [
   },
   {
     id: "6",
-    image: "/1.jpg",
+    image: "/3.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
 ];

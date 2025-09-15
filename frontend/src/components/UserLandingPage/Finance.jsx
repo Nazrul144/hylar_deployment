@@ -2,6 +2,7 @@ import React from 'react'
 import UserLandingPageCard from './UserLandingPageCard/UserLandingPageCard'
 import { Inter, Montserrat } from "next/font/google";
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -51,9 +52,9 @@ const Finance = () => {
           />
         </div>
 
-        <Button className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer ${montSerrat.className}`}>
+        <Link href={'/finance'} className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer ${montSerrat.className}`}>
           View All {'>>'}
-        </Button>
+        </Link>
       </div>
     </div>
   )

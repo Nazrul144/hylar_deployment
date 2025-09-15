@@ -1,9 +1,10 @@
+import Finance from '@/components/browseCaterories/Finance'
 import React from 'react'
 
 const FinancePage = () => {
   return (
     <div>
-      <h1>Finance Page</h1>
+      <Finance/>
     </div>
   )
 }

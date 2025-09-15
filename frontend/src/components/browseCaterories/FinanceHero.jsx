@@ -1,13 +1,11 @@
-import Image from "next/image";
 import React from "react";
 
-
-const Hero = () => {
+const FinanceHero = () => {
   return (
     <div>
       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
         <video
-          src={"/video/fasion_cover_video.mp4"}
+          src={"/video/travel_cover_video.mp4"}
           autoPlay
           muted
           loop
@@ -21,7 +19,7 @@ const Hero = () => {
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
           >
-            FASHION
+            FINANCE
           </h1>
         </div>
       </div>
@@ -29,4 +27,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default FinanceHero;

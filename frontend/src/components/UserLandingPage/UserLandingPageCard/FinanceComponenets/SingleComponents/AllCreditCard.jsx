@@ -2,13 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
-import React, { useState } from "react";
 import { CiBookmark } from "react-icons/ci";
-import CatagoriesSlider from "../CatagoriesSlider";
+import CatagoriesSlider from "../../CatagoriesSlider";
 
-const Womenswear = () => {
+const AllCreditCard = () => {
   return (
+    
     <div>
       {/*Slider*/}
       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
@@ -27,15 +26,17 @@ const Womenswear = () => {
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
           >
-            FASHION
+            FINANCE
           </h1>
         </div>
       </div>
+
       <div className="lg:w-7xl mx-auto mt-8">
+      {/*Banner*/}  
       {/*Heading Text*/}
       <div className="mt-20">
         <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
-          Womenswear
+          Credit Cards
         </h1>
         <h3 className="text-center mb-6">
           Must see offers from some of Blue Light Card members' best-loved{" "}
@@ -160,7 +161,7 @@ const Womenswear = () => {
   );
 };
 
-export default Womenswear;
+export default AllCreditCard;
 
 const cardInfo = [
   {

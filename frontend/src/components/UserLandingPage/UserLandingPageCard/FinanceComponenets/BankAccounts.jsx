@@ -12,7 +12,7 @@ const BankAccounts = () => {
         {/*Heading Text*/}
         <div className="mt-14">
           <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
-            Credit Cards
+            Bank Accounts
           </h1>
           <h3 className="text-center mb-6">
             Must see offers from some of Blue Light Card members' best-loved{" "}
@@ -55,7 +55,7 @@ const BankAccounts = () => {
           </div>
           <div className="flex justify-center">
             <Link
-              href={"/womenswear"}
+              href={"/bankaccount"}
               className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
             >
               View All {">>"}

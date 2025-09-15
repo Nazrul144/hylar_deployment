@@ -18,7 +18,7 @@ const CatagoriesSlider = () => {
   return (
     <div>
         <h1 className="text-center text-5xl font-bold common-text mt-24">Browse Catagories</h1>
-      <div className="w-7xl mx-auto mt-14">
+      <div className="lg:w-4xl mx-auto mt-14">
         <Swiper
           slidesPerView={1}
           centeredSlides={false}

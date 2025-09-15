@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { CiBookmark } from "react-icons/ci";
+import CatagoriesSlider from "../CatagoriesSlider";
 
 const Shoes = () => {
   return (
@@ -152,6 +153,7 @@ const Shoes = () => {
             </li>
           </ul>
         </div>
+        <CatagoriesSlider/>
       </div>
     </div>
     </div>

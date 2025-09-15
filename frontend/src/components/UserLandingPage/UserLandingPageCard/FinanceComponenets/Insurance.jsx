@@ -54,7 +54,7 @@ const Insurance = () => {
           </div>
           <div className="flex justify-center">
             <Link
-              href={"/finance"}
+              href={"/insurance"}
               className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
             >
               View All {">>"}

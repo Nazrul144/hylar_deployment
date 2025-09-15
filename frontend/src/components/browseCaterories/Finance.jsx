@@ -1,4 +1,5 @@
 import Hero from "../UserLandingPage/Hero"
+import CatagoriesSlider from "../UserLandingPage/UserLandingPageCard/CatagoriesSlider"
 import ChildrenswearCard from "../UserLandingPage/UserLandingPageCard/ChildrenswearCard"
 import BankAccounts from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/BankAccounts"
 import CreditCards from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/CreditCards"
@@ -15,6 +16,7 @@ const Finance = () => {
       <CreditCards/>
       <Loans/>
       <BankAccounts/>
+      <CatagoriesSlider/>
     </div>
   )
 }

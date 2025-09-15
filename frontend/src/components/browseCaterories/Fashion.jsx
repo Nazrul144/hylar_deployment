@@ -5,6 +5,7 @@ import ManswearCard from '../UserLandingPage/UserLandingPageCard/ManswearCard'
 import ChildrenswearCard from '../UserLandingPage/UserLandingPageCard/ChildrenswearCard'
 import ShoesCard from '../UserLandingPage/UserLandingPageCard/ShoesCard'
 import FashionHero from './FashionHero'
+import CatagoriesSlider from '../UserLandingPage/UserLandingPageCard/CatagoriesSlider'
 
 const Fashion = () => {
   return (
@@ -14,6 +15,7 @@ const Fashion = () => {
       <WomenswearCard/>
       <ChildrenswearCard/>
       <ShoesCard/>
+      <CatagoriesSlider/>
     </div>
   )
 }

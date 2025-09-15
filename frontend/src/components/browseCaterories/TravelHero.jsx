@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react'
 
-const FinanceHero = () => {
+const TravelHero = () => {
   return (
     <div>
-      <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
+       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
         <video
           src={"/video/travel_cover_video.mp4"}
           autoPlay
@@ -19,12 +19,12 @@ const FinanceHero = () => {
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
           >
-            TRAVEL 
+            FINANCE
           </h1>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FinanceHero;
+export default TravelHero

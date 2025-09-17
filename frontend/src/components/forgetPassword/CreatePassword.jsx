@@ -2,13 +2,14 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
-import Swal from "sweetalert2";
 import { Button } from "../ui/button";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const CreatePassword = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   // handle input change
@@ -22,15 +23,19 @@ const CreatePassword = () => {
   // handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData); // 👉 here you get { email: "value", password: "value" }
-  };
 
-  const handleUpdate = () => {
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
     Swal.fire({
-      title: "Good job!",
-      text: "You clicked the button!",
+      title: "Password Updated Successfully!",
       icon: "success",
     });
+
+    console.log("Form submitted:", formData);
+    // 👉 send formData.newPassword to your backend
   };
 
   return (
@@ -45,7 +50,6 @@ const CreatePassword = () => {
             className=" object-cover"
             priority
           />
-
           <div className="absolute inset-0 grid place-items-center ml-14">
             <h1 className="z-10 text-3xl font-bold text-white drop-shadow-lg">
               Set a New <br /> Password
@@ -62,53 +66,51 @@ const CreatePassword = () => {
           <div className="absolute inset-0 rounded-lg bg-black/30" />
         </div>
 
-        {/* Login form */}
+        {/* Form */}
         <div className="h-[600px] w-96">
           <div className="w-full max-w-md p-8 space-y-3 text-gray-100 h-full">
-            <h1 className="montserrat-text  common-text text-xl font-bold ">
-              Account
-            </h1>
             <h1 className="text-black font-bold text-3xl">
               Create New Password
             </h1>
-            <p className="text-gray-600 text-justify text-sm mb-6">
+            <p className="text-gray-600 text-sm mb-6">
               Use at least 8 characters. A mix of upper & lower case letters,
               numbers, and symbols makes it stronger.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email input */}
+              {/* New Password */}
               <div className="relative w-80">
                 <label
-                  htmlFor="email"
+                  htmlFor="newPassword"
                   className="absolute -top-2 left-3 bg-white px-1 text-sm text-gray-600"
                 >
                   New Password
                 </label>
                 <input
                   type="password"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  id="newPassword"
+                  name="newPassword"
+                  value={formData.newPassword}
                   placeholder="*****"
                   required
                   onChange={handleChange}
                   className="w-full h-12 rounded-md border border-blue-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                />{" "}
-                <br />
+                />
               </div>
+
+              {/* Confirm Password */}
               <div className="relative w-80">
                 <label
-                  htmlFor="email"
+                  htmlFor="confirmPassword"
                   className="absolute -top-2 left-3 bg-white px-1 text-sm text-gray-600"
                 >
                   Confirm Password
                 </label>
                 <input
                   type="password"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
                   placeholder="*****"
                   required
                   onChange={handleChange}
@@ -124,22 +126,22 @@ const CreatePassword = () => {
                 </div>
               </div>
 
-              {/* Submit button */}
+              {/* Submit */}
               <Button
-                onclick={handleUpdate}
-                href={"/updatepassword"}
-                className="block pt-3 w-full text-center rounded-sm text-white bg-[#00308F] h-12 cursor-pointer"
+                type="submit"
+                className="block w-full text-center rounded-sm text-white bg-[#00308F] h-12 cursor-pointer"
               >
                 Update Password
               </Button>
             </form>
+
             <div className="flex justify-between mt-6 text-black">
-              <div className="common-text font-bold underline text-sm">
-                <Link href={"/login"}>Back to Login</Link>
-              </div>
-              <div className="common-text font-bold text-sm">
-                <Link href={"/"}>Need help? Contact support</Link>
-              </div>
+              <Link href={"/login"} className="font-bold underline text-sm">
+                Back to Login
+              </Link>
+              <Link href={"/"} className="font-bold text-sm">
+                Need help? Contact support
+              </Link>
             </div>
           </div>
         </div>

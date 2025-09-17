@@ -71,6 +71,7 @@ const ForgotPassword = () => {
                   id="email"
                   name="email"
                   value={formData.email}
+                  required
                   onChange={handleChange}
                   className="w-full h-12 rounded-md border border-blue-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 />
@@ -89,16 +90,16 @@ const ForgotPassword = () => {
                     />
                 </div>
                 <div>
-                    <h3 className='text-gray-500 text-sm'>Didn't get it? Check spam/promotions, or wait a <br /> moment before resending.</h3>
+                    <h3 className='text-gray-500 text-sm'>Didn't get it? Check spam/promotions, or wait a  moment before resending.</h3>
                 </div>
                 
               </div>
             </form>
-             <div className='flex justify-between mt-24 text-black'>
-        <div className='common-text font-bold underline'>
+             <div className='flex justify-between mt-38 text-black'>
+        <div className='common-text font-bold underline text-sm'>
             <Link href={'/login'}>Back to Login</Link>
         </div>
-        <div className='common-text font-bold'>
+        <div className='common-text font-bold text-sm'>
             <Link href={'/'}>Need help? Contact support</Link>
         </div>
       </div>

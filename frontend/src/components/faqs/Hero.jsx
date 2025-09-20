@@ -4,7 +4,7 @@ import { Search, X } from "lucide-react";
 
 import React from 'react'
 import { Button } from "../ui/button";
-import { IoCloseSharp } from "react-icons/io5";
+
 
 const Hero = () => {
       const [query, setQuery] = useState("");
@@ -16,7 +16,7 @@ const Hero = () => {
     
   };
   return (
-    <div className="flex flex-col items-center justify-center h-96 bg-[#00308F] ">
+    <div className="flex flex-col items-center justify-center h-96 bg-[#00308F] px-4 lg:px-4">
       {/* Title */}
       <h1 className="text-white text-3xl md:text-4xl font-bold mb-2">
         How can we help you?

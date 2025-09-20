@@ -2,7 +2,7 @@
 import Articles from '@/components/faqs/Articles'
 import EligibilitySection from '@/components/faqs/EligibilitySection'
 import Faqs from '@/components/faqs/Hero'
-import Faq from '@/components/LandingPage/Faq'
+import PopularFaqs from '@/components/faqs/PopularFaqs'
 import CatagoriesSlider from '@/components/UserLandingPage/UserLandingPageCard/CatagoriesSlider'
 import React from 'react'
 
@@ -12,7 +12,7 @@ const FAQSPage = () => {
       <Faqs/>
       <Articles/>
       <EligibilitySection/>
-      <Faq/>
+      <PopularFaqs/>
       <CatagoriesSlider/>
     </div>
   )

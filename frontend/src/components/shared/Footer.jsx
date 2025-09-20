@@ -3,6 +3,7 @@ import { useId } from "react"
 import { Input } from "@/components/ui/input"
 import Image from 'next/image'
 import { BiSend } from "react-icons/bi";
+import Link from 'next/link';
 
 
 const Footer = () => {
@@ -54,7 +55,7 @@ const Footer = () => {
               <h3 className='text-sm  font-bold mb-2'>Privacy Policy</h3>
               <p className='text-sm mb-2'>Terms Of Use</p>
               <p className='text-sm mb-2'>FAQ</p>
-              <p className='text-sm '>Contact</p>
+              <Link href={'/contact'} className='text-sm '>Contact</Link>
           </div>
 
 {/*Column-5*/}

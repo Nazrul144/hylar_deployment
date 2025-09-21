@@ -1,17 +1,15 @@
 import CatagoriesSlider from "../UserLandingPage/UserLandingPageCard/CatagoriesSlider"
 import HotelAndTravel from "../UserLandingPage/UserLandingPageCard/TravelComponentes/HotelsAndTravel"
 import SkiBreaks from "../UserLandingPage/UserLandingPageCard/TravelComponentes/SkiBreaks"
-
 import SunAndBeach from "../UserLandingPage/UserLandingPageCard/TravelComponentes/SunAndBeach"
 import UkStays from "../UserLandingPage/UserLandingPageCard/TravelComponentes/UkStays"
-
-import FinanceHero from "./FinanceHero"
+import TravelHero from "./TravelHero"
 
 
 const Travel = () => {
   return (
     <div>
-      <FinanceHero/>
+      <TravelHero/>
       <SunAndBeach/>
       <UkStays/>
       <HotelAndTravel/>

@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
+import { FaBookmark } from "react-icons/fa6";
 
 // All routes and submenus here:
 const navItems = [
@@ -24,7 +25,7 @@ const navItems = [
     title: "Discover Savings",
     items: [
       { title: "Fashion", path: "/fashion" },
-      { title: "Travels", path: "/travels" },
+      { title: "Travels", path: "/travel" },
       { title: "Home & Lifestyle", path: "/lifestyle" },
       { title: "Finance", path: "/finance" },
     ],
@@ -180,12 +181,23 @@ export default function Navbar({ montserrat }) {
         <div>
           {user ? (
             <div className="flex items-center gap-2">
+              {/*bookmark icon and user name div*/}
+              <div className="flex gap-3 items-center">
+                <div className="relative">
+                  <FaBookmark className="text-2xl text-blue-600 cursor-pointer" />
+
+                  {/* Badge (static example with 3) */}
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                    5
+                  </span>
+                </div>
+
+                <div className="font-medium text-gray-700">User Name</div>
+              </div>
+
+              {/*Profile div*/}
               <div className="dropdown dropdown-end">
-                <div
-                  tabIndex={0}
-                  role="button"
-                 
-                >
+                <div tabIndex={0} role="button">
                   <div className="w-10 rounded-full">
                     <RxAvatar className="text-4xl cursor-pointer hover:bg-gray-100 rounded-full" />
                   </div>

@@ -1,10 +1,11 @@
 
+import Works from '@/components/addYourBusiness/Works'
 import React from 'react'
 
 const WorkPage = () => {
   return (
     <div>
-      <h1>How it work</h1>
+      <Works/>
     </div>
   )
 }

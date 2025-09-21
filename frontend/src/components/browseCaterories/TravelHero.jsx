@@ -19,7 +19,7 @@ const TravelHero = () => {
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
           >
-            FINANCE
+            TRAVELS
           </h1>
         </div>
       </div>

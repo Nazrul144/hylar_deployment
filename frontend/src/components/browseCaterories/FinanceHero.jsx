@@ -19,7 +19,7 @@ const FinanceHero = () => {
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
           >
-            TRAVEL 
+            FINANCE 
           </h1>
         </div>
       </div>

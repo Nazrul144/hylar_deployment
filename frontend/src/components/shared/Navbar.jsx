@@ -1,9 +1,8 @@
-'use client';
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
@@ -15,9 +14,9 @@ import {
 } from "@/components/ui/popover";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { RxAvatar } from "react-icons/rx";
 
 // All routes and submenus here:
-
 const navItems = [
   { title: "Home", path: "/" },
   { title: "How It Works", path: "/work" },
@@ -38,6 +37,8 @@ const navItems = [
 export default function Navbar({ montserrat }) {
   const pathName = usePathname();
 
+  const user = true;
+
   return (
     <header className="border-b px-4 md:px-6 sticky top-0 z-50">
       <div className="flex h-16 items-center justify-between gap-4 lg:px-16">
@@ -46,7 +47,11 @@ export default function Navbar({ montserrat }) {
           {/* Mobile menu trigger */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button className="group size-8 md:hidden" variant="ghost" size="icon">
+              <Button
+                className="group size-8 md:hidden"
+                variant="ghost"
+                size="icon"
+              >
                 <svg
                   className="pointer-events-none"
                   width={16}
@@ -79,11 +84,16 @@ export default function Navbar({ montserrat }) {
                 {/* For Mobile Device */}
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navItems.map((item, index) => (
-                    <NavigationMenuItem key={index} montserrat={montserrat.className}>
+                    <NavigationMenuItem
+                      key={index}
+                      montserrat={montserrat.className}
+                    >
                       {item.items ? (
                         <Popover>
                           <PopoverTrigger asChild>
-                            <NavigationMenuTrigger className={`${cn(montserrat)}`}>
+                            <NavigationMenuTrigger
+                              className={`${cn(montserrat)}`}
+                            >
                               {item.title}
                             </NavigationMenuTrigger>
                           </PopoverTrigger>
@@ -101,7 +111,7 @@ export default function Navbar({ montserrat }) {
                         </Popover>
                       ) : (
                         <Link
-                          className={`${cn(montserrat)} ${item.path === pathName ? 'text-[#00308F] font-bold underline' : ''}`}
+                          className={`${cn(montserrat)} ${item.path === pathName ? "text-[#00308F] font-bold underline" : ""}`}
                           href={item.path}
                           key={item.path}
                         >
@@ -125,11 +135,16 @@ export default function Navbar({ montserrat }) {
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList className="gap-6">
                 {navItems.map((item, index) => (
-                  <NavigationMenuItem key={index} montserrat={montserrat.className}>
+                  <NavigationMenuItem
+                    key={index}
+                    montserrat={montserrat.className}
+                  >
                     {item.items ? (
                       <Popover>
                         <PopoverTrigger asChild>
-                          <NavigationMenuTrigger className={`${cn(montserrat)}`}>
+                          <NavigationMenuTrigger
+                            className={`${cn(montserrat)}`}
+                          >
                             {item.title}
                           </NavigationMenuTrigger>
                         </PopoverTrigger>
@@ -147,7 +162,7 @@ export default function Navbar({ montserrat }) {
                       </Popover>
                     ) : (
                       <Link
-                        className={`${cn(montserrat)} ${item.path === pathName ? 'text-[#00308F] font-bold underline' : ''}`}
+                        className={`${cn(montserrat)} ${item.path === pathName ? "text-[#00308F] font-bold underline" : ""}`}
                         href={item.path}
                         key={item.path}
                       >
@@ -162,18 +177,64 @@ export default function Navbar({ montserrat }) {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg"
-          >
-            <Link href='/login'>Log in</Link>
-          </Button>
-          <Button asChild size="sm" className="font-semibold common-bg px-6 py-5 text-lg">
-            <Link href='/register'>Sign Up</Link>
-          </Button>
+        <div>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                 
+                >
+                  <div className="w-10 rounded-full">
+                    <RxAvatar className="text-4xl cursor-pointer hover:bg-gray-100 rounded-full" />
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                >
+                  <li>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-between"
+                    >
+                      <Link href="#">Profile</Link>
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-between"
+                    >
+                      Logout
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg"
+              >
+                <Link href="/login">Log in</Link>
+              </Button>
+              <Button
+                asChild
+                size="sm"
+                className="font-semibold common-bg px-6 py-5 text-lg"
+              >
+                <Link href="/register">Sign Up</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

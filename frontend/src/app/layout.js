@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Montserrat} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import NavHeader from "@/components/shared/NavHeader";

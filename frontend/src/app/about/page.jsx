@@ -1,4 +1,5 @@
-import BlogPage from '@/components/blogPage/BlogPage'
+
+import FashionAndClothingDiscounts from '@/components/discountLandingPage/FashionAndClothingDiscounts'
 import About from '@/components/LandingPage/About'
 import React from 'react'
 
@@ -6,7 +7,7 @@ const AboutPage = () => {
   return (
     <div>
       <About/>
-      <BlogPage/>
+      <FashionAndClothingDiscounts/>
     </div>
   )
 }

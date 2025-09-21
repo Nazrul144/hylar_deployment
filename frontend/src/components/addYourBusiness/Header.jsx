@@ -16,7 +16,7 @@ const Header = () => {
       </div>
 
       {/* Overlapping div */}
-      <div className='lg:w-[880] h-[326px] bg-blue-900/80 mx-auto relative -mt-[163px] rounded-t-lg'>
+      <div className='lg:w-[880px] h-[326px] bg-blue-900/80 mx-auto relative -mt-[163px] rounded-t-lg'>
         <h1 className='text-white font-bold text-4xl text-center pt-16'>
           Reach Verified Frontline Workers
         </h1>

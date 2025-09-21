@@ -2,30 +2,25 @@ import { Oleo_Script } from "next/font/google";
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import Image from "next/image";
-import ManswearCard from "../UserLandingPage/UserLandingPageCard/ManswearCard";
-import WomenswearCard from "../UserLandingPage/UserLandingPageCard/WomenswearCard";
-import ChildrenswearCard from "../UserLandingPage/UserLandingPageCard/ChildrenswearCard";
-import ShoesCard from "../UserLandingPage/UserLandingPageCard/ShoesCard";
 import FAQ from "../addYourBusiness/FAQ";
-import FinanceDiscount from "./FinanceDiscount";
-import HolidayDiscounts from "./HolidayDiscounts";
-import HomeAndLifeStyle from "../UserLandingPage/HomeAndLifeStyle";
+import SunAndBeach from "../UserLandingPage/UserLandingPageCard/TravelComponentes/SunAndBeach";
+import UkStays from "../UserLandingPage/UserLandingPageCard/TravelComponentes/UkStays";
+import HotelAndTravel from "../UserLandingPage/UserLandingPageCard/TravelComponentes/HotelsAndTravel";
+import SkiBreaks from "../UserLandingPage/UserLandingPageCard/TravelComponentes/SkiBreaks";
+
 
 const oleo = Oleo_Script({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
 
-const FashionAndClothingDiscounts = () => {
+const HolidayDiscounts = () => {
   return (
-    <div>
-        {/*Discount-1*/}
-        <div className="lg:w-7xl mx-auto mt-20">
+    <div className="lg:w-7xl mx-auto mt-20">
       <h1
         className={`${oleo.className} font-bold text-5xl text-[#00308F] text-center mb-4`}
       >
-        Fashion & Clothing Discounts
+        Holiday Discounts
       </h1>
       <p className="text-center text-lg mb-12">
         A trusted platform built for high-impact results. <br /> With over a
@@ -48,8 +43,8 @@ const FashionAndClothingDiscounts = () => {
           </Link>
         </Button>
       </div>
-      
-        <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center mt-6 mb-10 rounded-sm">
+
+      <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center mt-6 mb-10 rounded-sm">
         <video
           src={"fashion/cover.mp4"}
           autoPlay
@@ -64,8 +59,7 @@ const FashionAndClothingDiscounts = () => {
         <div className="absolute flex flex-col items-center justify-center gap-4 z-30">
           <h1
             className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
-          >
-          </h1>
+          ></h1>
         </div>
       </div>
       <div>
@@ -77,10 +71,10 @@ const FashionAndClothingDiscounts = () => {
           Don't miss out — join the Blue Light Card community today and start
           saving on the <br /> brands you love!
         </h1>
-        <ManswearCard />
-        <WomenswearCard />
-        <ChildrenswearCard />
-        <ShoesCard />
+        <SunAndBeach />
+        <UkStays />
+        <HotelAndTravel />
+        <SkiBreaks />
         <FAQ />
         <div className="flex justify-center mt-10">
           <Button
@@ -97,11 +91,7 @@ const FashionAndClothingDiscounts = () => {
         </div>
       </div>
     </div>
-    <FinanceDiscount/>
-    <HolidayDiscounts/>
-    <HomeAndLifeStyle/>
-    </div>
   );
 };
 
-export default FashionAndClothingDiscounts;
+export default HolidayDiscounts;

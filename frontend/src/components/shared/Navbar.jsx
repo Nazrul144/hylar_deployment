@@ -24,6 +24,7 @@ const navItems = [
   {
     title: "Discover Savings",
     items: [
+      {title: "Discover Savings", path: "/discover"},
       { title: "Fashion", path: "/fashion" },
       { title: "Travels", path: "/travel" },
       { title: "Home & Lifestyle", path: "/lifestyle" },

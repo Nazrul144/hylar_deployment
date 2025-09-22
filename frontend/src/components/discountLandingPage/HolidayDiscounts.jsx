@@ -46,7 +46,7 @@ const HolidayDiscounts = () => {
 
       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center mt-6 mb-10 rounded-sm">
         <video
-          src={"fashion/cover.mp4"}
+          src={"/video/finance_cover_video.mp4"}
           autoPlay
           muted
           loop

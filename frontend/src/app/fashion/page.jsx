@@ -1,10 +1,22 @@
+'use client'
 import Fashion from '@/components/browseCaterories/Fashion'
-import React from 'react'
+import FashionAndClothingDiscounts from '@/components/discountLandingPage/FashionAndClothingDiscounts'
+import React, { useState } from 'react'
 
 const FasionPage = () => {
+   const [isLogin, setIsLogin] = useState(false)
+
+   if(isLogin){
+    return(
+      <div>
+           <Fashion/>
+      </div>
+    )
+   }
+
   return (
     <div>
-      <Fashion/>
+     <FashionAndClothingDiscounts/>
     </div>
   )
 }

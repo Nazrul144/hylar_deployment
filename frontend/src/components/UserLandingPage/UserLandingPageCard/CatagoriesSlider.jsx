@@ -17,7 +17,7 @@ import Image from "next/image";
 const CatagoriesSlider = () => {
   return (
     <div>
-        <h1 className="text-center text-5xl font-bold common-text mt-24">Browse Catagories</h1>
+        <h1 className="text-center lg:text-5xl font-bold common-text mt-24">Browse Catagories</h1>
       <div className="lg:w-4xl mx-auto mt-14">
         <Swiper
           slidesPerView={1}

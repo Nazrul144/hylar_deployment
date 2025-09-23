@@ -102,7 +102,7 @@ const Footer = () => {
           <h3 className="text-sm  font-bold mb-2">
             Save $3 with App New User Only
           </h3>
-          <div>
+          <div className=" w-32 lg:w-96">
             <Image
               src={"/footer/qr_code.png"}
               width={200}

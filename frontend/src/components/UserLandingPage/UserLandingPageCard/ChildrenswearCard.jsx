@@ -8,10 +8,10 @@ import { CiBookmark } from "react-icons/ci";
 
 const ChildrenswearCard = () => {
   return (
-    <div className="lg:w-7xl mx-auto mt-8">
+    <div className="lg:w-7xl mx-auto mt-8 px-2">
         {/*Heading Text*/}
       <div className="mt-20">
-        <h1 className="common-text font-bold text-5xl text-center mb-2 inter-text">
+        <h1 className="common-text font-bold text-xl lg:text-5xl text-center mb-2 inter-text">
           Childrenswear
         </h1>
         <h3 className="text-center mb-6">
@@ -70,32 +70,32 @@ export default ChildrenswearCard;
 const cardInfo = [
   {
     id: "1",
-    image: "/3.jpg",
+    image: "/fashion/1.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "2",
-    image: "/3.jpg",
+    image: "/fashion/2.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "3",
-    image: "/3.jpg",
+    image: "/fashion/3.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "4",
-    image: "/3.jpg",
+    image: "/fashion/4.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "5",
-    image: "/3.jpg",
+    image: "/fashion/5.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
   {
     id: "6",
-    image: "/3.jpg",
+    image: "/fashion/6.jpg",
     description: " - Happy World Rainforest Day 🌿",
   },
 ];

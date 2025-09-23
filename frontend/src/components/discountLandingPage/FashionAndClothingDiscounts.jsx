@@ -2,7 +2,6 @@ import { Oleo_Script } from "next/font/google";
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import ManswearCard from "../UserLandingPage/UserLandingPageCard/ManswearCard";
 import WomenswearCard from "../UserLandingPage/UserLandingPageCard/WomenswearCard";
 import ChildrenswearCard from "../UserLandingPage/UserLandingPageCard/ChildrenswearCard";
@@ -17,14 +16,14 @@ const oleo = Oleo_Script({
 
 const FashionAndClothingDiscounts = () => {
   return (
-    <div>
-        <div className="lg:w-7xl mx-auto mt-20">
+    <div className="px-2">
+        <div className="lg:w-7xl mx-auto mt-10 lg:mt-20 px-2">
       <h1
-        className={`${oleo.className} font-bold text-5xl text-[#00308F] text-center mb-4`}
+        className={`${oleo.className} font-bold text-xl lg:text-5xl text-[#00308F] text-center mb-4`}
       >
         Fashion & Clothing Discounts
       </h1>
-      <p className="text-center text-lg mb-12">
+      <p className="text-center lg:text-lg mb-12">
         A trusted platform built for high-impact results. <br /> With over a
         million verified members and thousands of trusted partners, we help your
         business stand out. Whether you're a local shop or a national brand,
@@ -32,7 +31,7 @@ const FashionAndClothingDiscounts = () => {
         marketing channels — without the stress of setup fees or long
         commitments. You bring the offer, we bring the audience
       </p>
-      <div className="lg:flex justify-center">
+      <div className="lg:flex justify-center ml-28 lg:ml-0">
         <Button
           asChild
           variant="ghost"
@@ -66,11 +65,11 @@ const FashionAndClothingDiscounts = () => {
         </div>
       </div>
       <div>
-        <h1 className={`${oleo.className} font-bold text-5xl text-center mb-4`}>
+        <h1 className={`${oleo.className} font-bold text-xl lg:text-5xl text-center mb-4`}>
           Over <span className="text-[#00308F] mb-8">$300,000,000</span> saved
           by our <br /> members in the past year.
         </h1>
-        <h1 className="text-center text-lg">
+        <h1 className="text-center lg:text-lg px-2">
           Don't miss out — join the Blue Light Card community today and start
           saving on the <br /> brands you love!
         </h1>

@@ -39,7 +39,7 @@ const EligibilitySection = () => {
 
             {/* Content */}
             <div className="max-w-xl">
-              <h2 className="text-3xl font-bold">Who is eligible?</h2>
+              <h2 className="text-xl lg:text-3xl font-bold">Who is eligible?</h2>
               <p className="text-sm text-gray-600 mt-2">
                 Contrary to popular belief, Lorem Ipsum is not simply random
                 text. It has roots in a piece of classical Latin literature from

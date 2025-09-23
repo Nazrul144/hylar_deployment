@@ -45,11 +45,11 @@ const EmailSubscription = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="relative">
+    <div className="lg:max-w-7xl mx-auto px-2">
+      <div className="lg:relative">
         <Image src={myPhoto} alt="Image" />
 
-        <div className="absolute top-1 lg:top-16 left-4 lg:left-32">
+        <div className="lg:absolute top-1 lg:top-16 left-4 lg:left-32">
           <h3 className="pinyon-text lg:text-3xl text-[#7BB662]">
             ~ Mega Sale ~
           </h3>
@@ -63,12 +63,12 @@ const EmailSubscription = () => {
           </p>
 
           <div>
-            <div className="flex gap-2 mt-4 relative">
+            <div className="lg:flex gap-2 mt-4 relative px-2">
               <Input
                 id={id}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white border-none p-8 pr-12"
+                className="bg-white lg:border-none lg:p-8 lg:pr-12 border-1 border-gray-200 "
                 placeholder="Type Your Email"
                 type="email"
               />
@@ -77,13 +77,13 @@ const EmailSubscription = () => {
               {email && (
                 <RxCross2
                   onClick={handleClear}
-                  className="absolute right-44 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-600 cursor-pointer"
+                  className="lg:absolute lg:right-44 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-600 cursor-pointer"
                 />
               )}
 
               <Button
                 onClick={handleSubmit}
-                className="bg-[#7BB662] text-white text-lg p-8 hover:bg-[#00308F] transition-colors duration-300 ease-in-out cursor-pointer"
+                className="bg-[#7BB662] text-white text-lg mt-2 lg:mt-0 lg:0 lg:p-8 hover:bg-[#00308F] transition-colors duration-300 ease-in-out cursor-pointer"
               >
                 Subscribe
               </Button>

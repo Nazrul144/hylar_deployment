@@ -3,8 +3,8 @@ import React from 'react'
 
 const Faq = () => {
   return (
-    <div className='mt-16 max-w-5xl mx-auto'>
-        <h1 className='text-4xl inter-text font-semibold text-center common-text mb-8'>Frequently asked questions</h1>
+    <div className='mt-16 max-w-5xl mx-auto px-2'>
+        <h1 className='text-xl lg:text-4xl inter-text font-semibold text-center common-text mb-8'>Frequently asked questions</h1>
       <div className="space-y-4">
   <details className="group [&_summary::-webkit-details-marker]:hidden" open>
     <summary

@@ -5,7 +5,7 @@ const FAQ = () => {
   return (
     <div>
       <div className='mt-16 max-w-5xl mx-auto'>
-        <h1 className='text-4xl inter-text font-semibold text-center common-text mb-20'>Frequently asked questions</h1>
+        <h1 className='lg:text-4xl inter-text font-semibold text-center common-text mb-20 text-xl'>Frequently asked questions</h1>
       <div className="space-y-4">
   <details className="group [&_summary::-webkit-details-marker]:hidden" open>
     <summary
@@ -185,7 +185,7 @@ const FAQ = () => {
 </div>
 
 <div className='flex justify-center mt-20'>
-    <Link href={'/submit_form'} className='common-bg text-white text-lg py-2 px-4 rounded-sm montserrat-text font-semibold hover:scale-105 transition-all duration-300'>Click Here To Submit Your Offer</Link>
+    <Link href={'/submit_form'} className='common-bg text-white text-sm lg:text-lg py-2 px-4 rounded-sm montserrat-text font-semibold hover:scale-105 transition-all duration-300'>Click Here To Submit Your Offer</Link>
 </div>
     </div>
     </div>

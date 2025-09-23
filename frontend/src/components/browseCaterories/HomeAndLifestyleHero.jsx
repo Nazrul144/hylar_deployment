@@ -6,7 +6,7 @@ const HomeAndLifestyleHero = () => {
       <div>
         <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
           <video
-            src={"/finance_cover_video.mp4"}
+            src={"/video/finance_cover_video.mp4"}
             autoPlay
             muted
             loop
@@ -20,7 +20,7 @@ const HomeAndLifestyleHero = () => {
             <h1
               className={`text-[#FFFFFF] text-center font-extrabold text-8xl montserrat-text`}
             >
-              HOME & LIFESTYLE
+          
             </h1>
           </div>
         </div>

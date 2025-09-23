@@ -2,10 +2,10 @@ import React from 'react'
 import { ClipboardList, Smartphone, Wallet } from "lucide-react"; // icons
 const Works = () => {
   return (
-    <section className="mb-10 mt-10 bg-white text-center max-w-7xl mx-auto">
+    <section className="mb-10 mt-10 bg-white text-center w-full lg:max-w-7xl mx-auto">
     {/* Title */}
-    <h2 className="text-4xl font-bold common-text mb-2 inter-text">How It Works</h2>
-    <p className=" text-xl mb-12 montserrat-text ">
+    <h2 className="lg:text-4xl text-xl font-bold common-text mb-2 inter-text">How It Works</h2>
+    <p className=" px-2 lg:text-xl mb-12 montserrat-text ">
       Follow three easy steps to get your card and unlock exclusive discounts.
     </p>
 

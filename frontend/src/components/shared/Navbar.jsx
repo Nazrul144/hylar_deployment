@@ -192,7 +192,9 @@ export default function Navbar({ montserrat }) {
                   </span>
                 </div>
 
-                <div className="font-medium text-gray-700">User Name</div>
+                <div className="hidden md:block font-medium text-gray-700">
+                  User Name
+                </div>
               </div>
 
               {/*Profile div*/}

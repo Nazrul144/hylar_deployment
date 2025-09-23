@@ -7,7 +7,7 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 const LatestNews = () => {
   return (
     <div className='mt-20 mb-10 max-w-7xl mx-auto'>
-      <h1 className='text-center text-4xl inter-text common-text font-bold'>Latest News</h1>
+      <h1 className='text-center text-xl lg:text-4xl inter-text common-text font-bold'>Latest News</h1>
       <p className='text-sm montserrat-text text-center mt-3'>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
 
     {/*News Card*/}

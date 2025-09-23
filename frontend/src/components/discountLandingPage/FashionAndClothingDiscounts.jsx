@@ -8,9 +8,7 @@ import WomenswearCard from "../UserLandingPage/UserLandingPageCard/WomenswearCar
 import ChildrenswearCard from "../UserLandingPage/UserLandingPageCard/ChildrenswearCard";
 import ShoesCard from "../UserLandingPage/UserLandingPageCard/ShoesCard";
 import FAQ from "../addYourBusiness/FAQ";
-import FinanceDiscount from "./FinanceDiscount";
-import HolidayDiscounts from "./HolidayDiscounts";
-import HomeAndLifeStyle from "../UserLandingPage/HomeAndLifeStyle";
+
 
 const oleo = Oleo_Script({
   weight: ["400", "700"],
@@ -20,7 +18,6 @@ const oleo = Oleo_Script({
 const FashionAndClothingDiscounts = () => {
   return (
     <div>
-        {/*Discount-1*/}
         <div className="lg:w-7xl mx-auto mt-20">
       <h1
         className={`${oleo.className} font-bold text-5xl text-[#00308F] text-center mb-4`}
@@ -97,9 +94,6 @@ const FashionAndClothingDiscounts = () => {
         </div>
       </div>
     </div>
-    <FinanceDiscount/>
-    <HolidayDiscounts/>
-    <HomeAndLifeStyle/>
     </div>
   );
 };

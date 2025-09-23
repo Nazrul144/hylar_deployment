@@ -25,7 +25,7 @@ const Register = () => {
         <h3 className='text-white mt-4 text-center'>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h3>
         
       </div>
-        <h4 className='text-white absolute bottom-4 text-sm left-12'>Log in to your<span className='font-bold'>MaximumSavings</span> account.</h4>
+        <h4 className='text-white absolute bottom-4 text-sm left-12'>Log in to your <span className='font-bold'>MaximumSavings</span> account.</h4>
 
       {/* Optional dark overlay for readability */}
        <div className="absolute inset-0 rounded-lg bg-black/30" />

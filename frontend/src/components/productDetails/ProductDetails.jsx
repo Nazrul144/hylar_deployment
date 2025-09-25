@@ -58,21 +58,22 @@ const ProductDetails = () => {
           alt="banner_image"
           className="mb-10"
         />
-        <h1 className="font-bold text-xl lg:text-7xl text-[#00308F] mb-4">
+        <h1 className="font-bold text-xl lg:text-5xl text-[#00308F] mb-4 text-center mt-16">
           Voucher Gift – Get 50% OFF Your Meal!
         </h1>
-        <p className="text-xl">
-          Enjoy a delicious dining experience at half the price! Indulge in our
-          signature dishes, fresh ingredients, and warm atmosphere. Whether
-          you're here for lunch, dinner, or a quick snack, this voucher gives
-          you 50% off your total bill. Don't miss out on this mouthwatering deal
-          - treat yourself today! Valid until 16 May 2020. Terms and conditions
+        <p className="text-xl text-center">
+          Enjoy a delicious dining experience at half the price! Indulge in our 
+          signature <br />
+           dishes, fresh ingredients, and warm atmosphere. Whether
+          you're here for <br /> lunch, dinner, or a quick snack, this voucher gives
+          you 50% off <br /> your total bill. Don't miss out on this mouthwatering deal <br />
+          - treat yourself today! Valid until 16 May 2020. Terms <br /> and conditions
           apply.
         </p>
-        <h1 className="text-xl">
+        <h1 className="text-xl text-center mt-6 font-bold italic">
           Valid until 16 May 2020. Terms and conditions apply
         </h1>
-        <div className="mt-16">
+        <div className="mt-10">
           <h1 className="text-center text-2xl text-gray-700">
             Hurry, Before It's Too Late!
           </h1>
@@ -97,7 +98,7 @@ const ProductDetails = () => {
                 </div>
               ))}
             </div>
-            <div className="mt-14">
+            <div className="mt-10">
               <h1 className=" text-xl lg:text-3xl font-bold text-[#00308F] text-center">
                 Visit Our Shop
               </h1>
@@ -105,7 +106,7 @@ const ProductDetails = () => {
                 We welcome you to our cozy space where taste meets comfort. Stop
                 by for a <br /> memorable dining experience.
               </h3>
-              <div className="flex justify-center mt-16">
+              <div className="flex justify-center mt-10">
                 <div className="text-xl space-y-3 ">
                   <div className="flex items-center">
                     <IoLocationSharp className="text-[#00308F] text-2xl" />
@@ -124,7 +125,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center mt-16">
+              <div className="flex justify-center mt-12">
                 <DialogDemo/>
               </div>
             </div>

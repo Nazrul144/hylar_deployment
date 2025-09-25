@@ -1,6 +1,6 @@
 'use client'
 import Finance from '@/components/browseCaterories/Finance'
-import HolidayDiscounts from '@/components/discountLandingPage/HolidayDiscounts'
+import FinanceDiscount from '@/components/discountLandingPage/FinanceDiscount'
 import React, { useState } from 'react'
 
 const FinancePage = () => {
@@ -15,7 +15,7 @@ const FinancePage = () => {
 
   return (
     <div>
-     <HolidayDiscounts/>
+     <FinanceDiscount/>
     </div>
   )
 

@@ -41,8 +41,9 @@ const ManswearCard = () => {
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
-                  Redeem {">>"}
+                  <Link href={'/redeem_details'}>Redeem {">>"}</Link>
                 </Button>
+
                 <Button
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"

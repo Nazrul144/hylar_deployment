@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { CiBookmark } from "react-icons/ci";
 import CatagoriesSlider from "../CatagoriesSlider";
+import Link from "next/link";
 
 const Manswear = () => {
   return (
@@ -66,7 +67,7 @@ const Manswear = () => {
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
-                  Redeem {">>"}
+                 <Link href={'/redeem_details'}>Redeem {">>"}</Link>
                 </Button>
                 <Button
                   className="border-2 rounded-none text-lg cursor-pointer"

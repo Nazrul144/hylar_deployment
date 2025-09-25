@@ -1,14 +1,11 @@
 
-
-import About from '@/components/LandingPage/About'
-import ProductDetails from '@/components/productDetails/ProductDetails'
+import About from '@/components/landingPage/About'
 import React from 'react'
 
 const AboutPage = () => {
   return (
     <div>
       <About/>
-      <ProductDetails/>
     </div>
   )
 }

@@ -16,6 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
 import { FaBookmark } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 
 // All routes and submenus here:
 const navItems = [
@@ -35,13 +36,38 @@ const navItems = [
   { title: "FAQS", path: "/faqs" },
 ];
 
+
 export default function Navbar({ montserrat }) {
   const pathName = usePathname();
+
+  //Handle Scrolling:
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(()=>{
+    const handleScrolled = ()=>{
+      if(window.scrollY> 10){
+        setScrolled(true)
+      }else{
+        setScrolled(false)
+      }
+    };
+    addEventListener("scroll", handleScrolled);
+     return () => window.removeEventListener("scroll", handleScrolled);
+  },[])
+
+
+
+
 
   const user = true;
 
   return (
-    <header className="border-b px-4 md:px-6 sticky top-0 z-50">
+     <header
+      className={cn(
+        "border-b px-4 md:px-6 sticky top-0 z-50 transition-colors duration-300",
+        scrolled ? "bg-white/90 shadow-md backdrop-blur-md" : "bg-white"
+      )}
+    >
       <div className="flex h-16 items-center justify-between gap-4 lg:px-16">
         {/* Left side */}
         <div className="flex items-center gap-2">

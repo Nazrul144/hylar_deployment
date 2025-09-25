@@ -40,12 +40,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >
-        <NavHeader />
-        <Navbar montserrat={montserrat.className}/>
-        <Toaster position="top-center" reverseOrder={false} />
-        {children}
-        <SubscribePopup/>
-        <Footer/>
+            <NavHeader />
+            <Navbar montserrat={montserrat.className}/>
+            <Toaster position="top-center" reverseOrder={false} />
+            {children}
+            <SubscribePopup/>
+            <Footer/>
       </body>
     </html>
   );

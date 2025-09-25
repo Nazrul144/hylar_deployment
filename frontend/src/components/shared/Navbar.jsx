@@ -36,33 +36,48 @@ const navItems = [
   { title: "FAQS", path: "/faqs" },
 ];
 
-
 export default function Navbar({ montserrat }) {
   const pathName = usePathname();
 
   //Handle Scrolling:
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(()=>{
-    const handleScrolled = ()=>{
-      if(window.scrollY> 10){
-        setScrolled(true)
-      }else{
-        setScrolled(false)
+  useEffect(() => {
+    const handleScrolled = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
       }
     };
     addEventListener("scroll", handleScrolled);
-     return () => window.removeEventListener("scroll", handleScrolled);
-  },[])
+    return () => window.removeEventListener("scroll", handleScrolled);
+  }, []);
 
+  //LocalStorageItem
+  const [bookmarks, setBookmarkedItems] = useState([]);
 
+  useEffect(() => {
+    const savedRaw = localStorage.getItem("bookmark");
+    if (savedRaw) {
+      try {
+        const saved = JSON.parse(savedRaw);
+        if (Array.isArray(saved)) {
+          setBookmarkedItems(saved); // <- pure objects
+        }
+      } catch (error) {
+        console.error("Failed to parse bookmarks from localStorage:", error);
+        setBookmarkedItems([]);
+      }
+    }
+  }, []);
 
-
+ 
 
   const user = true;
 
   return (
-     <header
+    <header
       className={cn(
         "border-b px-4 md:px-6 sticky top-0 z-50 transition-colors duration-300",
         scrolled ? "bg-white/90 shadow-md backdrop-blur-md" : "bg-white"
@@ -210,11 +225,13 @@ export default function Navbar({ montserrat }) {
               {/*bookmark icon and user name div*/}
               <div className="flex gap-3 items-center">
                 <div className="relative">
-                  <FaBookmark className="text-2xl text-blue-600 cursor-pointer" />
+                  <Link href={"/store_item"}>
+                    <FaBookmark className="text-2xl text-blue-600" />
+                  </Link>
 
                   {/* Badge (static example with 3) */}
                   <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                    5
+                    {bookmarks.length}
                   </span>
                 </div>
 

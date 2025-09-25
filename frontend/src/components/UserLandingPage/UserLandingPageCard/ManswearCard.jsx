@@ -3,13 +3,41 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CiBookmark } from "react-icons/ci";
 
 const ManswearCard = () => {
+  const [bookmarkedItems, setBookmarkedItems] = useState([]);
+
+  // Load bookmarked items from localStorage when component mounts
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("bookmark") || "[]");
+    setBookmarkedItems(saved.map((item) => item.id));
+  }, []);
+
+  // Handle bookmark click (toggle)
+  const handleBookmark = (item) => {
+    const saved = JSON.parse(localStorage.getItem("bookmark") || "[]");
+
+    // Check if item is already bookmarked
+    const exists = saved.find((i) => i.id === item.id);
+
+    if (exists) {
+      // If exists, remove it
+      const updated = saved.filter((i) => i.id !== item.id);
+      localStorage.setItem("bookmark", JSON.stringify(updated));
+      setBookmarkedItems(updated.map((i) => i.id));
+    } else {
+      // If not, add it
+      saved.push(item);
+      localStorage.setItem("bookmark", JSON.stringify(saved));
+      setBookmarkedItems(saved.map((i) => i.id));
+    }
+  };
+
   return (
     <div className="lg:w-7xl mx-auto mt-8 px-2">
-      {/*Heading Text*/}
+      {/* Heading Text */}
       <div className="mt-20">
         <h1 className="common-text font-bold text-xl lg:text-5xl text-center mb-2 inter-text">
           Manswear
@@ -19,10 +47,11 @@ const ManswearCard = () => {
           <br />
           Fashion & Clothing partners.
         </h3>
-        {/*Card*/}
       </div>
+
+      {/* Card */}
       <div>
-        <div className="grid lg:grid-cols-3 px-2 gap-3 ">
+        <div className="grid lg:grid-cols-3 px-2 gap-3">
           {cardInfo?.map((item) => (
             <div className="shadow-xl p-4 rounded-sm" key={item.id}>
               <Image
@@ -32,7 +61,7 @@ const ManswearCard = () => {
                 alt="Image"
                 className="block"
               />
-              <h1 className="mt-2 ">
+              <h1 className="mt-2">
                 <span className="font-bold">Paucek and Lage</span>{" "}
                 {item.description}
               </h1>
@@ -41,27 +70,29 @@ const ManswearCard = () => {
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
-                  <Link href={'/redeem_details'}>Redeem {">>"}</Link>
+                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
                 </Button>
 
                 <Button
-                  className="border-2 rounded-none text-lg cursor-pointer"
-                  variant="none"
+                  className={`border-2 rounded-none text-lg  ${
+                    bookmarkedItems.includes(item.id)
+                      ? "bg-[#3366CC] text-white" // bookmarked state
+                      : "bg-white text-black hover:bg-gray-100" // normal state
+                  }`}
+                  variant="ghost"
+                  onClick={() => handleBookmark(item)}
                 >
                   <CiBookmark />
                 </Button>
               </div>
             </div>
           ))}
-
         </div>
-
-      
 
         <div className="flex justify-center">
           <Link
             href={"/manswear"}
-            className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
+            className="bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer"
           >
             View All {">>"}
           </Link>

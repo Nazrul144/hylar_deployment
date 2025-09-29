@@ -16,7 +16,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
 import { FaBookmark } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
+
 
 // All routes and submenus here:
 const navItems = [
@@ -54,26 +56,8 @@ export default function Navbar({ montserrat }) {
     return () => window.removeEventListener("scroll", handleScrolled);
   }, []);
 
-  //LocalStorageItem
-  const [bookmarks, setBookmarkedItems] = useState([]);
-
-  useEffect(() => {
-    const savedRaw = localStorage.getItem("bookmark");
-    if (savedRaw) {
-      try {
-        const saved = JSON.parse(savedRaw);
-        if (Array.isArray(saved)) {
-          setBookmarkedItems(saved); // <- pure objects
-        }
-      } catch (error) {
-        console.error("Failed to parse bookmarks from localStorage:", error);
-        setBookmarkedItems([]);
-      }
-    }
-  }, []);
-
- 
-
+  //Use context api here:
+  const {bookmarks} = useContext(BookmarkContext)
   const user = true;
 
   return (

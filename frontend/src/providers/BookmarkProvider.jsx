@@ -19,19 +19,25 @@ const BookmarkProvider = ({children}) => {
     localStorage.setItem("bookmark", JSON.stringify(bookmarks));
   }, [bookmarks]);
 
-  // Toggle add/remove bookmark
+  // Toggle add/remove (for ManswearCard)
   const toggleBookmark = (item) => {
-    const exists = bookmarks.find((i) => i.id === item.id);
-    if (exists) {
-      setBookmarks(bookmarks.filter((i) => i.id !== item.id));
-    } else {
-      setBookmarks([...bookmarks, item]);
-    }
+    setBookmarks((prev) => {
+      const exists = prev.some((i) => i.id === item.id);
+      if (exists) {
+        return prev.filter((i) => i.id !== item.id);
+      }
+      return [...prev, item];
+    });
+  };
+
+  // Remove only (for StorageItem)
+  const removeBookmark = (id) => {
+    setBookmarks((prev) => prev.filter((i) => i.id !== id));
   };
     
   return (
     <div>
-      <BookmarkContext.Provider value={{bookmarks, toggleBookmark}}>
+      <BookmarkContext.Provider value={{bookmarks, toggleBookmark, removeBookmark}}>
             {children}
       </BookmarkContext.Provider>
     </div>

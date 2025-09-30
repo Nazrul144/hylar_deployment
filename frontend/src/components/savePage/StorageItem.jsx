@@ -1,64 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { CiBookmark } from "react-icons/ci";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const StorageItem = () => {
-  const [bookmarks, setBookmarkedItems] = useState([]);
-
-useEffect(() => {
-  const savedRaw = localStorage.getItem("bookmark");
-  if (savedRaw) {
-    try {
-      const saved = JSON.parse(savedRaw);
-      if (Array.isArray(saved)) {
-        setBookmarkedItems(saved); // <- pure objects
-      }
-    } catch (error) {
-      console.error("Failed to parse bookmarks from localStorage:", error);
-      setBookmarkedItems([]);
-    }
-  }
-}, []);
-
+  const { bookmarks, removeBookmark } = useContext(BookmarkContext);
 
   return (
     <div className="lg:w-7xl mx-auto mt-8 px-2">
-      <div className="grid lg:grid-cols-3 px-2 gap-3">
-        {bookmarks.map((item) => (
-          <div className="shadow-xl p-4 rounded-sm" key={item.id}>
-            <Image
-              src={item.image}
-              width={400}
-              height={400}
-              alt="Image"
-              className="block"
-            />
-            <h1 className="mt-2">
-              <span className="font-bold">Paucek and Lage</span>{" "}
-              {item.description}
-            </h1>
-            <div className="flex items-center gap-3 mt-3">
-              <Button
-                className="border-2 rounded-none text-lg cursor-pointer"
-                variant="none"
-              >
-                <Link href={"/redeem_details"}>Redeem {">>"}</Link>
-              </Button>
+      {bookmarks.length === 0 ? (
+        <div className="flex items-center justify-center py-20">
+          <p className="text-gray-500 text-lg font-medium bg-gray-50 border border-dashed border-gray-300 px-6 py-4 rounded-md shadow-sm">
+            No bookmarks found
+          </p>
+        </div>
+      ) : (
+        <div className="grid lg:grid-cols-3 px-2 gap-3">
+          {bookmarks.map((item) => (
+            <div className="shadow-xl p-4 rounded-sm" key={item.id}>
+              <Image src={item.image} width={400} height={400} alt="Image" />
+              <h1 className="mt-2">
+                <span className="font-bold">Paucek and Lage</span>{" "}
+                {item.description}
+              </h1>
+              <div className="flex items-center gap-3 mt-3">
+                <Button
+                  className="border-2 rounded-none text-lg"
+                  variant="none"
+                >
+                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
+                </Button>
 
-              <Button
-                className="border-2 rounded-none text-lg cursor-pointer"
-                variant="none"
-              >
-                <CiBookmark />
-              </Button>
+                {/* ❌ Remove only */}
+                <Button
+                  onClick={() => removeBookmark(item.id)}
+                  className="border-2 rounded-none text-lg cursor-pointer text-red-500 hover:bg-red-100"
+                  variant="none"
+                >
+                  <CiBookmark />
+                  Remove
+                </Button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -18,7 +18,7 @@ import { useState } from "react";
 
 export default function Home() {
 
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(false)
 
   if(isLogin){
     return (

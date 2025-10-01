@@ -1,9 +1,20 @@
+'use client'
 import Link from 'next/link'
 import React from 'react'
+import {motion} from 'framer-motion'
 
 const FAQ = () => {
   return (
-    <div>
+    <motion.div
+    initial={{y:100, opacity:0}}
+    whileInView={{y:0, opacity:1}}
+    transition={{
+      delay:0.2,
+      stiffness: 60,
+      duration: 1,
+      type:"keyframes"
+    }}
+    >
       <div className='mt-16 max-w-5xl mx-auto'>
         <h1 className='lg:text-4xl inter-text font-semibold text-center common-text mb-20 text-xl'>Frequently asked questions</h1>
       <div className="space-y-4">
@@ -188,7 +199,7 @@ const FAQ = () => {
     <Link href={'/submit_form'} className='common-bg text-white text-sm lg:text-lg py-2 px-4 rounded-sm montserrat-text font-semibold hover:scale-105 transition-all duration-300'>Click Here To Submit Your Offer</Link>
 </div>
     </div>
-    </div>
+    </motion.div>
   )
 }
 

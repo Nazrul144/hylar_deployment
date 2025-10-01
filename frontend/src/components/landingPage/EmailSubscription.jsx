@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import myPhoto from "../../../public/emailSubscription/email_sub.png";
 import { RxCross2 } from "react-icons/rx";
-import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import {motion} from 'framer-motion'
 
 const EmailSubscription = () => {
   const id = useId();
@@ -45,7 +45,16 @@ const EmailSubscription = () => {
   };
 
   return (
-    <div className="lg:max-w-7xl mx-auto px-2">
+    <motion.div className="lg:max-w-7xl mx-auto px-2"
+    initial={{y:50, opacity:0}}
+    whileInView={{y:0, opacity:1}}
+    transition={{
+      delay: 0.2,
+      type: "keyframes",
+      duration: 1,
+      stiffness: 70
+    }}
+    >
       <div className="lg:relative">
         <Image src={myPhoto} alt="Image" />
 
@@ -91,7 +100,7 @@ const EmailSubscription = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

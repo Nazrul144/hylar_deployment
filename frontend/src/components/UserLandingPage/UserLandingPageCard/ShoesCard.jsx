@@ -3,13 +3,44 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { CiBookmark } from "react-icons/ci";
+import { motion } from "framer-motion";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const ShoesCard = () => {
+  const [loading, setLoading] = useState(true);
+  const [cards, setCards] = useState([]);
+
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+
+  // Simulate fetching data
+  useEffect(() => {
+    setTimeout(() => {
+      setCards(cardInfo);
+      setLoading(false);
+    }, 1500);
+  }, []);
+
+  // Motion variants
+  const containerVariants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.2 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   return (
     <div className="lg:w-7xl mx-auto mt-8 px-2">
-      {/*Heading Text*/}
+      {/* Heading */}
       <div className="mt-20">
         <h1 className="common-text font-bold lg:text-5xl text-center mb-2 inter-text text-xl">
           Shoes
@@ -19,12 +50,25 @@ const ShoesCard = () => {
           <br />
           Fashion & Clothing partners.
         </h3>
-        {/*Card*/}
       </div>
-      <div>
-        <div className="grid lg:grid-cols-3 gap-4">
-          {cardInfo?.map((item) => (
-            <div className="shadow-xl p-4 rounded-sm" key={item.id}>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <span className="loading loading-bars loading-xl"></span>
+        </div>
+      ) : (
+        <motion.div
+          className="grid lg:grid-cols-3 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+        >
+          {cards.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              className="shadow-xl p-4 rounded-sm"
+            >
               <Image
                 src={item.image}
                 width={400}
@@ -41,26 +85,32 @@ const ShoesCard = () => {
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
-                <Link href={'/redeem_details'}>Redeem {">>"}</Link>
+                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
                 </Button>
                 <Button
-                  className="border-2 rounded-none text-lg cursor-pointer"
-                  variant="none"
+                  className={`border-2 rounded-none text-lg cursor-pointer ${
+                    bookmarks.some((i) => i.id === item.id)
+                      ? "bg-[#3366CC] text-white hover:bg-[#3366CC] hover:text-white"
+                      : "bg-white text-black hover:bg-gray-100 hover:text-black"
+                  }`}
+                  variant="ghost"
+                  onClick={() => toggleBookmark(item)}
                 >
                   <CiBookmark />
                 </Button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
-        <div className="flex justify-center">
-          <Link
-            href={"/shoes"}
-            className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer `}
-          >
-            View All {">>"}
-          </Link>
-        </div>
+        </motion.div>
+      )}
+
+      <div className="flex justify-center">
+        <Link
+          href={"/shoes"}
+          className="bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer"
+        >
+          View All {">>"}
+        </Link>
       </div>
     </div>
   );
@@ -68,6 +118,7 @@ const ShoesCard = () => {
 
 export default ShoesCard;
 
+// Dummy data
 const cardInfo = [
   {
     id: "1",
@@ -100,4 +151,3 @@ const cardInfo = [
     description: " - Happy World Rainforest Day 🌿",
   },
 ];
-

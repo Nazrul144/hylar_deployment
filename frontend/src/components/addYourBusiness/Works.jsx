@@ -1,8 +1,19 @@
+'use client'
 import React from 'react'
+import {motion} from 'framer-motion'
 
 const Works = () => {
   return (
-    <div className='lg:w-7xl mx-auto mt-16'>
+    <motion.div className='lg:w-7xl mx-auto mt-16'
+    initial={{y:100, opacity:0}}
+    whileInView={{y:0, opacity:1}}
+    transition={{
+      delay: 0.2,
+      duration: 1,
+      type: "keyframes",
+      stiffness: 60
+    }}
+    >
       <div>
         <h1 className='text-center font-bold text-xl lg:text-5xl common-text mb-4'>How It Works</h1>
         <h3 className='text-center px-2 lg:text-xl poppins-text'>Submit your business details in minutes, and our team will verify your listing and guide you <br /> through the onboarding process. Once approved, your offer goes live to a responsive, engaged <br /> audience that’s actively looking for businesses just like yours. It’s quick, easy, and entirely <br /> designed to help you grow.</h3>
@@ -17,7 +28,7 @@ const Works = () => {
             }
       </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

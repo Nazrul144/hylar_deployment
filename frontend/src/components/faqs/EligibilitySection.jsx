@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const cards = [
   { id: 1, number: "01" },
@@ -9,9 +10,16 @@ const cards = [
   { id: 4, number: "04" },
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
+  }),
+};
+
 const EligibilitySection = () => {
-
-
   const [expanded, setExpanded] = useState(Array(cards.length).fill(false));
 
   const toggleExpand = (index) => {
@@ -24,11 +32,14 @@ const EligibilitySection = () => {
     <div className="mt-20 px-4 lg:px-0 text-justify">
       <section className="lg:w-7xl mx-auto">
         {cards.map((card, index) => (
-          <div
+          <motion.div
             key={card.id}
-            className={`flex items-center gap-6 mt-16 ${
-              index % 2 === 1 ? "lg:ml-96" : ""
-            }`}
+            className={`flex items-center gap-6 mt-16 ${index % 2 === 1 ? "lg:ml-96" : ""}`}
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={cardVariants}
           >
             {/* Number Box */}
             <div className="lg:w-36 lg:h-36 bg-blue-900 flex items-center justify-center">
@@ -40,22 +51,32 @@ const EligibilitySection = () => {
             {/* Content */}
             <div className="max-w-xl">
               <h2 className="text-xl lg:text-3xl font-bold">Who is eligible?</h2>
-              <p className="text-sm text-gray-600 mt-2">
+              <motion.p
+                layout
+                className="text-sm text-gray-600 mt-2"
+              >
                 Contrary to popular belief, Lorem Ipsum is not simply random
                 text. It has roots in a piece of classical Latin literature from
                 45 BC, making it over 2000 years old.
-                {expanded[index] && (
-                  <>
-                    {" "}
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. At,
-                    impedit aperiam. Provident assumenda aspernatur similique,
-                    odit aliquam temporibus consectetur modi ipsa ipsam dolore
-                    quae neque quas perferendis perspiciatis. Dolore totam
-                    facilis a vero fugit sed nesciunt, aperiam reiciendis nemo
-                    tempora!
-                  </>
-                )}
-              </p>
+                <AnimatePresence>
+                  {expanded[index] && (
+                    <motion.span
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      {" "}Lorem ipsum dolor sit amet consectetur adipisicing elit. At,
+                      impedit aperiam. Provident assumenda aspernatur similique,
+                      odit aliquam temporibus consectetur modi ipsa ipsam dolore
+                      quae neque quas perferendis perspiciatis. Dolore totam
+                      facilis a vero fugit sed nesciunt, aperiam reiciendis nemo
+                      tempora!
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.p>
+
               <Button
                 onClick={() => toggleExpand(index)}
                 className="mt-4 px-4 py-2 bg-green-500 text-white font-medium rounded cursor-pointer 
@@ -64,7 +85,7 @@ const EligibilitySection = () => {
                 {expanded[index] ? "Read Less" : "Read More"}
               </Button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </section>
     </div>

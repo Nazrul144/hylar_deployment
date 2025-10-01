@@ -1,3 +1,4 @@
+'use client'
 import { Oleo_Script } from "next/font/google";
 import React from "react";
 import { Button } from "../ui/button";

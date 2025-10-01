@@ -1,13 +1,14 @@
-'use client'
+"use client";
 import { Oleo_Script } from "next/font/google";
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import FAQ from "../addYourBusiness/FAQ"; 
+import FAQ from "../addYourBusiness/FAQ";
 import CreditCards from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/CreditCards";
 import Insurance from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/Insurance";
 import Loans from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/Loans";
 import BankAccounts from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/BankAccounts";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const oleo = Oleo_Script({
   weight: ["400", "700"],
@@ -31,17 +32,17 @@ const FinanceDiscount = () => {
         commitments. You bring the offer, we bring the audience
       </p>
       <div className="lg:flex justify-center">
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
+        <Link href="/register" className="text-white">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
                hover:bg-[#002766] hover:text-gray-300 transition-colors"
-        >
-          <Link href="/register" className="text-white">
-            Sign Up
-          </Link>
-        </Button>
+          >
+            Sign up
+          </Button>
+        </Link>
       </div>
 
       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center mt-6 mb-10 rounded-sm">
@@ -77,17 +78,15 @@ const FinanceDiscount = () => {
         <BankAccounts />
         <FAQ />
         <div className="flex justify-center mt-10">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
+          <Link href="/register" className="text-white">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
                hover:bg-[#002766] hover:text-gray-300 transition-colors"
-          >
-            <Link href="/register" className="text-white">
-              Sign Up
-            </Link>
-          </Button>
+            >Sign up</Button>
+          </Link>
         </div>
       </div>
     </div>

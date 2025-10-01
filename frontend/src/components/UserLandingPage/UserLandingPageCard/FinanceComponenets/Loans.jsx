@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useContext } from "react";
 import { CiBookmark } from "react-icons/ci";
 import { motion } from "framer-motion";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const Loans = () => {
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
   const containerVariants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.2 } },
@@ -15,7 +17,12 @@ const Loans = () => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
-    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   return (
@@ -26,7 +33,8 @@ const Loans = () => {
           Loans
         </h1>
         <h3 className="text-center mb-6">
-          Must see offers from some of Blue Light Card members' best-loved <br />
+          Must see offers from some of Blue Light Card members' best-loved{" "}
+          <br />
           Fashion & Clothing partners.
         </h3>
       </div>
@@ -38,7 +46,11 @@ const Loans = () => {
         whileInView="show"
       >
         {cardInfo?.map((item) => (
-          <motion.div key={item.id} variants={cardVariants} className="shadow-xl p-4 rounded-sm">
+          <motion.div
+            key={item.id}
+            variants={cardVariants}
+            className="shadow-xl p-4 rounded-sm"
+          >
             <Image
               src={item.image}
               width={400}
@@ -47,13 +59,25 @@ const Loans = () => {
               className="block"
             />
             <h1 className="mt-2">
-              <span className="font-bold">Paucek and Lage</span> {item.description}
+              <span className="font-bold">Paucek and Lage</span>{" "}
+              {item.description}
             </h1>
             <div className="flex items-center gap-3 mt-3">
-              <Button className="border-2 rounded-none text-lg cursor-pointer" variant="none">
-                <Link href={'/redeem_details'}>Redeem {">>"}</Link>
+              <Button
+                className="border-2 rounded-none text-lg cursor-pointer"
+                variant="none"
+              >
+                <Link href={"/redeem_details"}>Redeem {">>"}</Link>
               </Button>
-              <Button className="border-2 rounded-none text-lg cursor-pointer" variant="none">
+              <Button
+                className={`border-2 rounded-none text-lg cursor-pointer ${
+                  bookmarks.some((i) => i.id === item.id)
+                    ? "bg-[#3366CC] text-white hover:bg-[#3366CC] hover:text-white"
+                    : "bg-white text-black hover:bg-gray-100 hover:text-black"
+                }`}
+                variant="ghost"
+                onClick={() => toggleBookmark(item)}
+              >
                 <CiBookmark />
               </Button>
             </div>

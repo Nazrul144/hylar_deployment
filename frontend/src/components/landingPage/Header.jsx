@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { Button } from "../ui/button";
 import { BsRocketTakeoffFill } from "react-icons/bs";

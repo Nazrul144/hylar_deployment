@@ -4,7 +4,7 @@ import Partner from "@/components/addYourBusiness/Partner";
 import WhatYouGet from "@/components/addYourBusiness/WhatYouGet";
 import Works from "@/components/addYourBusiness/Works";
 import BlogPage from "@/components/blogPage/BlogPage";
-import Subscription from "@/components/LandingPage/Subscription";
+import Subscription from "@/components/landingPage/Subscription";
 import React from "react";
 
 const BusinessPage = () => {

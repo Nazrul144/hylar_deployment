@@ -1,10 +1,15 @@
 import ProductDetails from '@/components/productDetails/ProductDetails'
 import React from 'react'
 
-const RedeemDetails = () => {
+const RedeemDetails = async({params}) => {
+
+  const id = params.id;
+  console.log(id)
+
   return (
     <div>
-      <ProductDetails/>
+      <h1>Page Details:{id}</h1>
+      <ProductDetails id ={id}/>
     </div>
   )
 }

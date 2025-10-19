@@ -9,7 +9,29 @@ import { Button } from "../ui/button";
 import { LuSend } from "react-icons/lu";
 import { DialogDemo } from "../dialog/DialogDemo";
 
-const ProductDetails = () => {
+const ProductDetails = ({ id }) => {
+  const [singleItem, setSingleItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getSingleItem = async () => {
+      try {
+        const res = await fetch(
+          `https://jsonplaceholder.typicode.com/posts/${id}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch item");
+        const data = await res.json();
+        setSingleItem(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) getSingleItem();
+  }, [id]);
+
   const [time, setTime] = useState({
     days: 2,
     hours: 6,
@@ -48,6 +70,10 @@ const ProductDetails = () => {
 
   const formatNumber = (num) => String(num).padStart(2, "0");
 
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+
+  if (!singleItem) return <p className="text-center mt-10">Item not found.</p>;
+
   return (
     <div className="lg:w-7xl mx-auto px-2">
       <div>
@@ -61,18 +87,11 @@ const ProductDetails = () => {
         <h1 className="font-bold text-xl lg:text-5xl text-[#00308F] mb-4 text-center mt-16">
           Voucher Gift – Get 50% OFF Your Meal!
         </h1>
-        <p className="text-xl text-center">
-          Enjoy a delicious dining experience at half the price! Indulge in our 
-          signature <br />
-           dishes, fresh ingredients, and warm atmosphere. Whether
-          you're here for <br /> lunch, dinner, or a quick snack, this voucher gives
-          you 50% off <br /> your total bill. Don't miss out on this mouthwatering deal <br />
-          - treat yourself today! Valid until 16 May 2020. Terms <br /> and conditions
-          apply.
-        </p>
-        <h1 className="text-xl text-center mt-6 font-bold italic">
-          Valid until 16 May 2020. Terms and conditions apply
+        <h1 className="font-bold text-xl lg:text-2xl mb-4 text-center mt-16">
+          {singleItem.title}
         </h1>
+        
+       <p className="text-xl text-center mb-10 lg:w-[700px] mx-auto">{singleItem.body}</p>
         <div className="mt-10">
           <h1 className="text-center text-2xl text-gray-700">
             Hurry, Before It's Too Late!
@@ -126,7 +145,7 @@ const ProductDetails = () => {
                 </div>
               </div>
               <div className="flex justify-center mt-12">
-                <DialogDemo/>
+                <DialogDemo />
               </div>
             </div>
           </div>

@@ -1,12 +1,14 @@
 'use client'
 import Fashion from '@/components/browseCaterories/Fashion'
 import FashionAndClothingDiscounts from '@/components/discountLandingPage/FashionAndClothingDiscounts'
-import React, { useState } from 'react'
+import { UserContext } from '@/providers/AuthProvider'
+import React, { useContext, useEffect, useState } from 'react'
 
 const FasionPage = () => {
-   const [isLogin, setIsLogin] = useState(false)
-
-   if(isLogin){
+   
+  const user = useContext(UserContext)
+ 
+   if(user?.isLoggedIn){
     return(
       <div>
            <Fashion/>

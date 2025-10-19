@@ -19,7 +19,7 @@ export const metadata = {
 
 const ContactPage = () => {
   return (
-    <div className='w-7xl mx-auto'>
+    <div className='w-7xl mx-auto mt-16'>
       <Contact/>
     </div>
   )

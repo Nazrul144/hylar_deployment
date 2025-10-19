@@ -1,8 +1,10 @@
 'use client'
-import React from 'react'
+import React, { useContext } from 'react'
 import {motion} from 'framer-motion'
+import { CategoriesContext } from '@/providers/CategoriesProvider'
 
 const Works = () => {
+
   return (
     <motion.div className='lg:w-7xl mx-auto mt-16'
     initial={{y:100, opacity:0}}

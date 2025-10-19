@@ -36,6 +36,7 @@ const navItems = [
   { title: "About Us", path: "/about" },
   { title: "Add Your Business", path: "/business" },
   { title: "FAQS", path: "/faqs" },
+  { title: "Contact", path: "/contact" },
 ];
 
 export default function Navbar({ montserrat }) {
@@ -178,7 +179,8 @@ export default function Navbar({ montserrat }) {
                           <NavigationMenuList className="flex flex-col">
                             {item.items.map((submenu, subIndex) => (
                               <NavigationMenuItem key={subIndex}>
-                                <Link href={submenu.path} key={submenu.path}>
+                                <Link href={submenu.path} key={submenu.path}
+                                >
                                   {submenu.title}
                                 </Link>
                               </NavigationMenuItem>

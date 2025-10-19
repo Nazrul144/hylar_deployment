@@ -6,6 +6,7 @@ import Footer from "@/components/shared/Footer";
 import { Toaster } from "react-hot-toast";
 import SubscribePopup from "@/components/subscribePopup/SubscribePopup";
 import BookmarkProvider from "@/providers/BookmarkProvider";
+import CategoriesProvider from "@/providers/CategoriesProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +42,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >
-           <BookmarkProvider>
+           <CategoriesProvider>
+            <BookmarkProvider>
              <NavHeader />
             <Navbar montserrat={montserrat.className}/>
             <Toaster position="top-center" reverseOrder={false} />
@@ -49,6 +51,7 @@ export default function RootLayout({ children }) {
             <SubscribePopup/>
             <Footer/>
            </BookmarkProvider>
+           </CategoriesProvider>
       </body>
     </html>
   );

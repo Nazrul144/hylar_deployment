@@ -1,12 +1,26 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { motion } from "framer-motion";
 
 const LatestNews = () => {
+  const [latestNews, setLatestNews] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const getLatestNews = async () => {
+      const res = await fetch("https://jsonplaceholder.typicode.com/users");
+      const data = await res.json();
+      setLatestNews(data);
+    };
+    getLatestNews();
+  }, []);
+
+  const visibleAllNews = showAll ? latestNews : latestNews.slice(0, 6);
+
   // Card animation variants
   const cardVariant = {
     hidden: { opacity: 0, y: 30 },
@@ -29,7 +43,7 @@ const LatestNews = () => {
 
       {/* News Card */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
-        {newsData.map((news, index) => (
+        {visibleAllNews?.map((news, index) => (
           <motion.div
             key={news.id}
             variants={cardVariant}
@@ -52,10 +66,8 @@ const LatestNews = () => {
 
               <div className="mt-2">
                 <div>
-                  <h3 className="text-lg font-bold inter-text">
-                    {news.newsTitle}
-                  </h3>
-                  <p>{news.description}</p>
+                  <h3 className="text-lg font-bold inter-text">{news.name}</h3>
+                  <p>{news.address.street}</p>
                 </div>
               </div>
             </Link>
@@ -64,8 +76,11 @@ const LatestNews = () => {
       </div>
 
       <div className="flex items-center justify-center ">
-        <Button className="common-bg text-lg montserrat-text cursor-pointer hover:bg-common-bg hover:scale-105 transition-all duration-300 mt-10">
-          Load More <MdKeyboardDoubleArrowRight />
+        <Button
+          onClick={() => setShowAll(!showAll)}
+          className="common-bg text-lg mt-10 flex items-center gap-2 hover:scale-105 transition-all duration-300"
+        >
+          {showAll ? "Load Less" : "Load More"} <MdKeyboardDoubleArrowRight />
         </Button>
       </div>
     </div>

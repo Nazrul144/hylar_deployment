@@ -42,7 +42,7 @@ const Contact = () => {
     e.preventDefault();
     if (!validate()) return;
     console.log(formData);
-    toast.success("Form submitted successfully!")
+    toast.success("Form submitted successfully!");
     setFormData({
       name: "",
       email: "",
@@ -58,9 +58,10 @@ const Contact = () => {
     <div className="py-16 px-4 md:px-12 border-1 rounded-sm">
       {/* Page Heading */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-500 via-blue-400 to-green-500 bg-clip-text text-transparent">
           Contact Us
         </h2>
+
         <p className="text-gray-600 mt-2">
           Have a question or want to work with us? Fill out the form and we’ll
           get back to you.
@@ -71,9 +72,10 @@ const Contact = () => {
       <div className="lg:flex justify-between gap-12">
         {/* Left Side */}
         <div className="lg:w-1/2 space-y-6">
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
-            Get in Touch
-          </h3>
+         <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent">
+  Get in Touch
+</h3>
+
 
           <div className="space-y-4 mt-6">
             <p className="flex items-center gap-3 text-gray-700">
@@ -195,14 +197,15 @@ const Contact = () => {
               </p>
             )}
 
-            <Button
-              type="submit"
-              className="bg-blue-900 text-white px-6 py-5 rounded shadow 
-             hover:bg-blue-800 hover:scale-105 transform transition 
-             md:col-span-2 cursor-pointer w-20"
-            >
-              Submit
-            </Button>
+           <Button
+  type="submit"
+  className="bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 text-white font-semibold px-6 py-5 rounded-lg shadow-md 
+  hover:from-blue-600 hover:via-emerald-500 hover:to-cyan-500 hover:scale-105 transform transition-all duration-300 
+  md:col-span-2 cursor-pointer w-28"
+>
+  Submit
+</Button>
+
           </form>
         </div>
       </div>

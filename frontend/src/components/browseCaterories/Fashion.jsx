@@ -1,5 +1,4 @@
 import React from 'react'
-import Hero from './FashionHero'
 import WomenswearCard from '../UserLandingPage/UserLandingPageCard/WomenswearCard'
 import ManswearCard from '../UserLandingPage/UserLandingPageCard/ManswearCard'
 import ChildrenswearCard from '../UserLandingPage/UserLandingPageCard/ChildrenswearCard'

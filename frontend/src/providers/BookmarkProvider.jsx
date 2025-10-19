@@ -46,7 +46,3 @@ const BookmarkProvider = ({children}) => {
 
 export default BookmarkProvider
 
-//Step1: Create Provider by the folling command: "createContext"
-//Step2: Then in the div or the replacing the dive you write the varibale name what you have used during creatingContext.
-//Step3: Now use .Provider and you can pass the value in it.
-//Step4: Wrap the children in it.

@@ -13,7 +13,7 @@ const ManswearCard = () => {
 
   // Loading state
   const [loading, setLoading] = useState(true);
-  const [cards, setCards] = useState([]);
+  const [showAll, setShowAll] = useState(false)
   const [manswear, setManswear] = useState([])
   
   useEffect(()=>{
@@ -26,16 +26,10 @@ const ManswearCard = () => {
     getManswearData()
   },[])
 
+  const visibleAll = showAll ? manswear : manswear.slice(0,6)
 
-  // // Simulate fetching data
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setCards(cardInfo);
-  //     setLoading(false);
-  //   }, 1500);
-  // }, []);
 
-  // Motion variants
+ 
   const containerVariants = {
     hidden: {},
     show: {
@@ -71,7 +65,7 @@ const ManswearCard = () => {
           initial="hidden"
           whileInView="show"
         >
-          {manswear?.map((item) => (
+          {visibleAll?.map((item) => (
             <motion.div key={item.id} variants={cardVariants} className="shadow-xl p-4 rounded-sm">
               <Image src={item.image} width={400} height={400} alt="Image" />
               <h1 className="mt-2">

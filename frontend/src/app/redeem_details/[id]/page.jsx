@@ -8,7 +8,6 @@ const RedeemDetails = async({params}) => {
 
   return (
     <div>
-      <h1>Page Details:{id}</h1>
       <ProductDetails id ={id}/>
     </div>
   )

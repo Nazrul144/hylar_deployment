@@ -8,6 +8,7 @@ import SubscribePopup from "@/components/subscribePopup/SubscribePopup";
 import BookmarkProvider from "@/providers/BookmarkProvider";
 import CategoriesProvider from "@/providers/CategoriesProvider";
 import AuthProvider from "@/providers/AuthProvider";
+import SignupProvider from "@/providers/SignupProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +45,8 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >
            <AuthProvider>
-            <CategoriesProvider>
+            <SignupProvider>
+              <CategoriesProvider>
             <BookmarkProvider>
              <NavHeader />
             <Navbar montserrat={montserrat.className}/>
@@ -54,6 +56,7 @@ export default function RootLayout({ children }) {
             <Footer/>
            </BookmarkProvider>
            </CategoriesProvider>
+            </SignupProvider>
            </AuthProvider>
       </body>
     </html>

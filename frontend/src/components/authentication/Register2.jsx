@@ -1,14 +1,45 @@
+"use client";
 import Image from "next/image";
-import React from "react";
-import { useId } from "react";
+import React, { useContext } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { SignupContext } from "@/providers/SignupProvider";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Link from "next/link";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+
+const formSchema = z.object({
+  comment: z.array(z.string()),
+});
 
 const Register2 = () => {
-  const id = useId();
+  const router = useRouter();
+
+  const { signupData, setSignupData } = useContext(SignupContext);
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      comment: [],
+    },
+  });
+
+  const handleFormSubmit = (data) => {
+    console.log(data);
+    setSignupData((prev) => ({ ...prev, ...data })); //<--previous + current merage
+    router.push("/register/register2/register3");
+  };
+
   return (
     <div>
       <div className="lg:w-[803px] lg:h-[516px] mx-auto mt-14 lg:shadow-2xl relative">
@@ -29,35 +60,85 @@ const Register2 = () => {
           Can we contact you with promotions and updates to help you get <br />{" "}
           the most out of your Blue Light Card?
         </h3>
-        <div className="mt-10 flex justify-center text-lg montserrat-text ">
-          <RadioGroup
-            defaultValue="1"
-            className="[--primary:var(--color-green-500)] [--ring:var(--color-indigo-300)] in-[.dark]:[--primary:var(--color-indigo-500)] in-[.dark]:[--ring:var(--color-indigo-900)]"
-          >
-            <div className="flex items-center gap-2 ">
-              <RadioGroupItem value="1" id={`${id}-1`} />
-              <Label htmlFor={`${id}-1`}>Push notifications</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="2" id={`${id}-2`} />
-              <Label htmlFor={`${id}-2`}>Email updates</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="3" id={`${id}-3`} />
-              <Label htmlFor={`${id}-3`}>SMS updates</Label>
-            </div>
-          </RadioGroup>
-        </div>
-        <div className="lg:absolute justify-center lg:mt-0 mt-5 lg:mb-0 mb-6 lg:right-20 bottom-16 flex items-center">
-          <Link
-            href={"/register3"}
-            className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1"
-          >
-            {/* Icon first, then text */}
-            <span className="text-lg font-semibold">Next</span>
-            <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-          </Link>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+            <FormField
+              control={form.control}
+              name="comment"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-center">
+                  <FormLabel className="text-center mb-4">
+                    Choose your marketing preferences
+                  </FormLabel>
+                  <FormControl>
+                    <ToggleGroup
+                      type="multiple"
+                      value={field.value || []}
+                      onValueChange={field.onChange}
+                      className="flex space-x-6"
+                    >
+                      {/* Push Notification */}
+                      <ToggleGroupItem
+                        value="push-notification"
+                        aria-label="Push Notification"
+                        className="
+             flex items-center justify-center w-32 h-16 rounded-xl border-2 border-gray-300 cursor-pointer
+              data-[state=on]:bg-green-100
+              data-[state=on]:border-green-500
+              transition-all duration-200
+              hover:scale-105
+              text-center font-medium
+            "
+                      >
+                        Push Notification
+                      </ToggleGroupItem>
+
+                      {/* Email Update */}
+                      <ToggleGroupItem
+                        value="email-update"
+                        aria-label="Email Update"
+                        className="
+              flex items-center justify-center w-32 h-16 rounded-xl border-2 border-gray-300 cursor-pointer
+              data-[state=on]:bg-green-100
+              data-[state=on]:border-green-500
+              transition-all duration-200
+              hover:scale-105
+              text-center font-medium
+            "
+                      >
+                        Email Update
+                      </ToggleGroupItem>
+
+                      {/* SMS Update */}
+                      <ToggleGroupItem
+                        value="sms-update"
+                        aria-label="SMS Update"
+                        className="
+              flex items-center justify-center w-32 h-16 rounded-xl border-2 border-gray-300 cursor-pointer
+              data-[state=on]:bg-green-100
+              data-[state=on]:border-green-500
+              transition-all duration-200
+              hover:scale-105
+              text-center font-medium
+            "
+                      >
+                        SMS Update
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </FormControl>
+                  <FormMessage className="text-center mt-2" />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              className="bg-blue-900 text-white mb-4 mt-4 ml-50 lg:mt-28 lg:ml-[670px] cursor-pointer"
+              type="submit"
+            >
+              Next {">>"}
+            </Button>
+          </form>
+        </Form>
       </div>
       <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto " />
     </div>

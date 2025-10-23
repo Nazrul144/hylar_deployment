@@ -34,8 +34,6 @@ const StorageItem = () => {
                 >
                   <Link href={"/redeem_details"}>Redeem {">>"}</Link>
                 </Button>
-
-                {/* ❌ Remove only */}
                 <Button
                   onClick={() => removeBookmark(item.id)}
                   className="border-2 rounded-none text-lg cursor-pointer text-red-500 hover:bg-red-100"

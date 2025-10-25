@@ -1,22 +1,49 @@
-'use client'
+"use client";
 import Image from "next/image";
-import React from "react";
-import { useId } from "react";
-import Link from "next/link";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import React, { useContext } from "react";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Button } from "../ui/button";
-import { useFileUpload } from "@/hooks/use-file-upload";
-import { XIcon } from "lucide-react";
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { Input } from "../ui/input";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { SignupContext } from "@/providers/SignupProvider";
+
+const formSchema = z.object({
+  file: z
+    .any()
+    .refine((files) => files && files.length > 0, {
+      message: "File is required",
+    }),
+});
 
 const Register6 = () => {
-  const id = useId();
-       const [{ files }, { removeFile, openFileDialog, getInputProps }] =
-      useFileUpload({
-        accept: "image/*",
-      })
-    const previewUrl = files[0]?.preview || null
-    const fileName = files[0]?.file.name || null
-  
+
+  const router = useRouter()
+
+  const {signupData, setSignupData} = useContext(SignupContext)
+
+   const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      file: undefined,
+    },
+  });
+
+  const handleFormSubmit = (data) => {
+     console.log("Uploaded file:",data);
+     setSignupData((prev)=>({...prev, ...data}))
+     router.push("/register/register2/register3/register4/register5/register6/register7")
+  };
 
   return (
     <div>
@@ -50,48 +77,34 @@ const Register6 = () => {
         </div>
 
         {/*Upload Button*/}
-      <div className="flex flex-col items-center gap-2 mt-8">
-      <div className="relative inline-flex">
-        <Button
-          variant="outline"
-          className='lg:w-xl h-12 p-6 border-1 border-[#00308F] text-[#564848]  flex justify-start items-center'
-          onClick={openFileDialog}
-          aria-label={previewUrl ? "Change image" : "Upload image"}
-        >
-            <span className="font-bold border-2 border-gray-300 px-4 rounded-sm cursor-pointer">Choose File</span>
-        </Button>
-        {previewUrl && (
-          <Button
-            onClick={() => removeFile(files[0]?.id)}
-            size="icon"
-            className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"
-            aria-label="Remove image"
-          >
-            <XIcon className="size-3.5" />
-          </Button>
-        )}
-        <input
-          {...getInputProps()}
-          className="sr-only"
-          aria-label="Upload image file"
-          tabIndex={-1}
-        />
-      </div>
-      {fileName && <p className="text-muted-foreground text-xs">{fileName}</p>}
-        </div>
 
-
-
-        <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
-          <Link
-            href={"/register7"}
-            className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1"
-          >
-            {/* Icon first, then text */}
-            <span className="text-lg font-semibold">Next</span>
-            <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-          </Link>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 px-8">
+            <FormField
+              control={form.control}
+              name="file"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-red-700 italic'>Click on choose file to upload your id</FormLabel>
+                  <FormControl>
+                    <Input type="file" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
+              <Button
+                type="submit"
+                className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <span className="text-lg font-semibold">Next</span>
+                <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+              </Button>
+            </div>
+            
+          </form>
+        </Form>
       </div>
       <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto " />
     </div>
@@ -99,3 +112,13 @@ const Register6 = () => {
 };
 
 export default Register6;
+
+{/* <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
+  <Button
+    type="submit"
+    className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1"
+  >
+    <span className="text-lg font-semibold">Next</span>
+    <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+  </Button>
+</div>; */}

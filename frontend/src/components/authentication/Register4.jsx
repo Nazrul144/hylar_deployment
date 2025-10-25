@@ -1,49 +1,46 @@
 "use client";
-import Image from 'next/image';
-import React, { useState } from 'react';
-import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
-import { Button } from '@/components/ui/button';
+import Image from "next/image";
+import React, { useState } from "react";
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Register4 = () => {
-  const [isSending, setIsSending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const router = useRouter();
 
   const handleVerifyClick = async () => {
-    setIsSending(true);
+    setIsVerifying(true);
     setShowAlert(false);
 
-    // ✅ Demo API call to send verification code
     try {
       const res = await fetch("/api/send-verification", { method: "POST" });
       const data = await res.json();
-      console.log("Verification code sent (demo):", data.code);
 
-      setIsSending(false);
-      setShowAlert(true);
-
-      // ✅ Automatically redirect after 2s
-      setTimeout(() => {
-        router.push("/register/verify-code"); // Next page for code input
-      }, 2000);
+      if (data.success) {
+        setShowAlert(true);
+        router.push("/register/register2/register3/register4/register5")
+        
+      } else {
+        alert("Failed to send verification email");
+      }
     } catch (error) {
       console.error(error);
-      setIsSending(false);
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   const handleResend = async () => {
-    setIsSending(true);
+    setIsResending(true);
     setShowAlert(false);
-
-    // simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSending(false);
+    setIsResending(false);
     setShowAlert(true);
   };
 
@@ -74,25 +71,23 @@ const Register4 = () => {
           <Button
             onClick={handleVerifyClick}
             className="common-bg py-2.5 px-5 rounded-lg text-white w-56 h-12 flex items-center justify-center gap-1"
-            disabled={isSending}
+            disabled={isVerifying}
           >
             <span className="text-lg font-semibold">Verify Your Email</span>
             <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-            {isSending && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
+            {isVerifying && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
           </Button>
         </div>
 
-        {/* ✅ Alert Message */}
         {showAlert && (
           <Alert className="w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500">
             <AlertTitle>Verification Sent!</AlertTitle>
             <AlertDescription>
-              A new verification email has been sent to your inbox.
+              A verification link has been sent to your email. Please check your inbox.
             </AlertDescription>
           </Alert>
         )}
 
-        {/* ✅ Resend Button */}
         <div className="mt-8 text-center">
           <h1 className="text-lg">Didn't receive it?</h1>
           <h3 className="text-lg mt-1 mb-4">
@@ -101,20 +96,26 @@ const Register4 = () => {
           <Button
             variant="outline"
             onClick={handleResend}
-            disabled={isSending}
+            disabled={isResending}
           >
-            {isSending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSending ? "Resending..." : "Resend Email"}
+            {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isResending ? "Resending..." : "Resend Email"}
           </Button>
         </div>
 
         <div className="mt-8 text-center text-lg">
-          By clicking Create Account you agree to Blue Light Card's{" "}
-          <Link className="text-blue-600 hover:text-blue-800 underline" href="/term_condition">
+          By clicking Create Account you agree to{" "}
+          <Link
+            className="text-blue-600 hover:text-blue-800 underline"
+            href="/term_condition"
+          >
             Terms & Conditions
           </Link>
-           <br /> For information about how we process your personal <br /> data, click{" "}
-          <Link className="text-blue-600 hover:text-blue-800 underline" href="/privacy_notice">
+          <br /> For information about how we process your personal data, click{" "}
+          <Link
+            className="text-blue-600 hover:text-blue-800 underline"
+            href="/privacy_notice"
+          >
             Privacy Notice.
           </Link>
         </div>

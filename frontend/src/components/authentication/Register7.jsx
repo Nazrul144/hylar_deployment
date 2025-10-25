@@ -1,24 +1,71 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { ChevronDownIcon } from "lucide-react";
+import React, { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import { Button } from "../ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import Select from "react-select";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { Input } from "../ui/input";
-import { countries } from "countries-list";
+import { useRouter } from "next/navigation";
+import { SignupContext } from "@/providers/SignupProvider";
+import countryList from "react-select-country-list";
+
+const formSchema = z.object({
+  address1: z
+    .string()
+    .min(2, { message: "Please enter a valid address line 1" })
+    .max(150),
+  address2: z.string().optional(),
+  town: z
+    .string()
+    .min(2, { message: "Please provide a valid town or city name" })
+    .max(150),
+  country: z
+    .string()
+    .min(2, { message: "Please specify a valid country name" })
+    .max(150),
+  postcode: z
+    .string()
+    .min(2, { message: "Please enter a valid postal or ZIP code" })
+    .max(150),
+});
 
 const Register7 = () => {
-  const [selectedOrganization, setSelectedOrganization] = useState("Country");
+  const router = useRouter();
 
-  const countryNames = Object.values(countries).map((c) => c.name);
+  const { signupData, setSignupData } = useContext(SignupContext);
+  const countries = countryList().getData(); // [{label: "Afghanistan", value: "AF"}, ...]
 
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      address1: "",
+      address2: "",
+      town: "",
+      country: "",
+      postcode: "",
+    },
+  });
+
+  const handleFormSubmit = (data) => {
+    console.log(data);
+    setSignupData((prev) => ({ ...prev, ...data }));
+    router.push(
+      "/register/register2/register3/register4/register5/register6/register7/register8"
+    );
+  };
+
+
+  
   return (
     <div>
       <div className="lg:w-[803px] lg:h-[761px] mx-auto mt-14 lg:shadow-2xl relative">
@@ -41,86 +88,95 @@ const Register7 = () => {
           correct.
         </h3>
 
-        {/* Form */}
-        <div className="lg:w-2xl mx-auto p-4">
-          <Input
-            className="h-14 !text-lg !text-black bg-[#F0F0F0] rounded-none placeholder:text-black"
-            type="text"
-            placeholder="Address line 1"
-          />
-          <br />
-          <Input
-            className="h-14 !text-lg !text-black bg-[#F0F0F0] rounded-none placeholder:text-black"
-            type="text"
-            placeholder="Address line 2 (Optional)"
-          />
-          <br />
-          <Input
-            className="h-14 !text-lg !text-black bg-[#F0F0F0] rounded-none placeholder:text-black"
-            type="text"
-            placeholder="Town/City"
-          />
-          <br />
-
-          {/* Country Dropdown */}
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleFormSubmit)}
+            className="space-y-4 lg:px-12 "
+          >
+            <FormField
+              control={form.control}
+              name="address1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Address line 1" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Address line 2 (Optional)" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      options={countries} // your country array
+                      menuPlacement="bottom" // always open downward
+                      placeholder="Select country"
+                      onChange={(option) => field.onChange(option.label)} // save selected country
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="town"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Town/City" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Postcode" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-between items-center mt-12">
+              <div>
                 <Button
-                  className="w-full lg:w-[640px] flex justify-between h-14 bg-[#F0F0F0] text-black"
+                  onClick={() => router.back()}
                   variant="outline"
+                  className="py-5 px-6 text-lg common-text border-2 border-blue-800 cursor-pointer"
                 >
-                  {selectedOrganization}
-                  <ChevronDownIcon className="-me-1 opacity-60" size={16} />
+                  Back
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-full max-h-60 overflow-y-auto"
-                side="bottom"
-                align="start"
-                sideOffset={4} // Ensures it always drops downward
-              >
-                {countryNames?.map((country) => (
-                  <DropdownMenuItem
-                    key={country}
-                    className="w-[630px]"
-                    onClick={() => setSelectedOrganization(country)}
-                  >
-                    {country}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <br />
-          <Input
-            className="h-14 !text-lg !text-black bg-[#F0F0F0] rounded-none placeholder:text-black"
-            type="text"
-            placeholder="Postcode"
-          />
-
-          {/* Back and Next Button */}
-          <div className="flex justify-between items-center mt-12">
-            <div>
-              <Button
-                variant="outline"
-                className="py-5 px-6 text-lg common-text border-2 border-blue-800 cursor-pointer"
-              >
-                <Link href={'/register6'}>Back</Link>
-              </Button>
+              </div>
+              <div>
+                <Button className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1">
+                  <span className="text-lg font-semibold">Next</span>
+                  <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+                </Button>
+              </div>
             </div>
-            <div>
-              <Link
-                href={"/register8"}
-                className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1"
-              >
-                <span className="text-lg font-semibold">Next</span>
-                <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-              </Link>
-            </div>
-          </div>
-        </div>
+          </form>
+        </Form>
       </div>
 
       <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto" />

@@ -17,32 +17,36 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  file: z
-    .any()
-    .refine((files) => files && files.length > 0, {
-      message: "File is required",
-    }),
+  frontFile: z.any().refine((files) => files && files.length > 0, {
+    message: "Front part of ID is required",
+  }),
+  backFile: z.any().refine((files) => files && files.length > 0, {
+    message: "Back part of ID is required",
+  }),
 });
 
 const Register6 = () => {
+  const router = useRouter();
 
-  const router = useRouter()
+  const { signupData, setSignupData } = useContext(SignupContext);
 
-  const {signupData, setSignupData} = useContext(SignupContext)
-
-   const form = useForm({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      file: undefined,
+      frontFile: undefined,
+      backFile: undefined,
     },
   });
 
   const handleFormSubmit = (data) => {
-     console.log("Uploaded file:",data);
-     setSignupData((prev)=>({...prev, ...data}))
-     router.push("/register/register2/register3/register4/register5/register6/register7")
+    console.log("Uploaded file:", data);
+    setSignupData((prev) => ({ ...prev, ...data }));
+    router.push(
+      "/register/register2/register3/register4/register5/register6/register7"
+    );
   };
 
   return (
@@ -65,7 +69,15 @@ const Register6 = () => {
           Please complete the following to start saving
         </h3>
         {/*NID Card*/}
-        <div className="mt-6 flex justify-center text-lg montserrat-text ">
+        <div className="mt-6 flex justify-between lg:px-20 text-lg montserrat-text ">
+          <Image
+            src={"/NID.png"}
+            width={200}
+            height={200}
+            alt="NID"
+            objectFit="cover"
+            priority
+          />
           <Image
             src={"/NID.png"}
             width={200}
@@ -79,20 +91,71 @@ const Register6 = () => {
         {/*Upload Button*/}
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 px-8">
-            <FormField
-              control={form.control}
-              name="file"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-red-700 italic'>Click on choose file to upload your id</FormLabel>
-                  <FormControl>
-                    <Input type="file" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form
+            onSubmit={form.handleSubmit(handleFormSubmit)}
+            className="space-y-4 px-8"
+          >
+            <div className="flex justify-between mt-4">
+              <div>
+                <FormField
+                  control={form.control}
+                  name="frontFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-red-700 italic">
+                        Upload Front Side of Your ID
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            // Check if the same file is already uploaded in backFile
+                            const backFile = form.getValues("backFile");
+                            if (backFile && file.name === backFile[0]?.name) {
+                              toast.error("You have already uploaded this file.")
+                              e.target.value = ""; // reset input
+                              return;
+                            }
+                            field.onChange(e.target.files);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+                <FormField
+                  control={form.control}
+                  name="backFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-red-700 italic">
+                        Upload Back Side of Your ID
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            const frontFile = form.getValues("frontFile");
+                            if (frontFile && file.name === frontFile[0]?.name) {
+                              toast.error("You have already uploaded this file.")
+                              e.target.value = "";
+                              return;
+                            }
+                            field.onChange(e.target.files);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
             <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
               <Button
                 type="submit"
@@ -102,7 +165,6 @@ const Register6 = () => {
                 <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
               </Button>
             </div>
-            
           </form>
         </Form>
       </div>
@@ -113,7 +175,8 @@ const Register6 = () => {
 
 export default Register6;
 
-{/* <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
+{
+  /* <div className="lg:absolute justify-center mt-4 lg:right-20  flex items-center mb-8 lg:mb-0">
   <Button
     type="submit"
     className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1"
@@ -121,4 +184,5 @@ export default Register6;
     <span className="text-lg font-semibold">Next</span>
     <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
   </Button>
-</div>; */}
+</div>; */
+}

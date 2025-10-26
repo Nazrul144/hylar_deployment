@@ -32,9 +32,9 @@ const Register5 = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: "",
-      job: "",
-      employer: ""
+      status: "Employed",
+      job: "NHS",
+      employer: "Education"
     },
   });
 

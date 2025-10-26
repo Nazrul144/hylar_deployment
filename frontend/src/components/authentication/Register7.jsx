@@ -76,7 +76,7 @@ const Register7 = () => {
             height={50}
             priority
             alt="header_Image"
-            className="object-cover"
+            className="object-cover" 
           />
         </div>
 

@@ -5,8 +5,24 @@ import Image from "next/image";
 import { CiBookmark } from "react-icons/ci";
 import CatagoriesSlider from "../../CatagoriesSlider";
 import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const AllCreditCard = () => {
+
+       const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+        const [allCreditCard, setAllCreditCard] = useState([])
+  
+         useEffect(()=>{
+              const getManswearData = async()=>{
+                const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+                const data = await res.json()
+                setAllCreditCard(data)
+             
+              }
+              getManswearData()
+            },[])
+
   return (
     <div>
       {/*Slider*/}
@@ -47,7 +63,7 @@ const AllCreditCard = () => {
         </div>
         <div>
           <div className="grid lg:grid-cols-3 gap-4">
-            {cardInfo?.map((item) => (
+            {allCreditCard?.map((item) => (
               <div className="shadow-xl p-4 rounded-sm" key={item.id}>
                 <Image
                   src={item.image}
@@ -60,19 +76,24 @@ const AllCreditCard = () => {
                   <span className="font-bold">Paucek and Lage</span>{" "}
                   {item.description}
                 </h1>
-                <div className="flex items-center gap-3 mt-3">
-                  <Link href={"/redeem_details"}>
-                    {">>"}{" "}
-                    <Button
-                      className="border-2 rounded-none text-lg cursor-pointer"
-                      variant="none"
-                    >
-                      Redeem
-                    </Button>
-                  </Link>
+                  <div className="flex items-center gap-3 mt-3">
                   <Button
-                    className="border-2 rounded-none text-lg cursor-pointer"
+                    className="border-2 rounded-none text-lg"
                     variant="none"
+                  >
+                    <Link href={`/redeem_details/${item.id}`}>
+                      Redeem {">>"}
+                    </Link>
+                  </Button>
+
+                  <Button
+                    className={`border-2 rounded-none text-lg cursor-pointer ${
+                      bookmarks.some((i) => i.id === item.id)
+                        ? "bg-[#3366CC] text-white hover:bg-[#3366CC] hover:text-white"
+                        : "bg-white text-black hover:bg-gray-100 hover:text-black"
+                    }`}
+                    variant="ghost"
+                    onClick={() => toggleBookmark(item)}
                   >
                     <CiBookmark />
                   </Button>
@@ -166,65 +187,3 @@ const AllCreditCard = () => {
 
 export default AllCreditCard;
 
-const cardInfo = [
-  {
-    id: "1",
-    image: "/1.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "2",
-    image: "/2.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "3",
-    image: "/3.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "4",
-    image: "/4.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "5",
-    image: "/1.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "6",
-    image: "/4.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "7",
-    image: "/1.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "8",
-    image: "/2.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "9",
-    image: "/3.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "10",
-    image: "/4.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "11",
-    image: "/1.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "12",
-    image: "/4.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-];

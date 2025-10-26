@@ -40,6 +40,25 @@ const navItems = [
 ];
 
 export default function Navbar({ montserrat }) {
+
+
+  const [logo, setLogo] = useState([])
+
+ useEffect(() => {
+  const getLogo = async () => {
+    try {
+      const res = await fetch("..........");
+      const logo = await res.json(); // <-- await here
+      setLogo(logo);
+    } catch (error) {
+      console.error("Failed to fetch logo:", error);
+    }
+  };
+  getLogo(); // <-- call the function
+}, []);
+
+
+
   const pathName = usePathname();
 
   //Handle Scrolling:
@@ -60,6 +79,8 @@ export default function Navbar({ montserrat }) {
   //Use context api here:
   const {bookmarks} = useContext(BookmarkContext)
   const user = true;
+
+
 
   return (
     <header
@@ -244,7 +265,7 @@ export default function Navbar({ montserrat }) {
                       size="sm"
                       className="w-full justify-between"
                     >
-                      <Link href="#">Profile</Link>
+                      <Link href="/profile">Profile</Link>
                     </Button>
                   </li>
                   <li>

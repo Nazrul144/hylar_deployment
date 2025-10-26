@@ -156,7 +156,7 @@ const Register5 = () => {
               />
               </div>
               <Button
-                className="w-full mt-4 bg-blue-900 text-white"
+                className="w-full mt-4 bg-blue-900 text-white cursor-pointer"
                 type="submit"
               >
                 Next

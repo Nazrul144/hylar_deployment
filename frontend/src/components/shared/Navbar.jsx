@@ -58,6 +58,13 @@ export default function Navbar({ montserrat }) {
 }, []);
 
 
+//Submenu open and close:
+const [open, setOpen] = useState(false)
+
+const handleCloseClick = ()=>{
+  setOpen(false)
+}
+
 
   const pathName = usePathname();
 
@@ -137,7 +144,7 @@ export default function Navbar({ montserrat }) {
                       montserrat={montserrat.className}
                     >
                       {item.items ? (
-                        <Popover>
+                        <Popover open={open} onOpenChange={setOpen}>
                           <PopoverTrigger asChild>
                             <NavigationMenuTrigger
                               className={`${cn(montserrat)}`}
@@ -188,7 +195,7 @@ export default function Navbar({ montserrat }) {
                     montserrat={montserrat.className}
                   >
                     {item.items ? (
-                      <Popover>
+                      <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                           <NavigationMenuTrigger
                             className={`${cn(montserrat)}`}
@@ -201,6 +208,7 @@ export default function Navbar({ montserrat }) {
                             {item.items.map((submenu, subIndex) => (
                               <NavigationMenuItem key={subIndex}>
                                 <Link href={submenu.path} key={submenu.path}
+                                onClick={handleCloseClick}
                                 >
                                   {submenu.title}
                                 </Link>

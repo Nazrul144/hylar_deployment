@@ -81,8 +81,7 @@ const Womenswear = () => {
                     className="border-2 rounded-none text-lg"
                     variant="none"
                   >
-                    <Link href={`/redeem_details/${item.id}`}>
-                      Redeem {">>"}
+                    <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}
                     </Link>
                   </Button>
 

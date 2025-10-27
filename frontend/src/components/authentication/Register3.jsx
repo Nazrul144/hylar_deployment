@@ -1,8 +1,14 @@
-'use client'
+"use client";
 import Image from "next/image";
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
@@ -10,11 +16,19 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
-
-
+import { Checkbox } from "../ui/checkbox";
+import Link from "next/link";
 
 const formSchema = z
   .object({
+    terms: z.boolean().refine((val) => val === true, {
+      message: "You must agree to the Terms & Conditions",
+    }),
+
+    policy: z.boolean().refine((val) => val === true, {
+      message: "You must agree to the Policy",
+    }),
+
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" })
@@ -35,28 +49,25 @@ const formSchema = z
     }
   });
 
-
-
-
-
 const Register3 = () => {
-
-  const router = useRouter()
-  const {signupData, setSignupData} = useContext(SignupContext)
+  const router = useRouter();
+  const { signupData, setSignupData } = useContext(SignupContext);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       password: "",
-      confirmPassword: ""
-    }
+      confirmPassword: "",
+      terms: false,
+      policy: false
+    },
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data)
-    const allData = {...signupData, ...data}
-    setSignupData(allData)
-    router.push("/register/register2/register3/register4")
+    console.log(data);
+    const allData = { ...signupData, ...data };
+    setSignupData(allData);
+    router.push("/register/register2/register3/register4");
   };
 
   return (
@@ -81,7 +92,7 @@ const Register3 = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-              <div className="relative w-96 h-10 mb-8 mx-auto mt-12">
+            <div className="relative w-96 h-10 mb-8 mx-auto mt-12">
               {/* Label on border */}
               <FormField
                 control={form.control}
@@ -92,7 +103,8 @@ const Register3 = () => {
                       <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
                         Password
                       </Label>
-                      <Input type="password"
+                      <Input
+                        type="password"
                         {...field}
                         className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
                       />
@@ -110,7 +122,8 @@ const Register3 = () => {
                       <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
                         Confirm Password
                       </Label>
-                      <Input type="password"
+                      <Input
+                        type="password"
                         {...field}
                         className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
                       />
@@ -119,11 +132,55 @@ const Register3 = () => {
                   </FormItem>
                 )}
               />
-            <Button type="submit" className="mt-8 w-full bg-blue-900 text-white cursor-pointer">Submit</Button>
+
+              <FormField
+                control={form.control}
+                name="terms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center gap-3 mt-4">
+                        <Checkbox
+                          id="terms"
+                          onCheckedChange={field.onChange}
+                          checked={field.value}
+                        />
+                        <Label htmlFor="terms"> I agree to the <Link className="text-blue-600 hover:text-blue-800 underline" href="/term_condition">Terms & Conditions</Link></Label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="policy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center gap-3 mt-4">
+                        <Checkbox
+                          id="policy"
+                          onCheckedChange={field.onChange}
+                          checked={field.value}
+                        />
+                        <Label htmlFor="policy"> I agree to the <Link className="text-blue-600 hover:text-blue-800 underline" href="/privacy">Policy</Link></Label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="mt-8 w-full bg-blue-900 text-white cursor-pointer"
+              >
+                Submit
+              </Button>
             </div>
           </form>
         </Form>
-       
       </div>
       <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto " />
     </div>

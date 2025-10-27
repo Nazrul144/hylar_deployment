@@ -28,8 +28,7 @@ const formSchema = z.object({
 const Register8 = () => {
   const router = useRouter();
 
-
-  const {signupData, setSignupData} = useContext(SignupContext)
+  const { signupData, setSignupData } = useContext(SignupContext);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -40,9 +39,10 @@ const Register8 = () => {
 
   const handleCheckboxSubmit = (data) => {
     console.log(data);
-    setSignupData(prev =>({
-      ...prev, ...data
-    }))
+    setSignupData((prev) => ({
+      ...prev,
+      ...data,
+    }));
   };
 
   return (
@@ -79,39 +79,16 @@ const Register8 = () => {
                 <hr className="border-blue-800 border-[3px] lg:w-[640px] mx-auto" />
               </div>
             </div>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleCheckboxSubmit)}
-                className="space-y-8 mt-8"
+            
+            <div className="flex justify-end mt-12">
+              <Button
+                type="submit"
+                className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1 cursor-pointer"
               >
-                <FormField
-                  control={form.control}
-                  name="checkbox"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center gap-3">
-                          <Checkbox id="terms" onCheckedChange={field.onChange} checked={field.value} />
-                          <Label htmlFor="terms">
-                            I agree to the Terms and Conditions
-                          </Label>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end mt-12">
-                  <Button
-                    type="submit"
-                    className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1 cursor-pointer"
-                  >
-                    <span className="text-lg font-semibold">Start</span>
-                    <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                <span className="text-lg font-semibold">Start</span>
+                <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

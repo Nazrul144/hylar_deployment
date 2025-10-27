@@ -1,12 +1,8 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import nodemailer from "nodemailer";
 
 const Register4 = () => {
   const [isVerifying, setIsVerifying] = useState(false);
@@ -44,6 +40,40 @@ const Register4 = () => {
     setShowAlert(true);
   };
 
+
+   const verificationCode = Math.floor(100000 + Math.random() * 900000); // random 6-digit code
+  const email = "nazrulislam@gmail.com"; // demo email
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // your gmail
+        pass: process.env.EMAIL_PASS, // app password (not normal password)
+      },
+    });
+
+    const mailOptions = {
+      from: `"Demo Verification" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your Verification Code",
+      html: `
+        <h2>Email Verification</h2>
+        <p>Your verification code is: <strong>${verificationCode}</strong></p>
+        <p>Click below to verify:</p>
+        <a href="http://localhost:3000/api/verify?code=${verificationCode}" target="_blank">Verify Email</a>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return new Response(JSON.stringify({ success: true, code: verificationCode }), { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ success: false, message: "Failed to send email" }), { status: 500 });
+  }
+}
+
+
   return (
     <div>
       <div className="lg:w-[803px] lg:h-auto mx-auto mt-14 lg:shadow-2xl relative pb-10">
@@ -67,7 +97,7 @@ const Register4 = () => {
           <br /> the email to verify your account.
         </h3>
 
-        <div className="justify-center flex items-center">
+        {/* <div className="justify-center flex items-center">
           <Button
             onClick={handleVerifyClick}
             className="common-bg py-2.5 px-5 rounded-lg text-white w-56 h-12 flex items-center justify-center gap-1"
@@ -77,7 +107,7 @@ const Register4 = () => {
             <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
             {isVerifying && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
           </Button>
-        </div>
+        </div> */}
 
         {showAlert && (
           <Alert className="w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500">
@@ -101,23 +131,6 @@ const Register4 = () => {
             {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isResending ? "Resending..." : "Resend Email"}
           </Button>
-        </div>
-
-        <div className="mt-8 text-center text-lg">
-          By clicking Create Account you agree to{" "}
-          <Link
-            className="text-blue-600 hover:text-blue-800 underline"
-            href="/term_condition"
-          >
-            Terms & Conditions
-          </Link>
-          <br /> For information about how we process your personal data, click{" "}
-          <Link
-            className="text-blue-600 hover:text-blue-800 underline"
-            href="/privacy_notice"
-          >
-            Privacy Notice.
-          </Link>
         </div>
       </div>
       <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto" />

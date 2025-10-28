@@ -18,7 +18,7 @@ import { RxAvatar } from "react-icons/rx";
 import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
-
+import Image from "next/image";
 
 // All routes and submenus here:
 const navItems = [
@@ -40,31 +40,24 @@ const navItems = [
 ];
 
 export default function Navbar({ montserrat }) {
+  const [logo, setLogo] = useState([]);
+
+  useEffect(() => {
+    const getLogo = async () => {
+      const res = await fetch("/api/logo");
+      const logo = await res.json();
+      setLogo(logo.data);
+    };
+    getLogo();
+  }, []);
 
 
-  const [logo, setLogo] = useState([])
+  //Submenu open and close:
+  const [open, setOpen] = useState(false);
 
- useEffect(() => {
-  const getLogo = async () => {
-    try {
-      const res = await fetch("..........");
-      const logo = await res.json(); // <-- await here
-      setLogo(logo);
-    } catch (error) {
-      console.error("Failed to fetch logo:", error);
-    }
+  const handleCloseClick = () => {
+    setOpen(false);
   };
-  getLogo(); // <-- call the function
-}, []);
-
-
-//Submenu open and close:
-const [open, setOpen] = useState(false)
-
-const handleCloseClick = ()=>{
-  setOpen(false)
-}
-
 
   const pathName = usePathname();
 
@@ -84,10 +77,8 @@ const handleCloseClick = ()=>{
   }, []);
 
   //Use context api here:
-  const {bookmarks} = useContext(BookmarkContext)
+  const { bookmarks } = useContext(BookmarkContext);
   const user = true;
-
-
 
   return (
     <header
@@ -183,7 +174,15 @@ const handleCloseClick = ()=>{
           {/* Main nav */}
           <div className="flex items-center gap-6">
             <Link href={"/"} className="text-3xl font-bold italic">
-              Logo
+              {logo.logo && (
+                <Image
+                  src={`https://cestoid-uncoarsely-kayla.ngrok-free.dev${logo.logo}`}
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                  alt={logo.name || "Logo"}
+                />
+              )}
             </Link>
 
             {/* Navigation menu */}
@@ -207,8 +206,10 @@ const handleCloseClick = ()=>{
                           <NavigationMenuList className="flex flex-col">
                             {item.items.map((submenu, subIndex) => (
                               <NavigationMenuItem key={subIndex}>
-                                <Link href={submenu.path} key={submenu.path}
-                                onClick={handleCloseClick}
+                                <Link
+                                  href={submenu.path}
+                                  key={submenu.path}
+                                  onClick={handleCloseClick}
                                 >
                                   {submenu.title}
                                 </Link>

@@ -1,8 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useRouter } from "next/navigation";
-import nodemailer from "nodemailer";
+import Link from "next/link";
 
 const Register4 = () => {
   const [isVerifying, setIsVerifying] = useState(false);
@@ -39,40 +43,6 @@ const Register4 = () => {
     setIsResending(false);
     setShowAlert(true);
   };
-
-
-   const verificationCode = Math.floor(100000 + Math.random() * 900000); // random 6-digit code
-  const email = "nazrulislam@gmail.com"; // demo email
-
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER, // your gmail
-        pass: process.env.EMAIL_PASS, // app password (not normal password)
-      },
-    });
-
-    const mailOptions = {
-      from: `"Demo Verification" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your Verification Code",
-      html: `
-        <h2>Email Verification</h2>
-        <p>Your verification code is: <strong>${verificationCode}</strong></p>
-        <p>Click below to verify:</p>
-        <a href="http://localhost:3000/api/verify?code=${verificationCode}" target="_blank">Verify Email</a>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    return new Response(JSON.stringify({ success: true, code: verificationCode }), { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ success: false, message: "Failed to send email" }), { status: 500 });
-  }
-}
-
 
   return (
     <div>

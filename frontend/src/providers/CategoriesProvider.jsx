@@ -13,14 +13,14 @@ const CategoriesProvider = ({children}) => {
 
     console.log("Categories data:", categories)
 
-    useEffect(()=>{
-      const allCategoriesData = async()=>{
-        const data = await getData();
-        setCategories(data);
-        setLoading(false)
-      }
-      allCategoriesData()
-    },[])
+    // useEffect(()=>{
+    //   const getAllCategoriesData = async()=>{
+    //     const data = await getData();
+    //     setCategories(data);
+    //     setLoading(false)
+    //   }
+    //   getAllCategoriesData()
+    // },[])
 
   return (
     <CategoriesContext.Provider value={{categories, loading}}>

@@ -1,17 +1,17 @@
-export const getData = async()=>{
-    try {
-        const res = await fetch('https://lelia-leafed-lashandra.ngrok-free.dev/api/offers/categories',{
-        cache: "no-store"
-    })
-    if(!res.ok){
-        throw new Error("Fail to fetch categories")
-    }
-    return await res.json()
-    } catch (error) {
-        console.error("Somethings is wrong with fatching data..!!", error)
-        return ["no data"]
-    }
-}
+// export const getAllCategoriesData = async()=>{
+//     try {
+//         const res = await fetch('https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/offers/categories',{
+//         cache: "no-store"
+//     })
+//     if(!res.ok){
+//         throw new Error("Fail to fetch categories")
+//     }
+//     return await res.json()
+//     } catch (error) {
+//         console.error("Somethings is wrong with fatching data..!!", error)
+//         return ["no data"]
+//     }
+// }
 
 
 export const getLatestNews = async()=>{

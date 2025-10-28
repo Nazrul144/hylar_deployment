@@ -10,47 +10,50 @@ import { motion } from "framer-motion";
 
 const ManswearCard = () => {
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-
-  // Loading state
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false)
-  const [manswear, setManswear] = useState([])
-  
-  useEffect(()=>{
-    const getManswearData = async()=>{
-      const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-      const data = await res.json()
-      setManswear(data)
+  const [manswear, setManswear] = useState([]);
+
+  useEffect(() => {
+    const fetchMenswear = async () => {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+
+      const menswearOffers = data.data
+        .flatMap((cat) => cat.subcategories)
+        .filter((sub) => sub.subcategory_name === "Menswear")
+        .flatMap((sub) => sub.offers || []);
+
+      setManswear(menswearOffers);
       setLoading(false);
-    }
-    getManswearData()
-  },[])
+    };
 
-  const visibleAll = showAll ? manswear : manswear.slice(0,6)
+    fetchMenswear();
+  }, []);
 
-
- 
   const containerVariants = {
     hidden: {},
-    show: {
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
+    show: { transition: { staggerChildren: 0.2 } },
   };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
-    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   return (
     <div className="lg:w-7xl mx-auto mt-8 px-2">
       <div className="mt-20">
-        <h1 className="font-bold text-xl lg:text-5xl text-center mb-2">Manswear</h1>
+        <h1 className="font-bold text-xl lg:text-5xl text-center mb-2">
+          Menswear
+        </h1>
         <h3 className="text-center mb-6 px-2">
           Must see offers from some of Blue Light Card members' best-loved
-          <br /> Fashion & Clothing partners.
+          Fashion & Clothing partners.
         </h3>
       </div>
 
@@ -65,17 +68,36 @@ const ManswearCard = () => {
           initial="hidden"
           whileInView="show"
         >
-          {visibleAll?.map((item) => (
-            <motion.div key={item.id} variants={cardVariants} className="shadow-xl p-4 rounded-sm">
-              <Image src={item.image} width={400} height={400} alt="Image" />
+          {manswear.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              className="shadow-xl p-4 rounded-sm"
+            >
+              <Image
+                src={`https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`}
+                width={400}
+                height={400}
+                alt={item.product}
+                style={{
+                  objectFit: "cover",
+                  width: "400px",
+                  height: "400px",
+                }}
+              />
+
               <h1 className="mt-2">
-                <span className="font-bold">Paucek and Lage</span> {item?.title}
+                <span className="font-bold">{item.brand_name}</span>{" "}
+                {item.product}
               </h1>
+              <p className="text-sm mt-1">{item.description}</p>
               <div className="flex items-center gap-3 mt-3">
-                <Button className="border-2 rounded-none text-lg" variant="none">
+                <Button
+                  className="border-2 rounded-none text-lg"
+                  variant="none"
+                >
                   <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
-
                 <Button
                   className={`border-2 rounded-none text-lg cursor-pointer ${
                     bookmarks.some((i) => i.id === item.id)
@@ -106,5 +128,3 @@ const ManswearCard = () => {
 };
 
 export default ManswearCard;
-
-

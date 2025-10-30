@@ -40,16 +40,16 @@ const navItems = [
 ];
 
 export default function Navbar({ montserrat }) {
-  const [logo, setLogo] = useState([]);
+  // const [logo, setLogo] = useState([]);
 
-  useEffect(() => {
-    const getLogo = async () => {
-      const res = await fetch("/api/logo");
-      const logo = await res.json();
-      setLogo(logo.data);
-    };
-    getLogo();
-  }, []);
+  // useEffect(() => {
+  //   const getLogo = async () => {
+  //     const res = await fetch("/api/logo");
+  //     const logo = await res.json();
+  //     setLogo(logo.data);
+  //   };
+  //   getLogo();
+  // }, []);
 
 
   //Submenu open and close:
@@ -174,15 +174,13 @@ export default function Navbar({ montserrat }) {
           {/* Main nav */}
           <div className="flex items-center gap-6">
             <Link href={"/"} className="text-3xl font-bold italic">
-              {logo.logo && (
-                <Image
-                  src={`https://cestoid-uncoarsely-kayla.ngrok-free.dev${logo.logo}`}
-                  width={60}
-                  height={60}
-                  className="object-contain"
-                  alt={logo.name || "Logo"}
-                />
-              )}
+              <Image
+              src={'/logo.png'}
+              alt="logo"
+              width={50}
+              height={50}
+              className="lg:mr-24"
+              />
             </Link>
 
             {/* Navigation menu */}

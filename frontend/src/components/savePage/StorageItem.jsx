@@ -22,11 +22,18 @@ const StorageItem = () => {
         <div className="grid lg:grid-cols-3 px-2 gap-3">
           {bookmarks.map((item) => (
             <div className="shadow-xl p-4 rounded-sm" key={item.id}>
-              <Image src={item.image} width={400} height={400} alt="Image" />
-              <h1 className="mt-2">
-                <span className="font-bold">Paucek and Lage</span>{" "}
-                {item.description}
-              </h1>
+              <Image
+                src={
+                  item.image
+                    ? `https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`
+                    : "/fallback.jpg"
+                }
+                width={400}
+                height={400}
+                alt={item.product || "Menswear Image"}
+                style={{ objectFit: "cover", width: "400px", height: "400px" }}
+              />
+              <h1 className="mt-2">{item.description}</h1>
               <div className="flex items-center gap-3 mt-3">
                 <Button
                   className="border-2 rounded-none text-lg"

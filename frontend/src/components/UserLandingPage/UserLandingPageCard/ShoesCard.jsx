@@ -10,16 +10,24 @@ import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const ShoesCard = () => {
   const [loading, setLoading] = useState(true);
-  const [cards, setCards] = useState([]);
-
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const [shoes, setShoes] = useState([]);
 
-  // Simulate fetching data
   useEffect(() => {
-    setTimeout(() => {
-      setCards(cardInfo);
+    const fetchShoes = async () => {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+
+      const ShoesOffers = data.data
+        .flatMap((cat) => cat.subcategories)
+        .filter((sub) => sub.subcategory_name === "Shoes")
+        .flatMap((sub) => sub.offers || []);
+
+      setShoes(ShoesOffers);
       setLoading(false);
-    }, 1500);
+    };
+
+    fetchShoes();
   }, []);
 
   // Motion variants
@@ -63,29 +71,42 @@ const ShoesCard = () => {
           initial="hidden"
           whileInView="show"
         >
-          {cards.map((item) => (
+          {shoes.map((item) => (
             <motion.div
               key={item.id}
               variants={cardVariants}
               className="shadow-xl p-4 rounded-sm"
             >
+              {/* Image */}
               <Image
-                src={item.image}
+                src={
+                  item.image
+                    ? `https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`
+                    : "/fallback.jpg"
+                }
                 width={400}
                 height={400}
-                alt="Image"
-                className="block"
+                alt={item.product || "Womenswear"}
+                style={{ width: "400px", height: "200px" }}
+                className="object-contain"
               />
-              <h1 className="mt-2">
-                <span className="font-bold">Paucek and Lage</span>{" "}
-                {item.description}
-              </h1>
+
+              {/* Brand Name */}
+              <h2 className="mt-2 text-lg font-semibold">{item.brand_name}</h2>
+
+              {/* Discount */}
+              {item.discount_percent && (
+                <p className="text-red-600 font-bold text-xl mt-1">
+                  {item.discount_percent}% OFF
+                </p>
+              )}
+
               <div className="flex items-center gap-3 mt-3">
                 <Button
                   className="border-2 rounded-none text-lg cursor-pointer"
                   variant="none"
                 >
-                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
+                  <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
                 <Button
                   className={`border-2 rounded-none text-lg cursor-pointer ${
@@ -117,37 +138,3 @@ const ShoesCard = () => {
 };
 
 export default ShoesCard;
-
-// Dummy data
-const cardInfo = [
-  {
-    id: "1",
-    image: "/fashion/1.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "2",
-    image: "/fashion/2.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "3",
-    image: "/fashion/3.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "4",
-    image: "/fashion/4.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "5",
-    image: "/fashion/5.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-  {
-    id: "6",
-    image: "/fashion/6.jpg",
-    description: " - Happy World Rainforest Day 🌿",
-  },
-];

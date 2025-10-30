@@ -10,17 +10,25 @@ import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const SunAndBeach = () => {
   const [loading, setLoading] = useState(true);
-  const [cards, setCards] = useState([]);
+  const [sunBeach, setSunBeach] = useState([]);
     const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
 
-  // Simulate fetching data
-  useEffect(() => {
-    setTimeout(() => {
-      setCards(cardInfo); 
-      setLoading(false);  
-    }, 1500); 
-  }, []);
+   useEffect(() => {
+    const fetchSunBeach = async () => {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
 
+      const menswearOffers = data.data
+        .flatMap((cat) => cat.subcategories)
+        .filter((sub) => sub.subcategory_name === "Menswear")
+        .flatMap((sub) => sub.offers || []);
+
+      setSunBeach(menswearOffers);
+      setLoading(false);
+    };
+
+    fetchSunBeach();
+  }, []);
   // Motion variants
   const containerVariants = {
     hidden: {},
@@ -56,7 +64,7 @@ const SunAndBeach = () => {
           initial="hidden"
           whileInView="show"
         >
-          {cards.map((item) => (
+          {sunBeach.map((item) => (
             <motion.div key={item.id} variants={cardVariants} className="shadow-xl p-4 rounded-sm">
               <Image
                 src={item.image}

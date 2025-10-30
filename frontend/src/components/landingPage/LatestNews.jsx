@@ -56,13 +56,13 @@ const LatestNews = () => {
               href="#"
               className="block rounded-lg p-4 shadow-xs shadow-indigo-100"
             >
-              <Image
+              {/* <Image
                 width={400}
                 height={300}
                 alt="image"
                 src={news.image}
                 className="h-full w-full rounded-md object-cover"
-              />
+              /> */}
 
               <div className="mt-2">
                 <div>

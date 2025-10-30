@@ -74,28 +74,39 @@ const ManswearCard = () => {
               variants={cardVariants}
               className="shadow-xl p-4 rounded-sm"
             >
+              {/* Image */}
               <Image
-                src={`https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`}
+                src={
+                  item.image
+                    ? `https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`
+                    : "/fallback.jpg"
+                }
                 width={400}
                 height={400}
-                alt={item.product}
-                style={{
-                  objectFit: "cover",
-                  width: "400px",
-                  height: "400px",
-                }}
+                alt={item.product || "Menswear Image"}
+                style={{  width: "400px", height: "200px" }}
+                className="object-contain"
               />
 
-              <h1 className="mt-2">
-                <span className="font-bold">{item.brand_name}</span>{" "}
-                {item.product}
-              </h1>
-              <p className="text-sm mt-1">{item.description}</p>
+              {/* Brand Name */}
+              <h1 className="mt-2 font-semibold text-lg">{item.brand_name}</h1>
+
+              {/* Discount Percent */}
+              {item.discount_percent && (
+                <p className="text-red-600 font-bold text-xl mt-1">
+                  {item.discount_percent}% OFF
+                </p>
+              )}
+
+              {/* Product Name */}
+              <p className="mt-1">{item.product}</p>
+
+              {/* Description */}
+              {item.description && <p className="text-sm mt-1">{item.description}</p>}
+
+              {/* Buttons */}
               <div className="flex items-center gap-3 mt-3">
-                <Button
-                  className="border-2 rounded-none text-lg"
-                  variant="none"
-                >
+                <Button className="border-2 rounded-none text-lg" variant="none">
                   <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
                 <Button

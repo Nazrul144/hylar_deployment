@@ -1,33 +1,70 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "../ui/label";
+
+const formSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email address" }),
+
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(32, { message: "Password must not exceed 32 characters" })
+    .regex(/[A-Z]/, { message: "At least one uppercase letter" })
+    .regex(/[a-z]/, { message: "At least one lowercase letter" })
+    .regex(/[0-9]/, { message: "At least one number" })
+    .regex(/[^A-Za-z0-9]/, { message: "At least one special character" }),
+});
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData); // 👉 { email: "value", password: "value" }
-  };
-
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+const handleLoginSubmit = async (data) => {
+  try {
+    const res = await fetch("https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/accounts/login", { // 👉 এখানে তোমার backend URL বসাও
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // form data পাঠানো হচ্ছে
+      
+    });
+
+    const result = await res.json();
+    console.log("Response:", result);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 
   return (
     <div>
@@ -56,7 +93,8 @@ const Login = () => {
           </div>
 
           <h4 className="text-white absolute bottom-4 text-sm left-12">
-            Log in to your <span className="font-bold">MaximumSavings</span> account.
+            Log in to your <span className="font-bold">MaximumSavings</span>{" "}
+            account.
           </h4>
 
           <div className="absolute inset-0 rounded-lg bg-black/30" />
@@ -75,67 +113,57 @@ const Login = () => {
               Login
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email input */}
-              <div className="relative w-80">
-                <label
-                  htmlFor="email"
-                  className="absolute -top-2 left-3 bg-white px-1 text-sm text-gray-600"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full h-12 rounded-md border border-blue-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                />
-              </div>
-
-              {/* Password input */}
-              <div className="space-y-1 text-sm">
-                <div className="relative w-80">
-                  <label
-                    htmlFor="password"
-                    className="absolute -top-2 left-3 bg-white px-1 text-sm text-gray-600"
-                  >
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full h-12 rounded-md border border-blue-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleLoginSubmit)}
+                className="space-y-8"
+              >
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="relative">
+                          <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                            Email
+                          </Label>
+                          <Input
+                            {...field}
+                            className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                          />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className="flex justify-end text-xs text-gray-400">
-                  <Link rel="noopener noreferrer" href="forgotpass">
-                    Forgot Password?
-                  </Link>
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <div className="relative">
+                          <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                            Password
+                          </Label>
+                          <Input type="password"
+                            {...field}
+                            className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
+                          />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Link href={'/'} className="text-blue-500 mt-2 italic lg:ml-50 underline">Forgot Pawwrod</Link>
                 </div>
-              </div>
-
-              {/* Submit button */}
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                <Button
-                  type="submit"
-                  className="block w-full text-center rounded-sm text-white bg-[#00308F] h-12 cursor-pointer"
-                >
-                  LOG IN
-                </Button>
-              </motion.div>
-
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                <Button className="flex items-center justify-center w-full h-12 bg-transparent border-1 border-[#00308F] common-text rounded-sm cursor-pointer text-xl hover:bg-white">
-                  <FcGoogle className="text-2xl" />
-                  Google
-                </Button>
-              </motion.div>
-            </form>
+                
+                <Button className="w-full bg-blue-900 text-white" type="submit">Login</Button>
+              </form>
+              f
+            </Form>
 
             <p className="text-xs text-center sm:px-6 text-gray-800">
               Don't have an account?

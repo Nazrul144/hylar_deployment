@@ -9,17 +9,25 @@ import { motion } from "framer-motion";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 
 const ChildrenswearCard = () => {
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
   const [loading, setLoading] = useState(true);
-  const [cards, setCards] = useState([]);
+  const [childrenwear, setChildrenwear] = useState([]);
 
-    const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-
-  // Simulate fetching data
   useEffect(() => {
-    setTimeout(() => {
-      setCards(cardInfo); 
-      setLoading(false);  
-    }, 1500);
+    const fetchChildrenwear = async () => {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+
+      const ChildrenwearOffers = data.data
+        .flatMap((cat) => cat.subcategories)
+        .filter((sub) => sub.subcategory_name === "Childrenwear")
+        .flatMap((sub) => sub.offers || []);
+
+      setChildrenwear(ChildrenwearOffers);
+      setLoading(false);
+    };
+
+    fetchChildrenwear();
   }, []);
 
   // Motion variants
@@ -30,17 +38,24 @@ const ChildrenswearCard = () => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
-    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   return (
     <div className="lg:w-7xl mx-auto mt-8 px-2">
+      {/* Heading */}
       <div className="mt-20">
-        <h1 className="common-text font-bold text-xl lg:text-5xl text-center mb-2 inter-text">
+        <h1 className="common-text font-bold lg:text-5xl text-center mb-2 inter-text">
           Childrenswear
         </h1>
         <h3 className="text-center mb-6">
-          Must see offers from some of Blue Light Card members' best-loved <br />
+          Must see offers from some of Blue Light Card members' best-loved{" "}
+          <br />
           Fashion & Clothing partners.
         </h3>
       </div>
@@ -56,23 +71,44 @@ const ChildrenswearCard = () => {
           initial="hidden"
           whileInView="show"
         >
-          {cards.map((item) => (
-            <motion.div key={item.id} variants={cardVariants} className="shadow-xl p-4 rounded-sm">
+          {childrenwear.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              className="shadow-xl p-4 rounded-sm"
+            >
+              {/* Image */}
               <Image
-                src={item.image}
+                src={
+                  item.image
+                    ? `https://cestoid-uncoarsely-kayla.ngrok-free.dev${item.image}`
+                    : "/fallback.jpg"
+                }
                 width={400}
                 height={400}
-                alt="Image"
-                className="block"
+                alt={item.product || "Womenswear"}
+                style={{ width: "400px", height: "200px" }}
+                className="object-contain"
               />
-              <h1 className="mt-2">
-                <span className="font-bold">Paucek and Lage</span> {item.description}
-              </h1>
+
+              {/* Brand Name */}
+              <h2 className="mt-2 text-lg font-semibold">{item.brand_name}</h2>
+
+              {/* Discount */}
+              {item.discount_percent && (
+                <p className="text-red-600 font-bold text-xl mt-1">
+                  {item.discount_percent}% OFF
+                </p>
+              )}
+
               <div className="flex items-center gap-3 mt-3">
-                <Button className="border-2 rounded-none text-lg cursor-pointer" variant="none">
-                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
+                <Button
+                  className="border-2 rounded-none text-lg cursor-pointer"
+                  variant="none"
+                >
+                  <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
-                  <Button
+                <Button
                   className={`border-2 rounded-none text-lg cursor-pointer ${
                     bookmarks.some((i) => i.id === item.id)
                       ? "bg-[#3366CC] text-white hover:bg-[#3366CC] hover:text-white"
@@ -102,13 +138,3 @@ const ChildrenswearCard = () => {
 };
 
 export default ChildrenswearCard;
-
-// Dummy data
-const cardInfo = [
-  { id: "1", image: "/fashion/1.jpg", description: " - Happy World Rainforest Day 🌿" },
-  { id: "2", image: "/fashion/2.jpg", description: " - Happy World Rainforest Day 🌿" },
-  { id: "3", image: "/fashion/3.jpg", description: " - Happy World Rainforest Day 🌿" },
-  { id: "4", image: "/fashion/4.jpg", description: " - Happy World Rainforest Day 🌿" },
-  { id: "5", image: "/fashion/5.jpg", description: " - Happy World Rainforest Day 🌿" },
-  { id: "6", image: "/fashion/6.jpg", description: " - Happy World Rainforest Day 🌿" },
-];

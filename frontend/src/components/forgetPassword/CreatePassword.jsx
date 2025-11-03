@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
 
 const CreatePassword = () => {
   const [formData, setFormData] = useState({
@@ -37,6 +38,11 @@ const CreatePassword = () => {
     console.log("Form submitted:", formData);
     // 👉 send formData.newPassword to your backend
   };
+
+
+
+  const form = useForm()
+
 
   return (
     <div>

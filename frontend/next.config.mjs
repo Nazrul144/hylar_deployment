@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-    domains: ['cestoid-uncoarsely-kayla.ngrok-free.dev'], // tumar backend domain
+    domains: ['10.10.12.111'], // tumar backend domain
   },
   
 };

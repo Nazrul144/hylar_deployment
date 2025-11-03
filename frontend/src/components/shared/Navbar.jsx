@@ -1,11 +1,9 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
   Popover,
@@ -19,6 +17,15 @@ import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { IoIosArrowDown } from "react-icons/io";
+import { CategoriesContext } from "@/providers/CategoriesProvider";
 
 // All routes and submenus here:
 const navItems = [
@@ -26,12 +33,7 @@ const navItems = [
   { title: "How It Works", path: "/work" },
   {
     title: "Discover Savings",
-    items: [
-      { title: "Fashion", path: "/fashion" },
-      { title: "Travels", path: "/travel" },
-      { title: "Home & Lifestyle", path: "/lifestyle" },
-      { title: "Finance", path: "/finance" },
-    ],
+    
   },
   { title: "About Us", path: "/about" },
   { title: "Add Your Business", path: "/business" },
@@ -40,20 +42,12 @@ const navItems = [
 ];
 
 export default function Navbar({ montserrat }) {
-  // const [logo, setLogo] = useState([]);
-
-  // useEffect(() => {
-  //   const getLogo = async () => {
-  //     const res = await fetch("/api/logo");
-  //     const logo = await res.json();
-  //     setLogo(logo.data);
-  //   };
-  //   getLogo();
-  // }, []);
-
-
   //Submenu open and close:
   const [open, setOpen] = useState(false);
+
+  const {categories, loading} = useContext(CategoriesContext)
+
+  console.log("Data", categories)
 
   const handleCloseClick = () => {
     setOpen(false);
@@ -129,43 +123,28 @@ export default function Navbar({ montserrat }) {
               <NavigationMenu className="max-w-none *:w-full">
                 {/* For Mobile Device */}
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
-                  {navItems.map((item, index) => (
-                    <NavigationMenuItem
-                      key={index}
-                      montserrat={montserrat.className}
-                    >
-                      {item.items ? (
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger asChild>
-                            <NavigationMenuTrigger
-                              className={`${cn(montserrat)}`}
-                            >
-                              {item.title}
-                            </NavigationMenuTrigger>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-48 p-2">
-                            <NavigationMenuList className="flex flex-col">
-                              {item.items.map((submenu, subIndex) => (
-                                <NavigationMenuItem key={subIndex}>
-                                  <Link href={submenu.path} key={submenu.path}>
-                                    {submenu.title}
-                                  </Link>
-                                </NavigationMenuItem>
-                              ))}
-                            </NavigationMenuList>
-                          </PopoverContent>
-                        </Popover>
-                      ) : (
-                        <Link
-                          className={`${cn(montserrat)} ${item.path === pathName ? "text-[#00308F] font-bold underline" : ""}`}
-                          href={item.path}
-                          key={item.path}
-                        >
-                          {item.title}
-                        </Link>
-                      )}
+                  {navItems.map((navItem) =>
+                  navItem.title === "Discover Savings" ? (
+                    <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
+                      <DropdownMenuTrigger>
+                        <Button variant={"ghost"}>{navItem.title}</Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent onClick={handleCloseClick}>
+                        {categories.map((feature) => (
+                          <DropdownMenuItem key={feature.id}>
+                            <Link href={`/category/${feature.id}`}>
+                              {feature.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <NavigationMenuItem key={navItem.path}>
+                      <Link href={navItem.path}>{navItem.title}</Link>
                     </NavigationMenuItem>
-                  ))}
+                  )
+                )}
                 </NavigationMenuList>
               </NavigationMenu>
             </PopoverContent>
@@ -175,58 +154,39 @@ export default function Navbar({ montserrat }) {
           <div className="flex items-center gap-6">
             <Link href={"/"} className="text-3xl font-bold italic">
               <Image
-              src={'/logo.png'}
-              alt="logo"
-              width={50}
-              height={50}
-              className="lg:mr-24"
+                src={"/logo.png"}
+                alt="logo"
+                width={50}
+                height={50}
+                className="lg:mr-24"
               />
             </Link>
 
             {/* Navigation menu */}
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList className="gap-6">
-                {navItems.map((item, index) => (
-                  <NavigationMenuItem
-                    key={index}
-                    montserrat={montserrat.className}
-                  >
-                    {item.items ? (
-                      <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                          <NavigationMenuTrigger
-                            className={`${cn(montserrat)}`}
-                          >
-                            {item.title}
-                          </NavigationMenuTrigger>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-48 p-2">
-                          <NavigationMenuList className="flex flex-col">
-                            {item.items.map((submenu, subIndex) => (
-                              <NavigationMenuItem key={subIndex}>
-                                <Link
-                                  href={submenu.path}
-                                  key={submenu.path}
-                                  onClick={handleCloseClick}
-                                >
-                                  {submenu.title}
-                                </Link>
-                              </NavigationMenuItem>
-                            ))}
-                          </NavigationMenuList>
-                        </PopoverContent>
-                      </Popover>
-                    ) : (
-                      <Link
-                        className={`${cn(montserrat)} ${item.path === pathName ? "text-[#00308F] font-bold underline" : ""}`}
-                        href={item.path}
-                        key={item.path}
-                      >
-                        {item.title}
-                      </Link>
-                    )}
-                  </NavigationMenuItem>
-                ))}
+                {navItems.map((navItem) =>
+                  navItem.title === "Discover Savings" ? (
+                    <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
+                      <DropdownMenuTrigger>
+                        <Button variant={"ghost"}>{navItem.title}<IoIosArrowDown className="mt-0.5" /></Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {categories.map((category) => (
+                          <DropdownMenuItem key={category.id} onClick={handleCloseClick}>
+                            <Link href={`/category/${category.id}`}>
+                              {category.category_name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <NavigationMenuItem key={navItem.path}>
+                      <Link href={navItem.path}>{navItem.title}</Link>
+                    </NavigationMenuItem>
+                  )
+                )}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
@@ -311,3 +271,5 @@ export default function Navbar({ montserrat }) {
     </header>
   );
 }
+
+

@@ -8,6 +8,7 @@ export const metadata = {
 }
 
 const HomePage = () => {
+    
   return (
     <div>
       <Header/>

@@ -1,6 +1,6 @@
 'use client'
 
-import { getData } from "@/lib/api";
+import { getAllCategoriesData, getData } from "@/lib/api";
 import { createContext, useEffect, useState } from "react";
 
 
@@ -11,16 +11,20 @@ const CategoriesProvider = ({children}) => {
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
 
-    console.log("Categories data:", categories)
+    console.log("From Context:", categories)
 
-    // useEffect(()=>{
-    //   const getAllCategoriesData = async()=>{
-    //     const data = await getData();
-    //     setCategories(data);
-    //     setLoading(false)
-    //   }
-    //   getAllCategoriesData()
-    // },[])
+    useEffect(()=>{
+      const fetchData = async()=>{
+        const data = await getAllCategoriesData()
+        setCategories(data)
+        setLoading(false)
+      }
+      fetchData()
+    },[])
+
+
+    
+
 
   return (
     <CategoriesContext.Provider value={{categories, loading}}>

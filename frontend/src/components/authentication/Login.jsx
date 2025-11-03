@@ -157,7 +157,7 @@ const handleLoginSubmit = async (data) => {
                       </FormItem>
                     )}
                   />
-                  <Link href={'/'} className="text-blue-500 mt-2 italic lg:ml-50 underline">Forgot Pawwrod</Link>
+                  <Link href={'/createpass'} className="text-blue-500 mt-2 italic lg:ml-50 underline">Forgot Pawwrod</Link>
                 </div>
                 
                 <Button className="w-full bg-blue-900 text-white" type="submit">Login</Button>

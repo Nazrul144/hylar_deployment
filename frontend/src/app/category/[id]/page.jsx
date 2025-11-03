@@ -8,6 +8,7 @@ import { CiBookmark } from "react-icons/ci";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { useParams } from "next/navigation";
 import { CategoriesContext } from "@/providers/CategoriesProvider";
+import { BASE_URL } from "@/config/config";
 
 const CategoryPage = () => {
   const params = useParams();
@@ -66,11 +67,7 @@ const CategoryPage = () => {
               className="shadow-xl p-4 rounded-sm"
             >
               <Image
-                src={
-                  item.image
-                    ? `${BASE_URL}${item.image}` 
-                    : "/fallback.jpg"
-                }
+                src={item.image ? `${BASE_URL}${item.image}` : "/fallback.jpg"}
                 width={400}
                 height={200}
                 alt={item.brand_name}
@@ -107,12 +104,12 @@ const CategoryPage = () => {
 
         {items.length > 6 && (
           <div className="flex justify-center mt-10">
-            <Button
-              onClick={() => setShowAll((prev) => !prev)}
+            <Link
+              href={`/subcategories/${items[0]?.id || ""}`} // or use `sub.id` if you pass it as prop
               className="bg-[#00308F] text-white px-6 py-2 rounded-sm"
             >
-              {showAll ? "Show Less <<" : "View All >>"}
-            </Button>
+              View All
+            </Link>
           </div>
         )}
       </div>
@@ -124,15 +121,14 @@ const CategoryPage = () => {
       {/* Banner Section */}
       <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
         <Image
-           src={`${BASE_URL}${categoryData.banner_image}`}
+          src={`${BASE_URL}${categoryData.banner_image}`}
           alt="banner test"
-          width={1200}
-          height={400}
+          fill
         />
 
         <div className="absolute w-full h-full bg-black/40 z-10" />
         <div className="absolute z-20 text-center">
-          <h1 className="text-white text-7xl font-extrabold uppercase">
+          <h1 className="text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
             {categoryData.category_name}
           </h1>
         </div>

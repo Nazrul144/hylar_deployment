@@ -18,15 +18,18 @@ import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
 import { Checkbox } from "../ui/checkbox";
 import Link from "next/link";
+import { BASE_URL } from "@/config/config";
+import toast from "react-hot-toast";
 
 const formSchema = z
   .object({
-    terms: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the Terms & Conditions",
+    agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
+      message:
+        "You must agree to the agreed_to_terms_and_conditions & Conditions",
     }),
 
-    policy: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the Policy",
+    agreed_to_policy: z.boolean().refine((val) => val === true, {
+      message: "You must agree to the policy",
     }),
 
     password: z
@@ -38,12 +41,12 @@ const formSchema = z
       .regex(/[0-9]/, { message: "At least one number" })
       .regex(/[^A-Za-z0-9]/, { message: "At least one special character" }),
 
-    confirmPassword: z.string(),
+    confirm_password: z.string(),
   })
   .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
+    if (data.password !== data.confirm_password) {
       ctx.addIssue({
-        path: ["confirmPassword"],
+        path: ["confirm_password"],
         message: "Passwords do not match",
       });
     }
@@ -57,17 +60,46 @@ const Register3 = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       password: "",
-      confirmPassword: "",
-      terms: false,
-      policy: false
+      confirm_password: "",
+      agreed_to_terms_and_conditions: false,
+      agreed_to_policy: false,
     },
   });
 
-  const handleFormSubmit = (data) => {
-    console.log(data);
-    const allData = { ...signupData, ...data };
-    setSignupData(allData);
-    router.push("/register/register2/register3/register4");
+  const handleFormSubmit = async (data) => {
+    try {
+      const formattedDate =
+        signupData.date_of_birth instanceof Date
+          ? signupData.date_of_birth.toISOString().slice(0, 10)
+          : typeof signupData.date_of_birth === "string"
+            ? signupData.date_of_birth.slice(0, 10)
+            : "";
+
+      const allData = {
+        ...signupData,
+        ...data,
+        date_of_birth: formattedDate,
+      };
+
+      console.log("Final payload:", allData);
+
+      const res = await fetch(`${BASE_URL}/api/accounts/register/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(allData),
+      });
+
+      const result = await res.json();
+      if (result.status_code === 400) {
+        toast.error("User already exists!");
+        return;
+      }
+      if (result.status_code === 201 || result.status_code === 200) {
+        router.push("/register/register2/register3/register4");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -115,7 +147,7 @@ const Register3 = () => {
               />
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="confirm_password"
                 render={({ field }) => (
                   <FormItem className="w-full mt-8">
                     <div className="relative">
@@ -135,17 +167,26 @@ const Register3 = () => {
 
               <FormField
                 control={form.control}
-                name="terms"
+                name="agreed_to_terms_and_conditions"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="flex items-center gap-3 mt-4">
                         <Checkbox
-                          id="terms"
+                          id="agreed_to_terms_and_conditions"
                           onCheckedChange={field.onChange}
                           checked={field.value}
                         />
-                        <Label htmlFor="terms"> I agree to the <Link className="text-blue-600 hover:text-blue-800 underline" href="/term_condition">Terms & Conditions</Link></Label>
+                        <Label htmlFor="agreed_to_terms_and_conditions">
+                          {" "}
+                          I agree to the{" "}
+                          <Link
+                            className="text-blue-600 hover:text-blue-800 underline"
+                            href="/term_condition"
+                          >
+                            agreed_to_terms_and_conditions & Conditions
+                          </Link>
+                        </Label>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -154,17 +195,26 @@ const Register3 = () => {
               />
               <FormField
                 control={form.control}
-                name="policy"
+                name="agreed_to_policy"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="flex items-center gap-3 mt-4">
                         <Checkbox
-                          id="policy"
+                          id="agreed_to_policy"
                           onCheckedChange={field.onChange}
                           checked={field.value}
                         />
-                        <Label htmlFor="policy"> I agree to the <Link className="text-blue-600 hover:text-blue-800 underline" href="/privacy">Policy</Link></Label>
+                        <Label htmlFor="agreed_to_policy">
+                          {" "}
+                          I agree to the{" "}
+                          <Link
+                            className="text-blue-600 hover:text-blue-800 underline"
+                            href="/privacy"
+                          >
+                            agreed_to_policy
+                          </Link>
+                        </Label>
                       </div>
                     </FormControl>
                     <FormMessage />

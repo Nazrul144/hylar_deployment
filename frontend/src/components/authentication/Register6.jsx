@@ -42,7 +42,7 @@ const Register6 = () => {
   });
 
   const handleFormSubmit = (data) => {
-    console.log("Uploaded file:", data);
+    ("Uploaded file:", data);
     setSignupData((prev) => ({ ...prev, ...data }));
     router.push(
       "/register/register2/register3/register4/register5/register6/register7"
@@ -113,7 +113,9 @@ const Register6 = () => {
                             // Check if the same file is already uploaded in backFile
                             const backFile = form.getValues("backFile");
                             if (backFile && file.name === backFile[0]?.name) {
-                              toast.error("You have already uploaded this file.")
+                              toast.error(
+                                "You have already uploaded this file."
+                              );
                               e.target.value = ""; // reset input
                               return;
                             }
@@ -142,7 +144,9 @@ const Register6 = () => {
                             const file = e.target.files[0];
                             const frontFile = form.getValues("frontFile");
                             if (frontFile && file.name === frontFile[0]?.name) {
-                              toast.error("You have already uploaded this file.")
+                              toast.error(
+                                "You have already uploaded this file."
+                              );
                               e.target.value = "";
                               return;
                             }

@@ -35,14 +35,11 @@ const CreatePassword = () => {
       icon: "success",
     });
 
-    console.log("Form submitted:", formData);
+    ("Form submitted:", formData);
     // 👉 send formData.newPassword to your backend
   };
 
-
-
-  const form = useForm()
-
+  const form = useForm();
 
   return (
     <div>

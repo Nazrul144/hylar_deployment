@@ -15,16 +15,17 @@ const SubCategoriesPage = () => {
 
   const params = useParams();
   const id = Number(params.id);
-  console.log("ID:", id);
+  ("ID:", id);
 
-useEffect(()=>{
-    const getSignleCategory = async()=>{
-        const res = await fetch(`http://10.10.12.111:4500/api/offers/categories/${id}`)
-        const subCategory = await res.json()
-        console.log("subCategory", subCategory)
-    }
-    getSignleCategory()
-},[])
+  useEffect(() => {
+    const getSignleCategory = async () => {
+      const res = await fetch(
+        `http://10.10.12.111:4500/api/offers/categories/${id}`
+      );
+      const subCategory = await res.json()("subCategory", subCategory);
+    };
+    getSignleCategory();
+  }, []);
 
   return (
     <div>

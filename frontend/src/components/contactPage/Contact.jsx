@@ -41,7 +41,7 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log(formData);
+    formData;
     toast.success("Form submitted successfully!");
     setFormData({
       name: "",
@@ -72,10 +72,9 @@ const Contact = () => {
       <div className="lg:flex justify-between gap-12">
         {/* Left Side */}
         <div className="lg:w-1/2 space-y-6">
-         <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent">
-  Get in Touch
-</h3>
-
+          <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent">
+            Get in Touch
+          </h3>
 
           <div className="space-y-4 mt-6">
             <p className="flex items-center gap-3 text-gray-700">
@@ -197,15 +196,14 @@ const Contact = () => {
               </p>
             )}
 
-           <Button
-  type="submit"
-  className="bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 text-white font-semibold px-6 py-5 rounded-lg shadow-md 
+            <Button
+              type="submit"
+              className="bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 text-white font-semibold px-6 py-5 rounded-lg shadow-md 
   hover:from-blue-600 hover:via-emerald-500 hover:to-cyan-500 hover:scale-105 transform transition-all duration-300 
   md:col-span-2 cursor-pointer w-28"
->
-  Submit
-</Button>
-
+            >
+              Submit
+            </Button>
           </form>
         </div>
       </div>

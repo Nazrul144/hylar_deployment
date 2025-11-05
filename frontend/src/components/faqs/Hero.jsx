@@ -16,7 +16,7 @@ const Hero = () => {
 
   const handleClear = () => setQuery("");
   const handleSearch = () => {
-    console.log("Searching for:", query);
+    ("Searching for:", query);
   };
 
   return (
@@ -37,9 +37,13 @@ const Hero = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
-        variants={{ 
-          hidden: { opacity: 0, y: 20 }, 
-          visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.2 } } 
+        variants={{
+          hidden: { opacity: 0, y: 20 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, delay: 0.2 },
+          },
         }}
         className="text-gray-200 text-sm md:text-base mb-6"
       >
@@ -53,7 +57,11 @@ const Hero = () => {
         viewport={{ once: true }}
         variants={{
           hidden: { opacity: 0, y: 20 },
-          visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.4 } },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, delay: 0.4 },
+          },
         }}
         className="flex items-center bg-white rounded-md shadow-md overflow-hidden w-full max-w-lg"
       >

@@ -47,7 +47,7 @@ export default function Navbar({ montserrat }) {
 
   const {categories, loading} = useContext(CategoriesContext)
 
-  console.log("Data", categories)
+
 
   const handleCloseClick = () => {
     setOpen(false);
@@ -126,7 +126,7 @@ export default function Navbar({ montserrat }) {
                   {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
                     <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
-                      <DropdownMenuTrigger>
+                      <DropdownMenuTrigger asChild>
                         <Button variant={"ghost"}>{navItem.title}</Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent onClick={handleCloseClick}>
@@ -168,7 +168,7 @@ export default function Navbar({ montserrat }) {
                 {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
                     <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
-                      <DropdownMenuTrigger>
+                      <DropdownMenuTrigger asChild>
                         <Button variant={"ghost"}>{navItem.title}<IoIosArrowDown className="mt-0.5" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>

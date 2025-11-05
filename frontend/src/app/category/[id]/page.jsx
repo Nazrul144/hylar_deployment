@@ -24,7 +24,7 @@ const CategoryPage = () => {
     setCategoryData(category);
   }, [categories, id]);
 
-  console.log(categoryData);
+  categoryData;
 
   if (!categoryData) {
     return (

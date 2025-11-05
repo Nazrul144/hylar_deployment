@@ -38,7 +38,7 @@ const Register8 = () => {
   });
 
   const handleCheckboxSubmit = (data) => {
-    console.log(data);
+    data;
     setSignupData((prev) => ({
       ...prev,
       ...data,
@@ -79,7 +79,7 @@ const Register8 = () => {
                 <hr className="border-blue-800 border-[3px] lg:w-[640px] mx-auto" />
               </div>
             </div>
-            
+
             <div className="flex justify-end mt-12">
               <Button
                 type="submit"

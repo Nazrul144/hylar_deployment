@@ -1,13 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useContext } from "react";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "../ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -18,12 +12,12 @@ import { SignupContext } from "@/providers/SignupProvider";
 // Zod schema: at least one must be true
 const formSchema = z
   .object({
-    pushNotification: z.boolean(),
-    emailUpdate: z.boolean(),
-    smsUpdate: z.boolean(),
+    agreed_to_push_marketing: z.boolean(),
+    agreed_to_email_marketing: z.boolean(),
+    agreed_to_sms_marketing: z.boolean(),
   })
   .refine(
-    (data) => data.pushNotification || data.emailUpdate || data.smsUpdate,
+    (data) => data.agreed_to_push_marketing || data.agreed_to_email_marketing || data.agreed_to_sms_marketing,
     {
       message: "At least one option must be selected",
       path: ["generalError"], // attach to a virtual field
@@ -37,14 +31,14 @@ const Register2 = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pushNotification: false,
-      emailUpdate: false,
-      smsUpdate: false,
+      agreed_to_push_marketing: false,
+      agreed_to_email_marketing: false,
+      agreed_to_sms_marketing: false,
     },
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data);
+    data;
     setSignupData((prev) => ({ ...prev, ...data }));
     router.push("/register/register2/register3");
   };
@@ -71,7 +65,8 @@ const Register2 = () => {
           Marketing Preferences
         </h1>
         <p className="text-center text-lg text-gray-700 mb-4">
-          Can we contact you with promotions and updates to help you get the most out of your Blue Light Card?
+          Can we contact you with promotions and updates to help you get the
+          most out of your Blue Light Card?
         </p>
 
         <Form {...form}>
@@ -83,9 +78,9 @@ const Register2 = () => {
 
             <div className="flex flex-col gap-4 items-start ml-8">
               {[
-                { name: "pushNotification", label: "Push Notification" },
-                { name: "emailUpdate", label: "Email Update" },
-                { name: "smsUpdate", label: "SMS Update" },
+                { name: "agreed_to_push_marketing", label: "Push Notification" },
+                { name: "agreed_to_email_marketing", label: "Email Update" },
+                { name: "agreed_to_sms_marketing", label: "SMS Update" },
               ].map((opt) => (
                 <FormField
                   key={opt.name}

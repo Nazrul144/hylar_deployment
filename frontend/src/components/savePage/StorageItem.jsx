@@ -40,7 +40,7 @@ const StorageItem = () => {
                   className="border-2 rounded-none text-lg"
                   variant="none"
                 >
-                  <Link href={"/redeem_details"}>Redeem {">>"}</Link>
+                   <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
                 <Button
                   onClick={() => removeBookmark(item.id)}

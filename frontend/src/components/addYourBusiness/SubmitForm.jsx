@@ -26,18 +26,21 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Name Should be at least 2 character" })
     .max(150),
-    email: z.string().min(1, { message: "Email is required" }).email({ message: "Invalid email address" }),
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email address" }),
   phone: z
     .string()
     .trim()
     .min(11, { message: "Phone number must be at least 11 digits" })
     .max(14, { message: "Phone number must not exceed 14 digits" })
     .regex(/^\+?[1-9]\d{6,14}$/, {
-  message: "Enter a valid phone number",
-}),
+      message: "Enter a valid phone number",
+    }),
 
   textArea: z.string().min(2, { message: "It's too short" }),
-  fileUpload: z.string()
+  fileUpload: z.string(),
 });
 
 const SubmitForm = () => {
@@ -51,13 +54,13 @@ const SubmitForm = () => {
       email: "",
       phone: "",
       textArea: "",
-      fileUpload: ""
+      fileUpload: "",
     },
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data);
-    form.reset()
+    data;
+    form.reset();
   };
 
   return (
@@ -212,9 +215,16 @@ const SubmitForm = () => {
                 name="fileUpload"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-2xl">Attachments(Optional)</FormLabel>
+                    <FormLabel className="text-2xl">
+                      Attachments(Optional)
+                    </FormLabel>
                     <FormControl>
-                      <Input type="file" placeholder="Add file or Drop file here" {...field} className="w-full"/>
+                      <Input
+                        type="file"
+                        placeholder="Add file or Drop file here"
+                        {...field}
+                        className="w-full"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -222,7 +232,12 @@ const SubmitForm = () => {
               />
             </div>
 
-            <Button className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer " type="submit">Submit Your Application</Button>
+            <Button
+              className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer "
+              type="submit"
+            >
+              Submit Your Application
+            </Button>
           </form>
         </Form>
       </div>
@@ -231,4 +246,3 @@ const SubmitForm = () => {
 };
 
 export default SubmitForm;
-

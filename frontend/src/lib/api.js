@@ -10,7 +10,7 @@ export const getAllCategoriesData = async()=>{
         throw new Error("Fail to fetch categories")
     }
     const result = await res.json()
-    console.log("result", result)
+    ("result", result)
     return result.data || []
     } catch (error) {
         console.error("Somethings is wrong with fatching data..!!", error)

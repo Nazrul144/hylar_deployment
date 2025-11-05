@@ -19,31 +19,30 @@ import { SignupContext } from "@/providers/SignupProvider";
 const formSchema = z.object({
   status: z.string().min(1, { message: "Select any one" }),
   job: z.string().min(1, { message: "Select any one" }),
-  employer: z.string().min(1, {message: "Selece any one"})
+  employer: z.string().min(1, { message: "Selece any one" }),
 });
 
 const Register5 = () => {
+  const router = useRouter();
 
-  const router = useRouter()
-
-  const {signupData, setSignupData} = useContext(SignupContext)
-
+  const { signupData, setSignupData } = useContext(SignupContext);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       status: "Employed",
       job: "NHS",
-      employer: "Education"
+      employer: "Education",
     },
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data);
-    setSignupData((prev)=>({
-      ...prev, ...data
-    }))
-    router.push("/register/register2/register3/register4/register5/register6")
+    data;
+    setSignupData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+    router.push("/register/register2/register3/register4/register5/register6");
   };
 
   return (
@@ -82,7 +81,10 @@ const Register5 = () => {
                         EMPLOYMENT STATUS
                       </FormLabel>
                       <FormControl>
-                        <select {...field} className="border-1 border-gray-200 rounded-sm p-2">
+                        <select
+                          {...field}
+                          className="border-1 border-gray-200 rounded-sm p-2"
+                        >
                           <option>Employed</option>
                           <option>Retired</option>
                           <option>Volunteer</option>
@@ -95,65 +97,71 @@ const Register5 = () => {
               </div>
               <div className="mb-6">
                 <FormField
-                control={form.control}
-                name="job"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="common-text font-bold">
-                      EMPLOYER
-                    </FormLabel>
-                    <FormControl>
-                      <select {...field} className="border-1 border-gray-200 rounded-sm p-2">
-                        <option>NHS</option>
-                        <option>Armed Force</option>
-                        <option>Police</option>
-                        <option>Fire Service</option>
-                        <option>Tech</option>
-                        <option>Essential Retail</option>
-                        <option>Childcare</option>
-                        <option>Education</option>
-                        <option>Ambulance Service</option>
-                        <option>Apha</option>
-                        <option>Blood Bike</option>
-                        <option>Dental Practice</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  control={form.control}
+                  name="job"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="common-text font-bold">
+                        EMPLOYER
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="border-1 border-gray-200 rounded-sm p-2"
+                        >
+                          <option>NHS</option>
+                          <option>Armed Force</option>
+                          <option>Police</option>
+                          <option>Fire Service</option>
+                          <option>Tech</option>
+                          <option>Essential Retail</option>
+                          <option>Childcare</option>
+                          <option>Education</option>
+                          <option>Ambulance Service</option>
+                          <option>Apha</option>
+                          <option>Blood Bike</option>
+                          <option>Dental Practice</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <div>
                 <FormField
-                control={form.control}
-                name="employer"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="common-text font-bold">
-                      EMPLOYER
-                    </FormLabel>
-                    <FormControl>
-                      <select {...field} className="border-1 border-gray-200 rounded-sm p-2">
-                        <option>Ambulance Service</option>
-                        <option>Fire Service</option>
-                        <option>HM Coastguard</option>
-                        <option>Independent Lifeboat</option>
-                        <option>NHS</option>
-                        <option>Armed Force</option>
-                        <option>Police</option>
-                        <option>Tech</option>
-                        <option>Essential Retail</option>
-                        <option>Childcare</option>
-                        <option>Education</option>
-                        <option>Red Cross</option>
-                        <option>RNLI</option>
-                        <option>Search and Rescue</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  control={form.control}
+                  name="employer"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="common-text font-bold">
+                        EMPLOYER
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="border-1 border-gray-200 rounded-sm p-2"
+                        >
+                          <option>Ambulance Service</option>
+                          <option>Fire Service</option>
+                          <option>HM Coastguard</option>
+                          <option>Independent Lifeboat</option>
+                          <option>NHS</option>
+                          <option>Armed Force</option>
+                          <option>Police</option>
+                          <option>Tech</option>
+                          <option>Essential Retail</option>
+                          <option>Childcare</option>
+                          <option>Education</option>
+                          <option>Red Cross</option>
+                          <option>RNLI</option>
+                          <option>Search and Rescue</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <Button
                 className="w-full mt-4 bg-blue-900 text-white cursor-pointer"

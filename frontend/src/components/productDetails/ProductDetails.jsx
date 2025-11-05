@@ -20,7 +20,7 @@ const ProductDetails = ({ id }) => {
     seconds: 0,
   });
 
-  console.log(singleItem);
+  singleItem;
 
   const formatNumber = (num) => String(num).padStart(2, "0");
 

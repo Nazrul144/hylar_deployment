@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import FAQ from "@/components/addYourBusiness/FAQ";
 import Header from "@/components/addYourBusiness/Header";
@@ -12,12 +12,12 @@ import React, { useContext } from "react";
 
 const BusinessPage = () => {
   const user = useContext(UserContext); // context থেকে user info নাও
-  console.log("user is :", user);
+ 
 
   return (
     <div>
-      {user?.isLoggedIn ? (   // user login আছে কিনা check করো
-        <BlogPage/>
+      {user?.isLoggedIn ? ( // user login আছে কিনা check করো
+        <BlogPage />
       ) : (
         <>
           <Header />

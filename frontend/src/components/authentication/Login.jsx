@@ -47,24 +47,26 @@ const Login = () => {
     },
   });
 
-const handleLoginSubmit = async (data) => {
-  try {
-    const res = await fetch("https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/accounts/login", { // 👉 এখানে তোমার backend URL বসাও
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data), // form data পাঠানো হচ্ছে
-      
-    });
+  const handleLoginSubmit = async (data) => {
+    try {
+      const res = await fetch(
+        "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/accounts/login",
+        {
+          // 👉 এখানে তোমার backend URL বসাও
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data), // form data পাঠানো হচ্ছে
+        }
+      );
 
-    const result = await res.json();
-    console.log("Response:", result);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
+      const result = await res.json();
+      ("Response:", result);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <div>
@@ -148,7 +150,8 @@ const handleLoginSubmit = async (data) => {
                           <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
                             Password
                           </Label>
-                          <Input type="password"
+                          <Input
+                            type="password"
                             {...field}
                             className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
                           />
@@ -157,10 +160,17 @@ const handleLoginSubmit = async (data) => {
                       </FormItem>
                     )}
                   />
-                  <Link href={'/createpass'} className="text-blue-500 mt-2 italic lg:ml-50 underline">Forgot Pawwrod</Link>
+                  <Link
+                    href={"/createpass"}
+                    className="text-blue-500 mt-2 italic lg:ml-50 underline"
+                  >
+                    Forgot Pawwrod
+                  </Link>
                 </div>
-                
-                <Button className="w-full bg-blue-900 text-white" type="submit">Login</Button>
+
+                <Button className="w-full bg-blue-900 text-white" type="submit">
+                  Login
+                </Button>
               </form>
               f
             </Form>

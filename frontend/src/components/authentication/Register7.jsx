@@ -57,15 +57,13 @@ const Register7 = () => {
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data);
+    data;
     setSignupData((prev) => ({ ...prev, ...data }));
     router.push(
       "/register/register2/register3/register4/register5/register6/register7/register8"
     );
   };
 
-
-  
   return (
     <div>
       <div className="lg:w-[803px] lg:h-[761px] mx-auto mt-14 lg:shadow-2xl relative">
@@ -76,7 +74,7 @@ const Register7 = () => {
             height={50}
             priority
             alt="header_Image"
-            className="object-cover" 
+            className="object-cover"
           />
         </div>
 
@@ -117,7 +115,7 @@ const Register7 = () => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="country"
               render={({ field }) => (

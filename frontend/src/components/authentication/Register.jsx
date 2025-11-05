@@ -4,7 +4,14 @@ import React, { useContext, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -17,13 +24,12 @@ import { Calendar } from "../ui/calendar";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
 
-
 const formSchema = z.object({
-  firstName: z
+  first_name: z
     .string()
     .min(2, { message: "First Name Should be at least 2 character" })
     .max(50),
-  lastName: z
+  last_name: z
     .string()
     .min(2, { message: "Last Name Should be at least 2 character" })
     .max(50),
@@ -31,30 +37,26 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Email is required" })
     .email({ message: "Invalid email address" }),
-  date: z.date().refine((val) => val !== null, {
-    message: "Please select a date",
+  date_of_birth: z.date().refine((val) => val !== null, {
+    message: "Please select a date_of_birth",
   }),
 
-   phone: z
-      .string()
-      .trim()
-      .min(11, { message: "Phone number must be at least 11 digits" })
-      .max(14, { message: "Phone number must not exceed 14 digits" })
-      .regex(/^\+?[1-9]\d{6,14}$/, {
-    message: "Enter a valid phone number",
-  }),
-
-
+  phone_no: z
+    .string()
+    .trim()
+    .min(11, { message: "phone_no number must be at least 11 digits" })
+    .max(14, { message: "phone_no number must not exceed 14 digits" })
+    // .regex(/^\+?[1-9]\d{6,14}$/, {
+    //   message: "Enter a valid phone_no number",
+    // }),
 });
 
 const Register = () => {
+  const router = useRouter();
 
-  const router = useRouter()
+  const { setSignupData } = useContext(SignupContext);
 
-  const {setSignupData} = useContext(SignupContext)
- 
-
-   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: (custom) => ({
@@ -67,18 +69,18 @@ const Register = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
-      date: null,
-      phone: ""
+      date_of_birth: null,
+      phone_no: "",
     },
   });
 
   const handleFormSubmit = (data) => {
-    console.log(data);
-    setSignupData(data)
-    router.push("/register/register2")
+    data;
+    setSignupData(data);
+    router.push("/register/register2");
   };
 
   return (
@@ -141,7 +143,7 @@ const Register = () => {
                   <div>
                     <FormField
                       control={form.control}
-                      name="firstName"
+                      name="first_name"
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div className="relative">
@@ -161,7 +163,7 @@ const Register = () => {
                   <div>
                     <FormField
                       control={form.control}
-                      name="lastName"
+                      name="last_name"
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div className="relative">
@@ -201,22 +203,23 @@ const Register = () => {
 
                 <FormField
                   control={form.control}
-                  name="date"
+                  name="date_of_birth"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                         <FormLabel>Date of Birth</FormLabel>
+                      <FormLabel>Date of Birth</FormLabel>
                       <FormControl>
                         <div className="flex flex-col gap-3 text-black">
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
-                                id="date"
+                                id="date_of_birth"
                                 className="w-full justify-between font-normal"
                               >
                                 {field.value
-                                  ? field.value.toLocaleDateString()
-                                  : "Select date"}
+                                  ? new Date(field.value).toLocaleDateString()
+                                  : "Select date of birth"}
+
                                 <ChevronDownIcon />
                               </Button>
                             </PopoverTrigger>
@@ -227,8 +230,9 @@ const Register = () => {
                               <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect= {(date)=>{field.onChange(date);
-                                  setOpen(false)
+                                onSelect={(date_of_birth) => {
+                                  field.onChange(date_of_birth);
+                                  setOpen(false);
                                 }}
                                 captionLayout="dropdown"
                                 fromYear={1950}
@@ -245,27 +249,31 @@ const Register = () => {
                 />
 
                 <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <div className="relative">
-                            <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
-                              Mobile Number
-                            </Label>
-                            <Input 
-                              {...field} placeholder="+44 "
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
-                            />
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  control={form.control}
+                  name="phone_no"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <div className="relative">
+                        <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                          Mobile Number
+                        </Label>
+                        <Input
+                          {...field}
+                          placeholder="+44 "
+                          className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                        />
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-
-
-                <Button className="w-full bg-blue-900 text-white cursor-pointer" type="submit">Continue</Button>
+                <Button
+                  className="w-full bg-blue-900 text-white cursor-pointer"
+                  type="submit"
+                >
+                  Continue
+                </Button>
               </form>
             </Form>
 
@@ -294,4 +302,3 @@ const Register = () => {
 };
 
 export default Register;
-

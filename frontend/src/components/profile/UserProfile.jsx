@@ -2,207 +2,208 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Card, CardContent } from '../ui/card';
-import { CreditCard, Globe, Mail, MapPin, Phone, Upload, User } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Globe, Upload, CreditCard } from 'lucide-react';
 import { Button } from '../ui/button';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 const UserProfile = () => {
-  // File states
+  // Editable photo state
   const [photo, setPhoto] = useState(null);
-  const [idCard, setIdCard] = useState(null);
 
-  // Form state
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Form data (static data for now)
   const [formData, setFormData] = useState({
-    username: 'John Doe',
-    email: 'john@example.com',
-    phone: '',
-    country: '',
-    city: '',
-    status: 'Active',
-    address: '',
-    postCode: ''
+    first_name: 'John',
+    last_name: 'Doe',
+    address_line1: '123 Main Street',
+    address_line2: 'Apt 4B',
+    city: 'New York',
+    country: 'USA',
+    employer: 'Acme Corp',
+    employment_status: 'Full-time',
+    id_card_front: 'id_front.png',
+    id_card_back: 'id_back.png',
+    job_details: 'Software Engineer',
+    postcode: '10001',
+    profile_picture: null,
   });
 
-  // Handlers for file uploads
-  const handlePhotoChange = (e) => setPhoto(e.target.files[0]);
-  const handleIdChange = (e) => setIdCard(e.target.files[0]);
-
-  // Handler for text inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle update profile
+  const handlePhotoChange = (e) => {
+    setPhoto(e.target.files[0]);
+  };
+
   const handleUpdate = async () => {
     try {
       const payload = new FormData();
-      payload.append('photo', photo);
-      payload.append('idCard', idCard);
-      Object.keys(formData).forEach(key => payload.append(key, formData[key]));
+      if (photo) payload.append('profile_picture', photo);
+      payload.append('first_name', formData.first_name);
+      payload.append('last_name', formData.last_name);
 
-      // Send data to backend API
-      const res = await fetch('/api/update-profile', {
-        method: 'POST',
-        body: payload
-      });
-      const data = await res.json();
-      toast.success("Profile updated successfully!")
+      toast.success('Profile updated successfully!');
+      setIsModalOpen(false);
     } catch (err) {
       console.error(err);
-      alert('Failed to update profile.');
+      toast.error('Failed to update profile');
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 p-6">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-3xl"
+        className="w-full max-w-4xl"
       >
-        <Card className="shadow-2xl rounded-2xl overflow-hidden bg-white/70 backdrop-blur-md hover:shadow-blue-200 transition-all">
-          <CardContent className="p-8">
+        <Card className="shadow-xl rounded-2xl bg-white p-6">
+          <CardContent>
             <div className="flex flex-col md:flex-row items-center gap-8">
-              {/* Profile Photo */}
+              {/* Profile Picture */}
               <div className="flex flex-col items-center">
-                <div className="relative group">
-                  <img
-                    src={photo ? URL.createObjectURL(photo) : '/default-user.png'}
-                    alt="User Avatar"
-                    className="w-36 h-36 rounded-full object-cover border-4 border-blue-500 shadow-md group-hover:shadow-blue-300 transition-all"
+                <div className="relative">
+                  <Image 
+                    src={photo ? URL.createObjectURL(photo) : '/profile.png'}
+                    width={50}
+                    height={50}
+                    alt="Profile Picture"
+                    className="w-36 h-36 rounded-full object-cover border-4 border-blue-500 shadow-md"
                   />
-                  <label
-                    htmlFor="photoUpload"
-                    className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600 shadow-md"
-                  >
-                    <Upload size={16} />
-                  </label>
-                  <input type="file" id="photoUpload" className="hidden" onChange={handlePhotoChange} />
                 </div>
-                <h2 className="mt-4 text-xl font-semibold text-gray-700">{formData.username}</h2>
-                <p className="text-gray-500">{formData.status}</p>
+                <h2 className="mt-4 text-xl font-semibold">{formData.first_name} {formData.last_name}</h2>
               </div>
 
-              {/* Profile Info */}
+              {/* Profile Info (read-only) */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <User className="text-blue-500" size={18} />
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    placeholder="Username"
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <Mail className="text-blue-500" size={18} />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Email"
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <Phone className="text-blue-500" size={18} />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="Phone Number"
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <Globe className="text-blue-500" size={18} />
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    placeholder="Country"
-                    className="w-full outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
+                <div className="flex items-center gap-2 border-b pb-2">
                   <MapPin className="text-blue-500" size={18} />
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    placeholder="City"
-                    className="w-full outline-none bg-transparent"
-                  />
+                  <input type="text" value={formData.address_line1} readOnly className="w-full bg-transparent outline-none" />
                 </div>
 
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <input
-                    type="text"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                    placeholder="User Status"
-                    className="w-full outline-none bg-transparent"
-                  />
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <MapPin className="text-blue-500" size={18} />
+                  <input type="text" value={formData.address_line2} readOnly className="w-full bg-transparent outline-none" />
                 </div>
 
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Globe className="text-blue-500" size={18} />
+                  <input type="text" value={formData.city} readOnly className="w-full bg-transparent outline-none" />
+                </div>
+
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Globe className="text-blue-500" size={18} />
+                  <input type="text" value={formData.country} readOnly className="w-full bg-transparent outline-none" />
+                </div>
+
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <User className="text-blue-500" size={18} />
+                  <input type="text" value={formData.employer} readOnly className="w-full bg-transparent outline-none" />
+                </div>
+
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <User className="text-blue-500" size={18} />
+                  <input type="text" value={formData.employment_status} readOnly className="w-full bg-transparent outline-none" />
+                </div>
+
+                <div className="flex items-center gap-2 border-b pb-2">
                   <CreditCard className="text-blue-500" size={18} />
-                  <label className="text-gray-600 cursor-pointer hover:text-blue-500">
-                    Upload ID Card
-                    <input type="file" className="hidden" onChange={handleIdChange} />
-                  </label>
-                  {idCard && <span className="ml-2 text-sm text-green-600">{idCard.name}</span>}
+                  <input type="text" value={formData.id_card_front} readOnly className="w-full bg-transparent outline-none" />
                 </div>
 
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="Address Line"
-                    className="w-full outline-none bg-transparent"
-                  />
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <CreditCard className="text-blue-500" size={18} />
+                  <input type="text" value={formData.id_card_back} readOnly className="w-full bg-transparent outline-none" />
                 </div>
 
-                <div className="flex items-center gap-2 border-b pb-2 hover:border-blue-400 transition-all">
-                  <input
-                    type="text"
-                    name="postCode"
-                    value={formData.postCode}
-                    onChange={handleInputChange}
-                    placeholder="Post Code"
-                    className="w-full outline-none bg-transparent"
-                  />
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <User className="text-blue-500" size={18} />
+                  <input type="text" value={formData.job_details} readOnly className="w-full bg-transparent outline-none" />
+                </div>
+
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <MapPin className="text-blue-500" size={18} />
+                  <input type="text" value={formData.postcode} readOnly className="w-full bg-transparent outline-none" />
                 </div>
               </div>
             </div>
 
-            {/* Update Button */}
+            {/* Update User Button */}
             <div className="flex justify-end mt-8">
               <Button
-                className="bg-blue-500 text-white hover:bg-blue-600 rounded-xl shadow-md hover:shadow-lg transition-all px-6 py-2"
-                onClick={handleUpdate}
+                className="bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600"
+                onClick={() => setIsModalOpen(true)}
               >
-                Update Profile
+                Update User
               </Button>
             </div>
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Modal for updating editable fields */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-6 w-96 shadow-xl relative">
+            <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
+
+            {/* First Name */}
+            <div className="mb-4">
+              <label className="block mb-1">First Name</label>
+              <input
+                type="text"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                className="w-full border px-3 py-2 rounded-md outline-none"
+              />
+            </div>
+
+            {/* Last Name */}
+            <div className="mb-4">
+              <label className="block mb-1">Last Name</label>
+              <input
+                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                className="w-full border px-3 py-2 rounded-md outline-none"
+              />
+            </div>
+
+            {/* Profile Picture */}
+            <div className="mb-4">
+              <label className="block mb-1 cursor-pointer">
+                Upload Profile Picture
+                <input type="file" className="hidden" onChange={handlePhotoChange} />
+              </label>
+              {photo && <span className="text-sm text-green-600">{photo.name}</span>}
+            </div>
+
+            {/* Modal Buttons */}
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                className="bg-gray-400 text-white rounded-md px-4 py-2"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-blue-500 text-white rounded-md px-4 py-2"
+                onClick={handleUpdate}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

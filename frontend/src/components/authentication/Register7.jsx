@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -13,21 +13,22 @@ import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import Select from "react-select";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
 import countryList from "react-select-country-list";
+import { BASE_URL } from "@/config/config";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  address1: z
+  address_line1: z
     .string()
     .min(2, { message: "Please enter a valid address line 1" })
     .max(150),
-  address2: z.string().optional(),
-  town: z
+  address_line2: z.string().optional(),
+  city: z
     .string()
-    .min(2, { message: "Please provide a valid town or city name" })
+    .min(2, { message: "Please provide a valid city or city name" })
     .max(150),
   country: z
     .string()
@@ -41,27 +42,64 @@ const formSchema = z.object({
 
 const Register7 = () => {
   const router = useRouter();
-
-  const { signupData, setSignupData } = useContext(SignupContext);
-  const countries = countryList().getData(); // [{label: "Afghanistan", value: "AF"}, ...]
+  const { userProfile, setUserProfile } = useContext(SignupContext);
+  const countries = countryList().getData();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      address1: "",
-      address2: "",
-      town: "",
-      country: "",
+      address_line1: "",
+      address_line2: "",
+      city: "",
+      country: "United States",
       postcode: "",
     },
   });
 
-  const handleFormSubmit = (data) => {
-    data;
-    setSignupData((prev) => ({ ...prev, ...data }));
-    router.push(
-      "/register/register2/register3/register4/register5/register6/register7/register8"
-    );
+  const handleFormSubmit = async (data) => {
+    const finalProfileData = { ...userProfile, ...data };
+
+    setUserProfile(finalProfileData);
+
+    try {
+      const token = localStorage.getItem("access_token");
+
+      const formData = new FormData();
+      Object.entries(finalProfileData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          // ✅ handle FileList fields correctly
+          if (key === "id_card_front" || key === "id_card_back") {
+            if (value instanceof FileList && value.length > 0) {
+              formData.append(key, value[0]);
+            }
+          } else {
+            formData.append(key, value);
+          }
+        }
+      });
+
+      const res = await fetch(`${BASE_URL}/api/profiles/`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const result = await res.json();
+      console.log(result);
+
+      if (!res.ok) {
+        toast.error(result.detail || "Failed to update profile");
+        return;
+      }
+
+      toast.success("Submited Successfully!");
+      router.push("/register/register2/register3/register4/register5/register6/register7/register8");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -89,11 +127,11 @@ const Register7 = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}
-            className="space-y-4 lg:px-12 "
+            className="space-y-4 lg:px-12"
           >
             <FormField
               control={form.control}
-              name="address1"
+              name="address_line1"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -105,7 +143,7 @@ const Register7 = () => {
             />
             <FormField
               control={form.control}
-              name="address2"
+              name="address_line2"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -118,23 +156,29 @@ const Register7 = () => {
             <FormField
               control={form.control}
               name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Select
-                      options={countries} // your country array
-                      menuPlacement="bottom" // always open downward
-                      placeholder="Select country"
-                      onChange={(option) => field.onChange(option.label)} // save selected country
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const selectedOption = countries.find(
+                  (c) => c.label === field.value
+                );
+                return (
+                  <FormItem>
+                    <FormControl>
+                      <Select
+                        options={countries}
+                        menuPlacement="bottom"
+                        placeholder="Select country"
+                        value={selectedOption || null}
+                        onChange={(option) => field.onChange(option.label)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
             <FormField
               control={form.control}
-              name="town"
+              name="city"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -167,9 +211,8 @@ const Register7 = () => {
                 </Button>
               </div>
               <div>
-                <Button className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1">
-                  <span className="text-lg font-semibold">Next</span>
-                  <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+                <Button className="common-bg py-2.5 px-5 text-lg cursor-pointer rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1">
+                  Submit
                 </Button>
               </div>
             </div>

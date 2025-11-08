@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -17,28 +17,26 @@ import { useRouter } from "next/navigation";
 import { SignupContext } from "@/providers/SignupProvider";
 
 const formSchema = z.object({
-  status: z.string().min(1, { message: "Select any one" }),
-  job: z.string().min(1, { message: "Select any one" }),
-  employer: z.string().min(1, { message: "Selece any one" }),
+  employment_status: z.string().min(1, { message: "Select any one" }),
+  job_details: z.string().min(1, { message: "Select any one" }),
+  employer: z.string().min(1, { message: "Select any one" }),
 });
 
 const Register5 = () => {
   const router = useRouter();
-
-  const { signupData, setSignupData } = useContext(SignupContext);
+  const { setUserProfile } = useContext(SignupContext);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: "Employed",
-      job: "NHS",
-      employer: "Education",
+      employment_status: "employed",
+      job_details: "nhs",
+      employer: "education",
     },
   });
 
   const handleFormSubmit = (data) => {
-    data;
-    setSignupData((prev) => ({
+    setUserProfile((prev) => ({
       ...prev,
       ...data,
     }));
@@ -67,14 +65,14 @@ const Register5 = () => {
           you're eligible.
         </h3>
 
-        {/* Form */}
         <div className="lg:w-2xl mx-auto p-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+              {/* EMPLOYMENT STATUS */}
               <div className="mb-4">
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="employment_status"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="common-text font-bold">
@@ -85,9 +83,9 @@ const Register5 = () => {
                           {...field}
                           className="border-1 border-gray-200 rounded-sm p-2"
                         >
-                          <option>Employed</option>
-                          <option>Retired</option>
-                          <option>Volunteer</option>
+                          <option value="employed">Employed</option>
+                          <option value="retired">Retired</option>
+                          <option value="volunteer">Volunteer</option>
                         </select>
                       </FormControl>
                       <FormMessage />
@@ -95,40 +93,9 @@ const Register5 = () => {
                   )}
                 />
               </div>
+
+              {/* EMPLOYER */}
               <div className="mb-6">
-                <FormField
-                  control={form.control}
-                  name="job"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="common-text font-bold">
-                        EMPLOYER
-                      </FormLabel>
-                      <FormControl>
-                        <select
-                          {...field}
-                          className="border-1 border-gray-200 rounded-sm p-2"
-                        >
-                          <option>NHS</option>
-                          <option>Armed Force</option>
-                          <option>Police</option>
-                          <option>Fire Service</option>
-                          <option>Tech</option>
-                          <option>Essential Retail</option>
-                          <option>Childcare</option>
-                          <option>Education</option>
-                          <option>Ambulance Service</option>
-                          <option>Apha</option>
-                          <option>Blood Bike</option>
-                          <option>Dental Practice</option>
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div>
                 <FormField
                   control={form.control}
                   name="employer"
@@ -142,20 +109,28 @@ const Register5 = () => {
                           {...field}
                           className="border-1 border-gray-200 rounded-sm p-2"
                         >
-                          <option>Ambulance Service</option>
-                          <option>Fire Service</option>
-                          <option>HM Coastguard</option>
-                          <option>Independent Lifeboat</option>
-                          <option>NHS</option>
-                          <option>Armed Force</option>
-                          <option>Police</option>
-                          <option>Tech</option>
-                          <option>Essential Retail</option>
-                          <option>Childcare</option>
-                          <option>Education</option>
-                          <option>Red Cross</option>
-                          <option>RNLI</option>
-                          <option>Search and Rescue</option>
+                          <option value="ambulance_service">
+                            Ambulance Service
+                          </option>
+                          <option value="fire_service">Fire Service</option>
+                          <option value="hm_coastguard">HM Coastguard</option>
+                          <option value="independent_lifeboat">
+                            Independent Lifeboat
+                          </option>
+                          <option value="nhs">NHS</option>
+                          <option value="armed_force">Armed Force</option>
+                          <option value="police">Police</option>
+                          <option value="tech">Tech</option>
+                          <option value="essential_retail">
+                            Essential Retail
+                          </option>
+                          <option value="childcare">Childcare</option>
+                          <option value="education">Education</option>
+                          <option value="red_cross">Red Cross</option>
+                          <option value="rnli">RNLI</option>
+                          <option value="search_and_rescue">
+                            Search and Rescue
+                          </option>
                         </select>
                       </FormControl>
                       <FormMessage />
@@ -163,6 +138,48 @@ const Register5 = () => {
                   )}
                 />
               </div>
+
+              {/* JOB DETAILS */}
+              <div>
+                <FormField
+                  control={form.control}
+                  name="job_details"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="common-text font-bold">
+                        JOB DETAILS
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="border-1 border-gray-200 rounded-sm p-2"
+                        >
+                          <option value="nhs">NHS</option>
+                          <option value="armed_force">Armed Force</option>
+                          <option value="police">Police</option>
+                          <option value="fire_service">Fire Service</option>
+                          <option value="tech">Tech</option>
+                          <option value="essential_retail">
+                            Essential Retail
+                          </option>
+                          <option value="childcare">Childcare</option>
+                          <option value="education">Education</option>
+                          <option value="ambulance_service">
+                            Ambulance Service
+                          </option>
+                          <option value="apha">Apha</option>
+                          <option value="blood_bike">Blood Bike</option>
+                          <option value="dental_practice">
+                            Dental Practice
+                          </option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <Button
                 className="w-full mt-4 bg-blue-900 text-white cursor-pointer"
                 type="submit"

@@ -10,7 +10,7 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import toast from "react-hot-toast";
 import { BASE_URL } from "@/config/config";
 import { SignupContext } from "@/providers/SignupProvider";
-import { email } from "zod";
+import Swal from "sweetalert2";
 
 const Register4 = () => {
   const [isVerifying, setIsVerifying] = useState(false);
@@ -34,80 +34,85 @@ const Register4 = () => {
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
-
-
   const handleOtpVerify = async () => {
-  if (otp.length !== 6) {
-    toast.error("Please enter a 6-digit OTP");
-    return;
-  }
-
-  setIsVerifying(true);
-  try {
-    console.log("Email and OTP", { email: userEmail, token: otp });
-
-    const res = await fetch(`${BASE_URL}/api/accounts/verify`, { 
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: userEmail.trim(), 
-        token: otp.trim(),  
-      }),
-    });
-
-    const data = await res.json();
-    console.log("Verify Response:", data);
-
-    if (data.status === "success" && data.status_code === 200) {
-      toast.success(data.detail || "Email verified successfully!");
-
-      // optional: store tokens if returned
-      localStorage.setItem("access_token", data.data?.access_token || "");
-      localStorage.setItem("refresh_token", data.data?.refresh_token || "");
-
-      router.push("/register/register2/register3/register4/register5");
-    } else {
-      toast.error(data.detail || "Invalid OTP");
+    if (otp.length !== 6) {
+      toast.error("Please enter a 6-digit OTP");
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to verify OTP");
-  } finally {
-    setIsVerifying(false);
-  }
-};
 
-//Resend OTP
+    setIsVerifying(true);
+    try {
+      const res = await fetch(`${BASE_URL}/api/accounts/mail-verification/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail.trim(),
+          token: otp.trim(),
+        }),
+      });
 
- const handleResend = async () => {
-  setIsResending(true);
-  setShowAlert(false);
+      const data = await res.json();
+      console.log("Verify Response:", data);
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/accounts/resend-verification`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail.trim() }), 
-    });
-    const data = await res.json();
+      if (data.status === "success" && data.status_code === 200) {
+        Swal.fire({
+          title: "Email Verified Successfully",
+          text: 'Click "OK" to close the modal.',
+          icon: "success",
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "OK",
+        });
 
-    if (data.status === "success" || data.status_code === 200) {
-      setShowAlert(true);
-      setResendCooldown(30); // reset cooldown
-      toast.success("OTP resent successfully!");
-    } else {
-      toast.error(data.detail || "Failed to resend OTP");
+        // optional: store tokens if returned
+        localStorage.setItem("access_token", data.data?.access_token || "");
+        localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+
+      
+
+        router.push("/register/register2/register3/register4/register5");
+      } else {
+        toast.error(data.detail || "Invalid OTP");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to verify OTP");
+    } finally {
+      setIsVerifying(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to resend OTP");
-  } finally {
-    setIsResending(false);
-  }
-};
+  };
 
+  // Resend OTP
+  const handleResend = async () => {
+    setIsResending(true);
 
+    try {
+      const res = await fetch(`${BASE_URL}/api/accounts/resend-verification/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail.trim() }),
+      });
+      const data = await res.json();
 
+      console.log("Data from register4", data);
+
+      if (data.status === "success" || data.status_code === 200) {
+        setShowAlert(true);
+        setResendCooldown(30);
+
+        // ✅ Automatically hide alert after 5 seconds
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 5000);
+      } else {
+        toast.error(data.detail || "Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to resend OTP");
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   return (
     <div>
@@ -158,7 +163,11 @@ const Register4 = () => {
         </div>
 
         {showAlert && (
-          <Alert className="w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500">
+          <Alert
+            className={`w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500 transition-opacity duration-500 ${
+              showAlert ? "opacity-100" : "opacity-0"
+            }`}
+          >
             <AlertTitle>Verification Sent!</AlertTitle>
             <AlertDescription>
               A verification link or OTP has been sent to your email. Please

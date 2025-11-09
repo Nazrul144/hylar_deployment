@@ -67,7 +67,7 @@ const Register7 = () => {
       const formData = new FormData();
       Object.entries(finalProfileData).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          // ✅ handle FileList fields correctly
+
           if (key === "id_card_front" || key === "id_card_back") {
             if (value instanceof FileList && value.length > 0) {
               formData.append(key, value[0]);
@@ -87,7 +87,7 @@ const Register7 = () => {
       });
 
       const result = await res.json();
-      console.log(result);
+
 
       if (!res.ok) {
         toast.error(result.detail || "Failed to update profile");

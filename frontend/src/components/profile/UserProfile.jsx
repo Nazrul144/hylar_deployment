@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { User, MapPin, Globe, CreditCard } from "lucide-react";
-import { Button } from "../ui/button";
 import Image from "next/image";
 import { BASE_URL } from "@/config/config";
 import { UserUpdate } from "../ui/userUpdate";

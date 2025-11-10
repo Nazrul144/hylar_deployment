@@ -85,8 +85,8 @@ const Register8 = () => {
                 type="submit"
                 className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1 cursor-pointer"
               >
-                <span className="text-lg font-semibold">Start</span>
-                <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+                <span className="text-lg font-semibold">Pay Now</span>
+       
               </Button>
             </div>
           </div>

@@ -3,55 +3,62 @@ import React, { useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa";
 import { Button } from "../ui/button";
-import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
+import { reset } from "canvas-confetti";
+
+const formSchema = z.object({
+  username: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters long." })
+    .max(50, { message: "Name cannot exceed 50 characters." }),
+
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email address." })
+    .min(5, { message: "Email must be at least 5 characters long." }),
+
+  subject: z
+    .string()
+    .min(3, { message: "Subject should be at least 3 characters." })
+    .max(100, { message: "Subject cannot exceed 100 characters." }),
+
+  phone: z.string().regex(/^(\+1\s?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, {
+    message: "Please enter a valid US phone number (e.g., +1 555-123-4567).",
+  }),
+
+  agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
+    message:
+      "You must agree to the agreed_to_terms_and_conditions & Conditions",
+  }),
+});
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    phone: "",
-    message: "",
-    agree: false,
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.subject) newErrors.subject = "Subject is required";
-    if (!formData.phone) newErrors.phone = "Phone number is required";
-    if (!formData.message) newErrors.message = "Message is required";
-    if (!formData.agree) newErrors.agree = "You must agree to submit the form";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-    formData;
-    toast.success("Form submitted successfully!");
-    setFormData({
-      name: "",
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
       email: "",
       subject: "",
       phone: "",
-      message: "",
-      agree: false,
-    });
-    setErrors({});
+      agreed_to_terms_and_conditions: false, 
+    },
+  });
+
+  const handleFormSubmit = (data) => {
+    console.log(data);
+    form.reset()
   };
 
   return (
@@ -104,107 +111,98 @@ const Contact = () => {
 
         {/* Right Side (Form) */}
         <div className="lg:w-1/2 mt-12 lg:mt-0 dark:text-white">
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                value={formData.name}
-                onChange={handleChange}
-                className="border border-blue-500 p-3 rounded w-full"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-
-            <div className="md:col-span-1">
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={formData.email}
-                onChange={handleChange}
-                className="border border-blue-500 p-3 rounded w-full"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
-
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                name="subject"
-                placeholder="Subject"
-                value={formData.subject}
-                onChange={handleChange}
-                className="border border-blue-500 p-3 rounded w-full"
-              />
-              {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
-              )}
-            </div>
-
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                name="phone"
-                placeholder="Phone Number"
-                value={formData.phone}
-                onChange={handleChange}
-                className="border border-blue-500 p-3 rounded w-full"
-              />
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-              )}
-            </div>
-
-            <textarea
-              name="message"
-              placeholder="Your Message"
-              value={formData.message}
-              onChange={handleChange}
-              className="border border-blue-500 p-3 rounded w-full md:col-span-2 h-32"
-            />
-            {errors.message && (
-              <p className="text-red-500 text-sm md:col-span-2">
-                {errors.message}
-              </p>
-            )}
-
-            <div className="flex items-start gap-2 md:col-span-2">
-              <input
-                type="checkbox"
-                name="agree"
-                checked={formData.agree}
-                onChange={handleChange}
-                className="mt-1"
-              />
-              <p className="text-sm text-gray-600 dark:text-white">
-                I agree to the terms and conditions and allow this website to
-                store my submitted information.
-              </p>
-            </div>
-            {errors.agree && (
-              <p className="text-red-500 text-sm md:col-span-2">
-                {errors.agree}
-              </p>
-            )}
-
-            <Button
-              type="submit"
-              className="bg-gradient-to-r from-cyan-500 via-blue-600 to-emerald-500 text-white font-semibold px-6 py-5 rounded-lg shadow-md 
-  hover:from-blue-600 hover:via-emerald-500 hover:to-cyan-500 hover:scale-105 transform transition-all duration-300 
-  md:col-span-2 cursor-pointer w-28"
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleFormSubmit)}
+              className="space-y-8"
             >
-              Submit
-            </Button>
-          </form>
+              <div className="lg:grid grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Your Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Your Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Subject" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Phone Number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="agreed_to_terms_and_conditions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center gap-3 mt-4">
+                        <Checkbox
+                          id="agreed_to_terms_and_conditions"
+                          onCheckedChange={field.onChange}
+                          checked={field.value}
+                        />
+                        <Label
+                          htmlFor="agreed_to_terms_and_conditions"
+                          className="text-gray-600 font-medium"
+                        >
+                          I agree to the terms and conditions and allow this
+                          website to store my submitted information
+                        </Label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="cursor-pointer bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 
+             hover:from-indigo-500 hover:via-blue-500 hover:to-sky-500 
+             transition-all duration-500 ease-in-out transform hover:scale-105 
+             text-white font-semibold shadow-md hover:shadow-lg px-6 py-2 rounded-lg"
+              >
+                Submit
+              </Button>
+            </form>
+          </Form>
         </div>
       </div>
     </div>

@@ -1,29 +1,80 @@
 "use client";
-import React, { useState } from "react";
-import { useId } from "react";
+import React, { useState, useId } from "react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { BiSend } from "react-icons/bi";
 import Link from "next/link";
-import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 import { motion } from "framer-motion";
+import { BASE_URL } from "@/config/config";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
   const id = useId();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleSubmit = () => {
-    if (!email) {
-      toast.error("Please Enter email!", { position: "bottom-center" });
+  const handleSubmit = async () => {
+    if (!email.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Email Required",
+        text: "Please enter your email address before subscribing!",
+        confirmButtonColor: "#7BB662",
+      });
       return;
     }
+
     if (!emailRegex.test(email)) {
-      toast.error("Invalid Email", { position: "bottom-center" });
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Email",
+        text: "Please enter a valid email address!",
+        confirmButtonColor: "#7BB662",
+      });
       return;
     }
-    toast.success("Subscription Successful", { position: "bottom-center" });
-    setEmail("");
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/notifications/subscribe-newsletter/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.status_code === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "Subscription Successful!",
+          text: "Thank you for subscribing to our newsletter.",
+          confirmButtonColor: "#7BB662",
+        });
+        setEmail("");
+      } else if (result.status_code === 403) {
+        Swal.fire({
+          icon: "info",
+          title: "Already Subscribed",
+          text: "You are already subscribed with this email.",
+          confirmButtonColor: "#7BB662",
+        });
+      } else {
+        throw new Error("Unexpected response from server");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Something went wrong",
+        text: "Please try again later.",
+        confirmButtonColor: "#7BB662",
+      });
+    }
   };
 
   const columnVariants = {
@@ -34,7 +85,7 @@ const Footer = () => {
   return (
     <div className="mt-24 common-bg">
       <div className="grid lg:grid-cols-5 ml-12 lg:ml-0 lg:px-44 text-[#FAFAFA]">
-        {/*Column-1*/}
+        {/* Column-1: Subscription */}
         <motion.div
           variants={columnVariants}
           initial="hidden"
@@ -66,7 +117,7 @@ const Footer = () => {
           </div>
         </motion.div>
 
-        {/*Column-2*/}
+        {/* Column-2 */}
         <motion.div
           variants={columnVariants}
           initial="hidden"
@@ -82,7 +133,7 @@ const Footer = () => {
           <p className="text-sm mb-2">+88015-88888-9999</p>
         </motion.div>
 
-        {/*Column-3*/}
+        {/* Column-3 */}
         <motion.div
           variants={columnVariants}
           initial="hidden"
@@ -103,7 +154,7 @@ const Footer = () => {
           <p className="text-sm">Shop</p>
         </motion.div>
 
-        {/*Column-4*/}
+        {/* Column-4 */}
         <motion.div
           variants={columnVariants}
           initial="hidden"
@@ -122,7 +173,7 @@ const Footer = () => {
           </Link>
         </motion.div>
 
-        {/*Column-5*/}
+        {/* Column-5 */}
         <motion.div
           variants={columnVariants}
           initial="hidden"

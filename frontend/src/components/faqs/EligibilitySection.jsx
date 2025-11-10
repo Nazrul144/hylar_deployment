@@ -53,7 +53,7 @@ const EligibilitySection = () => {
               <h2 className="text-xl lg:text-3xl font-bold">Who is eligible?</h2>
               <motion.p
                 layout
-                className="text-sm text-gray-600 mt-2"
+                className="text-sm text-gray-600 mt-2 dark:text-white"
               >
                 Contrary to popular belief, Lorem Ipsum is not simply random
                 text. It has roots in a piece of classical Latin literature from

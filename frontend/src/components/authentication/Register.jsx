@@ -137,7 +137,7 @@ const Register = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleFormSubmit)}
-                className="space-y-8"
+                className="space-y-8 text-black"
               >
                 <div className="flex gap-4">
                   <div>
@@ -152,7 +152,7 @@ const Register = () => {
                             </Label>
                             <Input
                               {...field}
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 "
                             />
                           </div>
                           <FormMessage />
@@ -259,7 +259,7 @@ const Register = () => {
                         </Label>
                         <Input
                           {...field}
-                          placeholder="+44 "
+                          placeholder="+1"
                           className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
                         />
                       </div>

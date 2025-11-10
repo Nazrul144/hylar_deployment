@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/popover";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RxAvatar } from "react-icons/rx";
 import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
@@ -26,6 +25,14 @@ import {
 import { Button } from "../ui/button";
 import { IoIosArrowDown } from "react-icons/io";
 import { CategoriesContext } from "@/providers/CategoriesProvider";
+import { BASE_URL } from "@/config/config";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "../ui/tooltip";
+import { ModeToggle } from "../themeProvider/ModeToggle";
 
 // All routes and submenus here:
 const navItems = [
@@ -33,7 +40,6 @@ const navItems = [
   { title: "How It Works", path: "/work" },
   {
     title: "Discover Savings",
-    
   },
   { title: "About Us", path: "/about" },
   { title: "Add Your Business", path: "/business" },
@@ -42,20 +48,57 @@ const navItems = [
 ];
 
 export default function Navbar({ montserrat }) {
-  //Submenu open and close:
   const [open, setOpen] = useState(false);
+  const { categories, loading } = useContext(CategoriesContext);
+  const [photo, setPhoto] = useState(null);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    country: "",
+    employer: "",
+    employment_status: "",
+    id_card_front: "",
+    id_card_back: "",
+    job_details: "",
+    postcode: "",
+    profile_picture: null,
+  });
 
-  const {categories, loading} = useContext(CategoriesContext)
+  useEffect(() => {
+    const fetchUserProfileData = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
 
+      try {
+        const res = await fetch(`${BASE_URL}/api/profiles/`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
+        if (!res.ok) throw new Error("Failed to fetch profile");
+
+        const userData = await res.json();
+        setFormData(userData.data);
+        setPhoto(userData.data.profile_picture || null);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchUserProfileData();
+  }, []);
 
   const handleCloseClick = () => {
     setOpen(false);
   };
 
   const pathName = usePathname();
-
-  //Handle Scrolling:
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -70,7 +113,6 @@ export default function Navbar({ montserrat }) {
     return () => window.removeEventListener("scroll", handleScrolled);
   }, []);
 
-  //Use context api here:
   const { bookmarks } = useContext(BookmarkContext);
   const user = true;
 
@@ -78,13 +120,13 @@ export default function Navbar({ montserrat }) {
     <header
       className={cn(
         "border-b px-4 md:px-6 sticky top-0 z-50 transition-colors duration-300",
-        scrolled ? "bg-white/90 shadow-md backdrop-blur-md" : "bg-white"
+        scrolled
+          ? "bg-white/90 dark:bg-gray-900/90 shadow-md backdrop-blur-md"
+          : "bg-white dark:bg-gray-900"
       )}
     >
       <div className="flex h-16 items-center justify-between gap-4 lg:px-16">
-        {/* Left side */}
         <div className="flex items-center gap-2">
-          {/* Mobile menu trigger */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -121,36 +163,49 @@ export default function Navbar({ montserrat }) {
             </PopoverTrigger>
             <PopoverContent align="start" className="w-64 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
-                {/* For Mobile Device */}
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navItems.map((navItem) =>
-                  navItem.title === "Discover Savings" ? (
-                    <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"}>{navItem.title}</Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent onClick={handleCloseClick}>
-                        {categories.map((feature) => (
-                          <DropdownMenuItem key={feature.id}>
-                            <Link href={`/category/${feature.id}`}>
-                              {feature.name}
-                            </Link>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <NavigationMenuItem key={navItem.path}>
-                      <Link href={navItem.path}>{navItem.title}</Link>
-                    </NavigationMenuItem>
-                  )
-                )}
+                    navItem.title === "Discover Savings" ? (
+                      <DropdownMenu
+                        key={navItem.title}
+                        open={open}
+                        onOpenChange={setOpen}
+                      >
+                        <DropdownMenuTrigger asChild>
+                          <Button className="text-gray-900 dark:text-gray-100" variant={"ghost"}>
+                            {navItem.title}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent onClick={handleCloseClick}>
+                          {categories.map((feature) => (
+                            <DropdownMenuItem key={feature.id} className="dark:text-gray-100">
+                              <Link href={`/category/${feature.id}`}>
+                                {feature.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <NavigationMenuItem key={navItem.path}>
+                        <Link
+                          href={navItem.path}
+                          className={cn(
+                            pathName === navItem.path
+                              ? "text-blue-800 underline font-bold dark:text-blue-400"
+                              : "text-gray-900 dark:text-gray-100"
+                          )}
+                        >
+                          {navItem.title}
+                        </Link>
+                      </NavigationMenuItem>
+                    )
+                  )}
                 </NavigationMenuList>
               </NavigationMenu>
             </PopoverContent>
           </Popover>
 
-          {/* Main nav */}
           <div className="flex items-center gap-6">
             <Link href={"/"} className="text-3xl font-bold italic">
               <Image
@@ -162,18 +217,28 @@ export default function Navbar({ montserrat }) {
               />
             </Link>
 
-            {/* Navigation menu */}
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList className="gap-6">
                 {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
-                    <DropdownMenu key={navItem.title} open={open} onOpenChange={setOpen}>
+                    <DropdownMenu
+                      key={navItem.title}
+                      open={open}
+                      onOpenChange={setOpen}
+                    >
                       <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"}>{navItem.title}<IoIosArrowDown className="mt-0.5" /></Button>
+                        <Button className="text-gray-900 dark:text-gray-100" variant={"ghost"}>
+                          {navItem.title}
+                          <IoIosArrowDown className="mt-0.5" />
+                        </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         {categories.map((category) => (
-                          <DropdownMenuItem key={category.id} onClick={handleCloseClick}>
+                          <DropdownMenuItem
+                            key={category.id}
+                            onClick={handleCloseClick}
+                            className="dark:text-gray-100"
+                          >
                             <Link href={`/category/${category.id}`}>
                               {category.category_name}
                             </Link>
@@ -183,7 +248,16 @@ export default function Navbar({ montserrat }) {
                     </DropdownMenu>
                   ) : (
                     <NavigationMenuItem key={navItem.path}>
-                      <Link href={navItem.path}>{navItem.title}</Link>
+                      <Link
+                        href={navItem.path}
+                        className={cn(
+                          pathName === navItem.path
+                            ? "text-blue-800 underline font-bold dark:text-blue-400"
+                            : "text-gray-900 dark:text-gray-100"
+                        )}
+                      >
+                        {navItem.title}
+                      </Link>
                     </NavigationMenuItem>
                   )
                 )}
@@ -192,45 +266,64 @@ export default function Navbar({ montserrat }) {
           </div>
         </div>
 
-        {/* Right side */}
         <div>
           {user ? (
             <div className="flex items-center gap-2">
-              {/*bookmark icon and user name div*/}
+              <ModeToggle/>
               <div className="flex gap-3 items-center">
                 <div className="relative">
                   <Link href={"/store_item"}>
-                    <FaBookmark className="text-2xl text-blue-600" />
+                    <FaBookmark className="text-2xl text-blue-600 dark:text-blue-400" />
                   </Link>
-
-                  {/* Badge (static example with 3) */}
                   <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {bookmarks.length}
                   </span>
                 </div>
 
-                <div className="hidden md:block font-medium text-gray-700">
-                  User Name
+                <div className="hidden md:block font-medium text-gray-700 dark:text-gray-100">
+                  {/* User Name */}
                 </div>
               </div>
 
-              {/*Profile div*/}
               <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button">
                   <div className="w-10 rounded-full">
-                    <RxAvatar className="text-4xl cursor-pointer hover:bg-gray-100 rounded-full" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image
+                            src={
+                              photo
+                                ? photo.startsWith("http")
+                                  ? photo
+                                  : `${BASE_URL}${photo}`
+                                : "/profile.png"
+                            }
+                            width={40}
+                            height={40}
+                            alt="Profile Picture"
+                            className="w-10 h-10 rounded-full object-cover border-2 border-gray-500 shadow-md cursor-pointer"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="dark:text-gray-100">
+                          <p>
+                            {formData.first_name} {formData.last_name}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
                 <ul
                   tabIndex={0}
-                  className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                  className="menu menu-sm dropdown-content bg-base-100 dark:bg-gray-800 rounded-box z-1 mt-3 w-52 p-2 shadow"
                 >
                   <li>
                     <Button
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-between"
+                      className="w-full justify-between dark:text-gray-100"
                     >
                       <Link href="/profile">Profile</Link>
                     </Button>
@@ -239,7 +332,7 @@ export default function Navbar({ montserrat }) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-between"
+                      className="w-full justify-between dark:text-gray-100"
                     >
                       Logout
                     </Button>
@@ -253,14 +346,14 @@ export default function Navbar({ montserrat }) {
                 asChild
                 variant="ghost"
                 size="sm"
-                className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg"
+                className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg dark:text-gray-100"
               >
                 <Link href="/login">Log in</Link>
               </Button>
               <Button
                 asChild
                 size="sm"
-                className="font-semibold common-bg px-6 py-5 text-lg"
+                className="font-semibold common-bg px-6 py-5 text-lg dark:text-gray-100"
               >
                 <Link href="/register">Sign Up</Link>
               </Button>
@@ -271,5 +364,3 @@ export default function Navbar({ montserrat }) {
     </header>
   );
 }
-
-

@@ -4,7 +4,7 @@ const Eligible = () => {
   return (
     <div>
       <section className="max-w-6xl mx-auto px-6 py-16">
-      <div className="space-y-20">
+      <div className="space-y-20 dark:text-white">
         {data.map((item, i) => (
           <StepCard
             key={i}

@@ -41,13 +41,13 @@ const Header = () => {
             whileInView={{ scale: [0, 1.2, 1] }} // zoom in to 1.2, then back to 1
             transition={{ duration: 1, ease: "easeInOut" }}
           >
-            <Button className="cursor-pointer hover:bg-common-bg hover:scale-105 transition-all duration-300 common-bg px-4 text-lg font-semibold">
+            <Button className="cursor-pointer hover:bg-common-bg hover:scale-105 transition-all duration-300 common-bg px-4 text-lg font-semibold dark:bg-black dark:text-white">
               Get Started <BsRocketTakeoffFill />
             </Button>
           </motion.div>
         </Link>
       </div>
-      <div className="flex justify-center items-center mt-6 bg-white">
+      <div className="flex justify-center items-center mt-6 bg-white dark:bg-black">
         <div className="grid grid-cols-5 gap-3 px-2">
           {/* Left tall ship */}
           <motion.div

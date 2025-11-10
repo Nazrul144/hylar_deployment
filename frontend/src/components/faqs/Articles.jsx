@@ -29,7 +29,7 @@ const Articles = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={{ ...fadeInUp, visible: { ...fadeInUp.visible, transition: { duration: 0.8, delay: 0.2 } } }}
-          className="text-gray-600 text-center common-text mb-8"
+          className="text-gray-600 text-center common-text mb-8 dark:text-white"
         >
           Please refer to the below articles which may help to resolve your query
         </motion.h1>

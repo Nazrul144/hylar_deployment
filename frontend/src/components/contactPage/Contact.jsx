@@ -62,7 +62,7 @@ const Contact = () => {
           Contact Us
         </h2>
 
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 mt-2 dark:text-white">
           Have a question or want to work with us? Fill out the form and we’ll
           get back to you.
         </p>
@@ -77,19 +77,19 @@ const Contact = () => {
           </h3>
 
           <div className="space-y-4 mt-6">
-            <p className="flex items-center gap-3 text-gray-700">
+            <p className="flex items-center gap-3 text-gray-700 dark:text-white">
               <FaPhoneAlt /> +880 1234 567 890
             </p>
-            <p className="flex items-center gap-3 text-gray-700">
+            <p className="flex items-center gap-3 text-gray-700 dark:text-white">
               <FaEnvelope /> contact@yourcompany.com
             </p>
-            <p className="flex items-center gap-3 text-gray-700">
+            <p className="flex items-center gap-3 text-gray-700 dark:text-white">
               <FaMapMarkerAlt /> 1200 Gulshan Avenue, Dhaka, Bangladesh
             </p>
           </div>
 
           {/* Social Icons */}
-          <div className="flex gap-6 mt-8 text-2xl text-gray-700">
+          <div className="flex gap-6 mt-8 text-2xl text-gray-700 dark:text-white">
             <a href="#">
               <FaInstagram />
             </a>
@@ -103,7 +103,7 @@ const Contact = () => {
         </div>
 
         {/* Right Side (Form) */}
-        <div className="lg:w-1/2 mt-12 lg:mt-0">
+        <div className="lg:w-1/2 mt-12 lg:mt-0 dark:text-white">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -185,7 +185,7 @@ const Contact = () => {
                 onChange={handleChange}
                 className="mt-1"
               />
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-white">
                 I agree to the terms and conditions and allow this website to
                 store my submitted information.
               </p>

@@ -54,7 +54,7 @@ const LatestNews = () => {
           >
             <Link
               href={`newsDetails/${news.slug}`}
-              className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white h-full flex flex-col"
+              className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-black h-full flex flex-col"
             >
               <div className="w-full h-56">
                 <Image
@@ -70,7 +70,7 @@ const LatestNews = () => {
                 <div>
                   <h3 className="text-lg font-bold inter-text">{news.title}</h3>
                   <div
-                    className="text-sm text-gray-600"
+                    className="text-sm text-gray-600 dark:text-gray-200"
                     dangerouslySetInnerHTML={{
                       __html:
                         news.content
@@ -89,9 +89,10 @@ const LatestNews = () => {
       <div className="flex items-center justify-center ">
         <Button
           onClick={() => setShowAll(!showAll)}
-          className="common-bg text-lg mt-10 flex items-center gap-2 hover:scale-105 transition-all duration-300"
+          className="common-bg text-lg mt-10 flex items-center gap-2 hover:scale-105 transition-all duration-300 dark:text-white"
         >
-          {showAll ? "Load Less" : "Load More"} <MdKeyboardDoubleArrowRight />
+          {showAll ? "Load Less" : "Load More"} 
+          {/* <MdKeyboardDoubleArrowRight /> */}
         </Button>
       </div>
     </div>

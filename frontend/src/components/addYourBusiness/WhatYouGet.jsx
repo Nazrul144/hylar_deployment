@@ -28,7 +28,7 @@ const WhatYouGet = () => {
       </motion.div>
 
       {/*Stylish Card Timeline*/}
-      <div className="flex justify-center items-center mt-24 bg-white">
+      <div className="flex justify-center items-center mt-24 bg-white dark:bg-black ">
         <div className="relative flex flex-col items-center w-full max-w-5xl">
           {/* Vertical Line */}
           <div className="absolute top-0 bottom-0 w-6 bg-blue-900 rounded-full"></div>

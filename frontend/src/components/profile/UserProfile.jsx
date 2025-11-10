@@ -53,15 +53,17 @@ const UserProfile = () => {
     fetchUserProfileData();
   }, []);
 
+  console.log("From userProfile:", formData, photo)
+
   return (
-    <div className="flex justify-center items-center  bg-gray-100 p-6">
+    <div className="flex justify-center items-center lg:mt-16 p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-6xl "
       >
-        <Card className="shadow-xl rounded-2xl bg-white p-24">
+        <Card className="shadow-xl rounded-2xl bg-white lg:p-24">
           <CardContent>
             <div className="flex flex-col md:flex-row items-center gap-8">
               {/* Profile Picture */}

@@ -10,6 +10,7 @@ import CategoriesProvider from "@/providers/CategoriesProvider";
 import AuthProvider from "@/providers/AuthProvider";
 import SignupProvider from "@/providers/SignupProvider";
 import { ThemeProvider } from "@/components/themeProvider/theme.provider";
+import { UserProvider } from "@/providers/UserProvider";
 
 
 const geistSans = Geist({
@@ -47,7 +48,8 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >
           <ThemeProvider>
-            <AuthProvider>
+           <UserProvider>
+             <AuthProvider>
             <SignupProvider>
               <CategoriesProvider>
             <BookmarkProvider>
@@ -61,6 +63,7 @@ export default function RootLayout({ children }) {
            </CategoriesProvider>
             </SignupProvider>
            </AuthProvider>
+           </UserProvider>
           </ThemeProvider>
       </body>
     </html>

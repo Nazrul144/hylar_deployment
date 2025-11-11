@@ -6,8 +6,11 @@ import { User, MapPin, Globe, CreditCard } from "lucide-react";
 import Image from "next/image";
 import { BASE_URL } from "@/config/config";
 import { UserUpdate } from "../ui/userUpdate";
+import { useUser } from "@/providers/UserProvider";
+
 
 const UserProfile = () => {
+  const { user, setUser } = useUser(); // use context
   const [photo, setPhoto] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -44,16 +47,27 @@ const UserProfile = () => {
 
         const userData = await res.json();
         setFormData(userData.data);
-        setPhoto(userData.data.profile_picture || null);
+        const profilePhoto =
+          userData.data.profile_picture && userData.data.profile_picture.startsWith("http")
+            ? userData.data.profile_picture
+            : userData.data.profile_picture
+            ? `${BASE_URL}${userData.data.profile_picture}`
+            : "/profile.png";
+        setPhoto(profilePhoto);
+
+        // Update global context
+        setUser({
+          first_name: userData.data.first_name,
+          last_name: userData.data.last_name,
+          photo: profilePhoto,
+        });
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
     };
 
     fetchUserProfileData();
-  }, []);
-
-  console.log("From userProfile:", formData, photo)
+  }, [setUser]);
 
   return (
     <div className="flex justify-center items-center lg:mt-16 p-6">
@@ -70,13 +84,7 @@ const UserProfile = () => {
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <Image
-                    src={
-                      photo
-                        ? photo.startsWith("http")
-                          ? photo
-                          : `${BASE_URL}${photo}`
-                        : "/profile.png"
-                    }
+                    src={photo || "/profile.png"}
                     width={144}
                     height={144}
                     alt="Profile Picture"
@@ -91,41 +99,18 @@ const UserProfile = () => {
               {/* Profile Info */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  {
-                    icon: MapPin,
-                    value: "address_line1",
-                    label: "Address Line 1",
-                  },
-                  {
-                    icon: MapPin,
-                    value: "address_line2",
-                    label: "Address Line 2",
-                  },
+                  { icon: MapPin, value: "address_line1", label: "Address Line 1" },
+                  { icon: MapPin, value: "address_line2", label: "Address Line 2" },
                   { icon: Globe, value: "city", label: "City" },
                   { icon: Globe, value: "country", label: "Country" },
                   { icon: User, value: "employer", label: "Employer" },
-                  {
-                    icon: User,
-                    value: "employment_status",
-                    label: "Employment Status",
-                  },
-                  {
-                    icon: CreditCard,
-                    value: "id_card_front",
-                    label: "ID Card Front",
-                  },
-                  {
-                    icon: CreditCard,
-                    value: "id_card_back",
-                    label: "ID Card Back",
-                  },
+                  { icon: User, value: "employment_status", label: "Employment Status" },
+                  { icon: CreditCard, value: "id_card_front", label: "ID Card Front" },
+                  { icon: CreditCard, value: "id_card_back", label: "ID Card Back" },
                   { icon: User, value: "job_details", label: "Job Details" },
                   { icon: MapPin, value: "postcode", label: "Postcode" },
                 ].map((field) => (
-                  <div
-                    key={field.value}
-                    className="flex items-center gap-2 border-b pb-2"
-                  >
+                  <div key={field.value} className="flex items-center gap-2 border-b pb-2">
                     <field.icon className="text-blue-500" size={18} />
                     <input
                       type="text"
@@ -138,7 +123,7 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* Update Button (non-functional for now) */}
+            {/* Update Button */}
             <div className="flex justify-end mt-8">
               <UserUpdate
                 currentFirstName={formData.first_name}
@@ -148,20 +133,25 @@ const UserProfile = () => {
                   try {
                     const token = localStorage.getItem("access_token");
                     const res = await fetch(`${BASE_URL}/api/profiles/`, {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
+                      headers: { Authorization: `Bearer ${token}` },
                     });
                     if (!res.ok) throw new Error("Failed to reload profile");
                     const updatedData = await res.json();
                     setFormData(updatedData.data);
-                    setPhoto(
-                      updatedData.data.profile_picture
-                        ? updatedData.data.profile_picture.startsWith("http")
-                          ? updatedData.data.profile_picture
-                          : `${BASE_URL}${updatedData.data.profile_picture}`
-                        : "/profile.png"
-                    );
+                    const updatedPhoto =
+                      updatedData.data.profile_picture && updatedData.data.profile_picture.startsWith("http")
+                        ? updatedData.data.profile_picture
+                        : updatedData.data.profile_picture
+                        ? `${BASE_URL}${updatedData.data.profile_picture}`
+                        : "/profile.png";
+                    setPhoto(updatedPhoto);
+
+                    // Update global context
+                    setUser({
+                      first_name: updatedData.data.first_name,
+                      last_name: updatedData.data.last_name,
+                      photo: updatedPhoto,
+                    });
                   } catch (error) {
                     console.error("Profile refresh failed:", error);
                   }

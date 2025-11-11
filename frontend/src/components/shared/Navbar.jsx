@@ -67,6 +67,8 @@ export default function Navbar({ montserrat }) {
     profile_picture: null,
   });
 
+  console.log("Categories:", categories)
+
   useEffect(() => {
     const fetchUserProfileData = async () => {
       const token = localStorage.getItem("access_token");

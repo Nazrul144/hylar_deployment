@@ -33,14 +33,13 @@ import {
   TooltipProvider,
 } from "../ui/tooltip";
 import { ModeToggle } from "../themeProvider/ModeToggle";
+import { UserContext } from "@/providers/UserProvider";
 
 // All routes and submenus here:
 const navItems = [
   { title: "Home", path: "/" },
   { title: "How It Works", path: "/work" },
-  {
-    title: "Discover Savings",
-  },
+  { title: "Discover Savings" },
   { title: "About Us", path: "/about" },
   { title: "Add Your Business", path: "/business" },
   { title: "FAQS", path: "/faqs" },
@@ -50,73 +49,35 @@ const navItems = [
 export default function Navbar({ montserrat }) {
   const [open, setOpen] = useState(false);
   const { categories, loading } = useContext(CategoriesContext);
-  const [photo, setPhoto] = useState(null);
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    address_line1: "",
-    address_line2: "",
-    city: "",
-    country: "",
-    employer: "",
-    employment_status: "",
-    id_card_front: "",
-    id_card_back: "",
-    job_details: "",
-    postcode: "",
-    profile_picture: null,
-  });
-
-  console.log("Categories:", categories)
-
-  useEffect(() => {
-    const fetchUserProfileData = async () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) return;
-
-      try {
-        const res = await fetch(`${BASE_URL}/api/profiles/`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch profile");
-
-        const userData = await res.json();
-        setFormData(userData.data);
-        setPhoto(userData.data.profile_picture || null);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchUserProfileData();
-  }, []);
-
-  const handleCloseClick = () => {
-    setOpen(false);
-  };
+  const { bookmarks } = useContext(BookmarkContext);
+  const { user } = useContext(UserContext);
+  const [photo, setPhoto] = useState("/profile.png");
 
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
+ 
+  useEffect(() => {
+    if (user && user.profile_picture) {
+      const fullUrl = user.profile_picture.startsWith("http")
+        ? user.profile_picture
+        : `${BASE_URL}${user.profile_picture}`;
+      setPhoto(`${fullUrl}?t=${Date.now()}`); 
+    } else {
+      setPhoto("/profile.png");
+    }
+  }, [user]);
+
   useEffect(() => {
     const handleScrolled = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      if (window.scrollY > 10) setScrolled(true);
+      else setScrolled(false);
     };
     addEventListener("scroll", handleScrolled);
     return () => window.removeEventListener("scroll", handleScrolled);
   }, []);
 
-  const { bookmarks } = useContext(BookmarkContext);
-  const user = true;
+  const handleCloseClick = () => setOpen(false);
 
   return (
     <header
@@ -174,13 +135,19 @@ export default function Navbar({ montserrat }) {
                         onOpenChange={setOpen}
                       >
                         <DropdownMenuTrigger asChild>
-                          <Button className="text-gray-900 dark:text-gray-100" variant={"ghost"}>
+                          <Button
+                            className="text-gray-900 dark:text-gray-100"
+                            variant={"ghost"}
+                          >
                             {navItem.title}
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent onClick={handleCloseClick}>
                           {categories.map((feature) => (
-                            <DropdownMenuItem key={feature.id} className="dark:text-gray-100">
+                            <DropdownMenuItem
+                              key={feature.id}
+                              className="dark:text-gray-100"
+                            >
                               <Link href={`/category/${feature.id}`}>
                                 {feature.name}
                               </Link>
@@ -229,7 +196,10 @@ export default function Navbar({ montserrat }) {
                       onOpenChange={setOpen}
                     >
                       <DropdownMenuTrigger asChild>
-                        <Button className="text-gray-900 dark:text-gray-100" variant={"ghost"}>
+                        <Button
+                          className="text-gray-900 dark:text-gray-100"
+                          variant={"ghost"}
+                        >
                           {navItem.title}
                           <IoIosArrowDown className="mt-0.5" />
                         </Button>
@@ -271,7 +241,7 @@ export default function Navbar({ montserrat }) {
         <div>
           {user ? (
             <div className="flex items-center gap-2">
-              <ModeToggle/>
+              <ModeToggle />
               <div className="flex gap-3 items-center">
                 <div className="relative">
                   <Link href={"/store_item"}>
@@ -280,10 +250,6 @@ export default function Navbar({ montserrat }) {
                   <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {bookmarks.length}
                   </span>
-                </div>
-
-                <div className="hidden md:block font-medium text-gray-700 dark:text-gray-100">
-                  {/* User Name */}
                 </div>
               </div>
 
@@ -294,22 +260,19 @@ export default function Navbar({ montserrat }) {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Image
-                            src={
-                              photo
-                                ? photo.startsWith("http")
-                                  ? photo
-                                  : `${BASE_URL}${photo}`
-                                : "/profile.png"
-                            }
+                            src={photo}
                             width={40}
                             height={40}
                             alt="Profile Picture"
                             className="w-10 h-10 rounded-full object-cover border-2 border-gray-500 shadow-md cursor-pointer"
                           />
                         </TooltipTrigger>
-                        <TooltipContent side="bottom" className="dark:text-gray-100">
+                        <TooltipContent
+                          side="bottom"
+                          className="dark:text-gray-100"
+                        >
                           <p>
-                            {formData.first_name} {formData.last_name}
+                            {user.first_name} {user.last_name}
                           </p>
                         </TooltipContent>
                       </Tooltip>

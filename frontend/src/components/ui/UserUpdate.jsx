@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { FiCamera } from "react-icons/fi";
 import { BASE_URL } from "@/config/config";
 import toast from "react-hot-toast";
+import { UserContext } from "@/providers/UserProvider";
 
 export function UserUpdate({
   currentFirstName,
@@ -30,7 +31,7 @@ export function UserUpdate({
   const [preview, setPreview] = useState("/profile.png");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load current user data on modal open
+
   useEffect(() => {
     setFirstName(currentFirstName || "");
     setLastName(currentLastName || "");
@@ -46,7 +47,7 @@ export function UserUpdate({
     }
   }, [currentFirstName, currentLastName, currentPhoto]);
 
-  // ✅ Handle new image change
+
   const handlePhotoChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -55,7 +56,10 @@ export function UserUpdate({
     }
   };
 
-  // ✅ Handle submit
+  const { setUser } = useContext(UserContext);
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -85,7 +89,7 @@ export function UserUpdate({
 
       if (!res.ok) throw new Error(data?.message || "Profile update failed");
 
-      // ✅ Instantly update parent
+
       if (onProfileUpdate) {
         onProfileUpdate(preview, firstName, lastName);
       }
@@ -93,7 +97,7 @@ export function UserUpdate({
       toast.success("Profile updated successfully!");
       setOpen(false);
     } catch (err) {
-      console.error("❌ Profile update failed:", err);
+      console.error(" Profile update failed:", err);
       toast.error("Something went wrong. Try again!");
     } finally {
       setLoading(false);
@@ -102,7 +106,7 @@ export function UserUpdate({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* ✅ Trigger Button */}
+ 
       <DialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
@@ -116,7 +120,7 @@ export function UserUpdate({
         </Button>
       </DialogTrigger>
 
-      {/* ✅ Modal */}
+   
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mx-auto">
@@ -126,7 +130,7 @@ export function UserUpdate({
           </DialogHeader>
 
           <div className="grid gap-4 mt-4">
-            {/* ✅ Profile Image Preview */}
+    
             <div className="flex flex-col items-center gap-2">
               <Label className="text-center">Profile Image</Label>
               <div className="relative w-32 h-32">
@@ -153,7 +157,7 @@ export function UserUpdate({
               />
             </div>
 
-            {/* ✅ First Name */}
+       
             <div className="grid gap-2">
               <Label htmlFor="first-name">First Name</Label>
               <Input
@@ -163,7 +167,7 @@ export function UserUpdate({
               />
             </div>
 
-            {/* ✅ Last Name */}
+         
             <div className="grid gap-2">
               <Label htmlFor="last-name">Last Name</Label>
               <Input
@@ -174,7 +178,6 @@ export function UserUpdate({
             </div>
           </div>
 
-          {/* ✅ Footer Buttons */}
           <DialogFooter className="justify-between mt-5">
             <DialogClose asChild>
               <Button variant="outline" disabled={loading}>

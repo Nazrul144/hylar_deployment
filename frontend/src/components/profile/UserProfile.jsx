@@ -1,16 +1,17 @@
 "use client";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { User, MapPin, Globe, CreditCard } from "lucide-react";
 import Image from "next/image";
 import { BASE_URL } from "@/config/config";
 import { UserUpdate } from "../ui/userUpdate";
-import { useUser } from "@/providers/UserProvider";
+import { UserContext } from "@/providers/UserProvider";
+
 
 
 const UserProfile = () => {
-  const { user, setUser } = useUser(); // use context
+  const { user, setUser } = useContext(UserContext) 
   const [photo, setPhoto] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -56,11 +57,16 @@ const UserProfile = () => {
         setPhoto(profilePhoto);
 
         // Update global context
-        setUser({
-          first_name: userData.data.first_name,
-          last_name: userData.data.last_name,
-          photo: profilePhoto,
-        });
+        // setUser({
+        //   first_name: userData.data.first_name,
+        //   last_name: userData.data.last_name,
+        //   photo: profilePhoto,
+        // });
+         setUser({
+        ...updatedData.data,
+        photo: updatedPhoto,
+      });
+
       } catch (error) {
         console.error("Error fetching profile:", error);
       }

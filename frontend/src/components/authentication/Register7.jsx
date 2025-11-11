@@ -19,6 +19,7 @@ import { SignupContext } from "@/providers/SignupProvider";
 import countryList from "react-select-country-list";
 import { BASE_URL } from "@/config/config";
 import toast from "react-hot-toast";
+import { UserContext } from "@/providers/UserProvider";
 
 const formSchema = z.object({
   address_line1: z
@@ -43,6 +44,7 @@ const formSchema = z.object({
 const Register7 = () => {
   const router = useRouter();
   const { userProfile, setUserProfile } = useContext(SignupContext);
+  const { setUser } = useContext(UserContext);
   const countries = countryList().getData();
 
   const form = useForm({
@@ -93,6 +95,8 @@ const Register7 = () => {
         toast.error(result.detail || "Failed to update profile");
         return;
       }
+      // Update UserContext immediately
+         setUser(result.data);
 
       toast.success("Submited Successfully!");
       router.push("/register/register2/register3/register4/register5/register6/register7/register8");

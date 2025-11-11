@@ -16,8 +16,9 @@ import { Input } from "../ui/input";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
-import { BASE_URL } from "@/config/config";
-import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { UserContext } from "@/providers/UserProvider";
 
 const formSchema = z.object({
   email: z
@@ -49,50 +50,34 @@ const Login = () => {
     },
   });
 
-const handleLoginSubmit = async (data) => {
+  const router = useRouter();
+  const {setUser} = useContext(UserContext)
 
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    toast.error("You are already logged in! Please logout first");
-    return;
-  }
+  const handleLoginSubmit = async (data) => {
+  const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  const result = await res.json();
 
-    const result = await res.json();
-    console.log("Login response:", result);
+  if (result.status_code === 200 || result.status === 202) {
+    toast.success("Login successful");
+    // Save in localStorage
+    localStorage.setItem("access_token", result.access_token);
+    localStorage.setItem("refresh_token", result.refresh_token);
+    localStorage.setItem("user", JSON.stringify(result.user));
+    // Set context
+    setUser(result.user);
 
-    if (result.status_code === 200 || result.status === 202) {
-      toast.success("Login successful");
-
-      localStorage.setItem("access_token", result.access_token);
-      localStorage.setItem("user", JSON.stringify(result.user));
-    } 
-    else if (result.status_code === 400) {
-      toast.error("Invalid email or password");
-    } 
-  
-    else if (result.status_code === 500) {
-      toast.error("Server error! Please try again later ");
-    } 
-    else {
-      toast.error(result?.message || "Unexpected error occurred ");
-    }
-
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error("Network error! Please check your connection");
+    router.push("/"); // redirect to home
+  } else {
+    toast.error(result?.message || "Login failed");
   }
 };
 
-
+ 
 
   return (
     <div>
@@ -144,7 +129,7 @@ const handleLoginSubmit = async (data) => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleLoginSubmit)}
-                className="space-y-8 text-black"
+                className="space-y-8"
               >
                 <div>
                   <FormField

@@ -64,6 +64,7 @@ const Login = () => {
 
     if (result.status_code === 200 || result.status === 202) {
       toast.success(`Welcome back, ${result.data.first_name || "User"}!`);
+      form.reset()
       const userInfo = {
         email: result.data.email,
         first_name: result.data.first_name,

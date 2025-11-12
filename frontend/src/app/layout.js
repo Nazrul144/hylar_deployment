@@ -11,6 +11,7 @@ import AuthProvider from "@/providers/AuthProvider";
 import SignupProvider from "@/providers/SignupProvider";
 import { ThemeProvider } from "@/components/themeProvider/theme.provider";
 import UserProvider from "@/providers/UserProvider";
+import PasswordProvider from "@/providers/PasswordProvider";
 
 
 const geistSans = Geist({
@@ -56,7 +57,9 @@ export default function RootLayout({ children }) {
              <NavHeader />
             <Navbar montserrat={montserrat.className}/>
             <Toaster position="top-center" reverseOrder={false} />
-            {children}
+            <PasswordProvider>
+              {children}
+            </PasswordProvider>
             <SubscribePopup/>
             <Footer/>
            </BookmarkProvider>

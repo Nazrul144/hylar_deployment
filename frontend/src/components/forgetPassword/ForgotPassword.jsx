@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { z } from "zod";
+import { email, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -15,6 +15,10 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/config/config";
+import toast from "react-hot-toast";
+import { useContext } from "react";
+import { PasswordContext } from "@/providers/PasswordProvider";
 
 // Zod schema
 const formSchema = z.object({
@@ -25,18 +29,40 @@ const formSchema = z.object({
 });
 
 const ForgotPassword = () => {
-
-  const router = useRouter()
+  const router = useRouter();
+  const {setPassInfo} = useContext(PasswordContext)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "" },
   });
 
-  const onSubmit = (values) => {
-    console.log("Form submitted:", values);
-    // You can navigate or call API here
-    router.push("/forgotpass/verifyopt")
+  const handleOtp = async (values) => {
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/accounts/forget-password/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+        }),
+      });
+
+      const data = await res.json();
+      setPassInfo({email: values.email})
+      if (res.ok) {
+        // Success: Navigate to OTP page
+        toast.success("OTP sent successfully!");
+        router.push("/forgotpass/verifyopt");
+      } else {
+        toast.error(data.detail || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error("Error calling API:", error);
+      toast.error("Network error. Please try again.");
+    }
   };
 
   return (
@@ -83,7 +109,7 @@ const ForgotPassword = () => {
 
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(handleOtp)}
                 className="space-y-6"
               >
                 {/* Email Field */}

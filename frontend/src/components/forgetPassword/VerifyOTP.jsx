@@ -1,43 +1,113 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "../ui/form";
+import { useState, useEffect, useContext} from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-
-const formSchema = z.object({
-  otp: z
-    .string()
-    .min(6, { message: "Enter 6-digit OTP" })
-    .max(6, { message: "Enter 6-digit OTP" }),
-});
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
+import { BASE_URL } from "@/config/config";
+import { PasswordContext } from "@/providers/PasswordProvider";
 
 const VerifyOTP = () => {
+  const router = useRouter();
+  const [otp, setOtp] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(30);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const router = useRouter()
+  const {passInfo} = useContext(PasswordContext) 
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: { otp: "" },
-  });
+  // Countdown for resend OTP
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const interval = setInterval(() => setResendCooldown((prev) => prev - 1), 1000);
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
 
-  const onSubmit = (values) => {
-    console.log("OTP submitted:", values);
-    // ✅ Now this will log correctly
-    // 👉 You can navigate manually after validation
-    router.push('/forgotpass/verifyotp/createpass')
+  // Verify OTP
+  const handleOtpVerify = async () => {
+    if (otp.length !== 6) {
+      toast.error("Please enter a 6-digit OTP");
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const res = await fetch(`${BASE_URL}/api/accounts/otp-validation/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: passInfo.email.trim(), code: otp.trim() }),
+      });
+
+      const result = await res.json();
+      console.log("Verify Response:", result);
+
+      if (result.status === "success" && result.status_code === 200) {
+        Swal.fire({
+          title: "Email Verified Successfully",
+          text: 'Click "OK" to continue.',
+          icon: "success",
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "OK",
+        });
+
+        localStorage.setItem("access_token", result.data?.access_token || "");
+        localStorage.setItem("refresh_token", result.data?.refresh_token || "");
+
+        router.push("/forgotpass/verifyopt/createpass");
+      } else {
+        toast.error(result.detail || "Invalid OTP");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to verify OTP");
+    } finally {
+      setIsVerifying(false);
+    }
   };
+
+ // Resend OTP
+const handleResendOtp = async () => {
+  if (!passInfo?.email) {
+    toast.error("No email found. Please go back and enter your email.");
+    return;
+  }
+
+  setIsResending(true);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/accounts/forget-password/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: passInfo.email.trim(), 
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success("OTP Resend successfully!");
+      setResendCooldown(30); 
+    } else {
+      toast.error(data.detail || "Failed to resend OTP");
+    }
+  } catch (error) {
+    console.error("Error calling API:", error);
+    toast.error("Network error. Please try again.");
+  } finally {
+    setIsResending(false);
+  }
+};
+
 
   return (
     <div>
@@ -75,71 +145,75 @@ const VerifyOTP = () => {
             </h1>
             <h1 className="text-black font-bold text-3xl dark:text-white">Verify OTP</h1>
             <p className="text-gray-600 text-justify text-sm mb-12 dark:text-gray-400">
-              Enter the 6-digit code we sent to your email address to verify
-              it's you.
+              Enter the 6-digit code we sent to your email address to verify it's you.
             </p>
 
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* OTP Field */}
-                <FormField
-                  control={form.control}
-                  name="otp"
-                  render={({ field }) => (
-                    <FormItem className="flex justify-center">
-                      <FormControl>
-                        <InputOTP
-                          maxLength={6}
-                          pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-                          value={field.value}
-                          onChange={(val) => field.onChange(val)}
-                        >
-                          <InputOTPGroup className="text-black dark:text-white">
-                            {[...Array(6)].map((_, i) => (
-                              <InputOTPSlot
-                                key={i}
-                                index={i}
-                                className="dark:bg-gray-800 dark:text-white"
-                              />
-                            ))}
-                          </InputOTPGroup>
-                        </InputOTP>
-                      </FormControl>
-                      <FormMessage className="text-red-500 text-sm mt-1" />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="block w-full text-center rounded-sm text-white bg-[#00308F] h-12 cursor-pointer pt-3 
-                             hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500"
-                >
-                  Send OTP Code
-                </Button>
-
-                {/* Hint / Info */}
-                <div className="flex items-center gap-2">
-                  <div>
-                    <Image
-                      src={"/forgetPassword/light.svg"}
-                      width={20}
-                      height={20}
-                      alt="Image"
+            {/* OTP INPUT */}
+            <div className="flex justify-center">
+              <InputOTP
+                maxLength={6}
+                pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                value={otp}
+                onChange={(value) => setOtp(value)}
+              >
+                <InputOTPGroup className="text-black dark:text-white">
+                  {[...Array(6)].map((_, i) => (
+                    <InputOTPSlot
+                      key={i}
+                      index={i}
+                      className="dark:bg-gray-800 dark:text-white"
                     />
-                  </div>
-                  <div>
-                    <h2 className="text-black dark:text-gray-300">
-                      <span className="text-sm">
-                        Didn't get it? Check spam/promotions, or wait a moment
-                        before resending.
-                      </span>
-                    </h2>
-                  </div>
-                </div>
-              </form>
-            </Form>
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            {/* Verify Button */}
+            <Button
+              onClick={handleOtpVerify}
+              disabled={isVerifying}
+              className="block w-full text-center rounded-sm text-white bg-[#00308F] h-12 cursor-pointer pt-3 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500"
+            >
+              {isVerifying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Verify
+            </Button>
+
+            {/* Alert Message */}
+            {showAlert && (
+              <Alert className="w-full mt-6 border-green-500 transition-opacity duration-500">
+                <AlertTitle>Verification Sent!</AlertTitle>
+                <AlertDescription>
+                  A verification code has been sent to your email. Please check your inbox.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Info Text */}
+            <div className="flex items-center gap-2 mt-4">
+              <div>
+                <Image
+                  src={"/forgetPassword/light.svg"}
+                  width={20}
+                  height={20}
+                  alt="icon"
+                />
+              </div>
+              <h2 className="text-black dark:text-gray-300 text-sm">
+                Didn't get it? Check spam/promotions, or wait before resending.
+              </h2>
+            </div>
+
+            {/* Resend OTP */}
+            <Button
+              type="button"
+              className="w-full text-center mt-3"
+              variant="outline"
+              onClick={handleResendOtp}
+              disabled={isResending || resendCooldown > 0}
+            >
+              {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
+            </Button>
 
             {/* Footer Links */}
             <div className="flex justify-between mt-24 text-black dark:text-gray-300">

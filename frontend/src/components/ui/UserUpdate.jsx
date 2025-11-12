@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,9 +56,9 @@ export function UserUpdate({
     }
   };
 
-  const { setUser } = useContext(UserContext);
+  const {user, setUser } = useContext(UserContext);
 
-
+console.log(user)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +92,7 @@ export function UserUpdate({
 
       if (onProfileUpdate) {
         onProfileUpdate(preview, firstName, lastName);
+        setUser(photo)
       }
 
       toast.success("Profile updated successfully!");

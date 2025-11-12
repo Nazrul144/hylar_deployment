@@ -11,7 +11,7 @@ import { UserContext } from "@/providers/UserProvider";
 
 
 const UserProfile = () => {
-  const { user, setUser } = useContext(UserContext) 
+  const { setUser } = useContext(UserContext) 
   const [photo, setPhoto] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -56,12 +56,7 @@ const UserProfile = () => {
             : "/profile.png";
         setPhoto(profilePhoto);
 
-        // Update global context
-        // setUser({
-        //   first_name: userData.data.first_name,
-        //   last_name: userData.data.last_name,
-        //   photo: profilePhoto,
-        // });
+       
          setUser({
         ...updatedData.data,
         photo: updatedPhoto,

@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
@@ -34,6 +34,7 @@ import {
 } from "../ui/tooltip";
 import { ModeToggle } from "../themeProvider/ModeToggle";
 import { UserContext } from "@/providers/UserProvider";
+import toast from "react-hot-toast";
 
 // All routes and submenus here:
 const navItems = [
@@ -55,7 +56,7 @@ export default function Navbar({ montserrat }) {
 
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
-
+  const router = useRouter()
  
   useEffect(() => {
     if (user && user.profile_picture) {
@@ -78,6 +79,46 @@ export default function Navbar({ montserrat }) {
   }, []);
 
   const handleCloseClick = () => setOpen(false);
+
+const {setUser} = useContext(UserContext)
+
+  //Handle logout:
+ const handleLogout = async () => {
+  try {
+    const access_token = localStorage.getItem("access_token");
+    const refresh_token = localStorage.getItem("refresh_token");
+
+    const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`, 
+      },
+      body: JSON.stringify({ refresh_token }),
+    });
+
+    const result = await res.json(); 
+
+    if (res.ok || result.status_code === 200) {
+      toast.success("You’ve been logged out successfully!");
+    } else {
+      toast.error(result?.detail || "Logout failed from server");
+    }
+
+    
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+    setUser(null);
+    router.push("/login");
+
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
+
+
+
 
   return (
     <header
@@ -240,7 +281,7 @@ export default function Navbar({ montserrat }) {
 
         <div>
           {user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-8">
               <ModeToggle />
               <div className="flex gap-3 items-center">
                 <div className="relative">
@@ -294,7 +335,7 @@ export default function Navbar({ montserrat }) {
                     </Button>
                   </li>
                   <li>
-                    <Button
+                    <Button onClick={handleLogout}
                       variant="ghost"
                       size="sm"
                       className="w-full justify-between dark:text-gray-100"

@@ -4,14 +4,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +12,8 @@ import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "@/providers/UserProvider";
+import { BASE_URL } from "@/config/config";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z
@@ -51,33 +46,41 @@ const Login = () => {
   });
 
   const router = useRouter();
-  const {setUser} = useContext(UserContext)
+  const { setUser } = useContext(UserContext);
 
   const handleLoginSubmit = async (data) => {
-  const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+    const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-  const result = await res.json();
+    const result = await res.json();
 
-  if (result.status_code === 200 || result.status === 202) {
-    toast.success("Login successful");
-    // Save in localStorage
-    localStorage.setItem("access_token", result.access_token);
-    localStorage.setItem("refresh_token", result.refresh_token);
-    localStorage.setItem("user", JSON.stringify(result.user));
-    // Set context
-    setUser(result.user);
+    if(result.status_code === 400 || result.status === "failed"){
+      toast.error("Invalid email or password.");
+      return;
+    }
 
-    router.push("/"); // redirect to home
-  } else {
-    toast.error(result?.message || "Login failed");
-  }
-};
+    if (result.status_code === 200 || result.status === 202) {
+      toast.success(`Welcome back, ${result.data.first_name || "User"}!`);
+      const userInfo = {
+        email: result.data.email,
+        first_name: result.data.first_name,
+        last_name: result.data.last_name,
+      };
+      // Save in localStorage
+      localStorage.setItem("access_token", result.data.access_token);
+      localStorage.setItem("refresh_token", result.data.refresh_token);
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      
+      setUser(userInfo);
 
- 
+      router.push("/"); 
+    } else {
+      toast.error(result?.message || "Login failed");
+    }
+  };
 
   return (
     <div>
@@ -129,7 +132,7 @@ const Login = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleLoginSubmit)}
-                className="space-y-8"
+                className="space-y-8 text-black"
               >
                 <div>
                   <FormField
@@ -179,7 +182,11 @@ const Login = () => {
                   </Link>
                 </div>
 
-                <Button className="w-full bg-blue-900 text-white" type="submit">
+                <Button
+                  onclick
+                  className="w-full bg-blue-900 text-white"
+                  type="submit"
+                >
                   Login
                 </Button>
               </form>

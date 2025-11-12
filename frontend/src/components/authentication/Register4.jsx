@@ -21,7 +21,7 @@ const Register4 = () => {
   const router = useRouter();
   const { signupData } = useContext(SignupContext);
 
-  const userEmail = signupData.email;
+  const userEmail = signupData?.email || "";
 
   // Countdown effect for resend button
   useEffect(() => {

@@ -95,7 +95,6 @@ const Register7 = () => {
         toast.error(result.detail || "Failed to update profile");
         return;
       }
-      // Update UserContext immediately
          setUser(result.data);
 
       toast.success("Submited Successfully!");

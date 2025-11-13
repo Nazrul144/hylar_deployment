@@ -12,17 +12,7 @@ const SignupProvider = ({children}) => {
     console.log("from context", signupData, "userCreated:", userCreated);
     console.log("from context", userProfile,);
 
-    // const getFinalSignupData = ()=>{
-    //   if(!signupData) return {}
-    //   const {form5, form6, form7} = signupData;
-    //   return {
-    //     ...form5,
-    //     ...form6,
-    //     ...form7
-    //   }
-    // }
 
-    //Function to send only form 5,6,7 data to backend
 
   return (
     <SignupContext.Provider value={{signupData, setSignupData, userProfile, setUserProfile, userCreated, setUserCreated}}>

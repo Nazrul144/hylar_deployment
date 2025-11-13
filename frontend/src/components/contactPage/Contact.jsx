@@ -16,7 +16,8 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
-import { reset } from "canvas-confetti";
+import emailjs from '@emailjs/browser';
+import Swal from "sweetalert2";
 
 const formSchema = z.object({
   username: z
@@ -34,8 +35,8 @@ const formSchema = z.object({
     .min(3, { message: "Subject should be at least 3 characters." })
     .max(100, { message: "Subject cannot exceed 100 characters." }),
 
-  phone: z.string().regex(/^(\+1\s?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, {
-    message: "Please enter a valid US phone number (e.g., +1 555-123-4567).",
+  phone: z.string().regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
+    message: "Please enter a valid UK phone number (e.g., +447911123456)",
   }),
 
   agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
@@ -52,14 +53,44 @@ const Contact = () => {
       email: "",
       subject: "",
       phone: "",
-      agreed_to_terms_and_conditions: false, 
+      agreed_to_terms_and_conditions: false,
     },
   });
 
-  const handleFormSubmit = (data) => {
-    console.log(data);
-    form.reset()
-  };
+
+
+const sendEmail = async (data) => {
+  emailjs.init(`${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}`); // public key
+
+  try {
+    await emailjs.send(
+      `${process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID}`,
+      `${process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID}`,
+      {
+        first_name: data.username,
+        from_email: data.email,
+        subject: data.subject,
+        phone: data.phone,
+      }
+    );
+
+    Swal.fire({
+      title: "Message Sent Successfully!",
+      icon: "success",
+    });
+
+    form.reset(); // Reset RHF form
+
+  } catch (error) {
+    console.log("ERROR:", error);
+  }
+};
+
+
+  // const handleFormSubmit = (data) => {
+  //   console.log(data);
+  //   form.reset()
+  // };
 
   return (
     <div className="py-16 px-4 md:px-12 border-1 rounded-sm">
@@ -112,10 +143,7 @@ const Contact = () => {
         {/* Right Side (Form) */}
         <div className="lg:w-1/2 mt-12 lg:mt-0 dark:text-white">
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleFormSubmit)}
-              className="space-y-8"
-            >
+            <form onSubmit={form.handleSubmit(sendEmail)} className="space-y-8">
               <div className="lg:grid grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -159,7 +187,7 @@ const Contact = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Phone Number" {...field} />
+                        <Input placeholder="+44 XXXXXXXXXX" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

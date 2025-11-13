@@ -2,10 +2,7 @@
 import Image from "next/image";
 import React from "react";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
-import { XIcon } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -17,49 +14,90 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { BASE_URL } from "@/config/config";
+
 
 const formSchema = z.object({
-  businessName: z.string().min(2, { message: "It's too short" }).max(150),
-  businessSecto: z.string().min(2, { message: "It's too short" }).max(150),
-  websiteLink: z.string().min(2, { message: "Link is too short" }).max(150),
-  contactPersonName: z
+  brand_name: z.string().min(2, { message: "Brand Name is required" }).max(150),
+
+  brand_sector: z
     .string()
-    .min(2, { message: "Name Should be at least 2 character" })
+    .min(2, { message: "Brand Sector is required" })
     .max(150),
+
+  websiteLink: z
+    .string()
+    .min(2, { message: "Website link is required" })
+    .max(150),
+
+  owner_name: z
+    .string()
+    .min(2, { message: "Contact Person Name is required" })
+    .max(150),
+
   email: z
     .string()
     .min(1, { message: "Email is required" })
     .email({ message: "Invalid email address" }),
+
   phone: z
     .string()
     .trim()
-    .min(11, { message: "Phone number must be at least 11 digits" })
-    .max(14, { message: "Phone number must not exceed 14 digits" })
-    .regex(/^\+?[1-9]\d{6,14}$/, {
-      message: "Enter a valid phone number",
+    .regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
+      message: "Enter a valid UK phone number (e.g., +447911123456 )",
     }),
 
-  textArea: z.string().min(2, { message: "It's too short" }),
-  fileUpload: z.string(),
+     document: z.any().refine((files) => files && files.length > 0, {
+    message: "File is required",
+  }),
+
+   brand_logo: z.any().refine((files) => files && files.length > 0, {
+    message: "Logo is required",
+  }),
+
+  address_line1: z
+    .string()
+    .min(3, { message: "Address Line 1 is required" })
+    .max(200),
+  address_line2: z
+    .string()
+    .min(3, { message: "Address Line 2 is required" })
+    .max(200),
+ 
 });
 
 const SubmitForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      businessName: "",
-      businessSecto: "",
+      brand_name: "",
+      brand_sector: "",
       websiteLink: "",
-      contactPersonName: "",
+      owner_name: "",
       email: "",
       phone: "",
-      textArea: "",
-      fileUpload: "",
+      document: undefined,
+      brand_logo: undefined,
+      address_line1: "",
+      address_line2: "",
     },
   });
 
-  const handleFormSubmit = (data) => {
-    data;
+  const handleFormSubmit = async(data) => {
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`,{
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        const result = await res.json()
+        console.log(result)
+      } catch (error) {
+        console.log(error)
+      }
     form.reset();
   };
 
@@ -69,13 +107,12 @@ const SubmitForm = () => {
         <Image
           src="/addBusiness/header.png"
           alt="header"
-          width={1920} // original image width
-          height={300} // desired header height
+          width={1920}
+          height={300}
           className="object-cover w-full"
           priority
         />
 
-        {/* Optional overlay text */}
         <div className="absolute inset-0 top-4 lg:top-28">
           <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-bold text-center drop-shadow-lg inter-text">
             Welcome To Exclusive Discounts & Savings
@@ -85,46 +122,49 @@ const SubmitForm = () => {
           </h3>
         </div>
       </div>
-      {/*Submit Form*/}
-      <div className="w-full  md:h-96 lg:w-[886px] lg:h-[1116px]  mx-auto lg:shadow-2xl rounded-sm px-2 lg:px-8">
+
+      {/* Submit Form */}
+      <div className="w-full md:h-96 lg:w-[886px] lg:h-[auto] mx-auto lg:shadow-2xl rounded-sm px-2 lg:px-8">
         <h1 className="text-center font-bold text-inter text-4xl pt-16 pb-12 common-text">
           Submit A Request
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+            {/* Brand Name */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="businessName"
+                name="brand_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Name</FormLabel>
+                    <FormLabel>Brand Name</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Your Business or Brand Name"
-                        {...field}
-                      />
+                      <Input placeholder="Your Brand Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            {/* Brand Sector */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="businessSecto"
+                name="brand_sector"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Secto</FormLabel>
+                    <FormLabel>Brand Sector</FormLabel>
                     <FormControl>
-                      <Input placeholder="Business Secto" {...field} />
+                      <Input placeholder="Brand Sector" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            {/* Website Link */}
             <div className="mb-4">
               <FormField
                 control={form.control}
@@ -140,13 +180,15 @@ const SubmitForm = () => {
                 )}
               />
             </div>
+
+            {/* Owner Name */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="contactPersonName"
+                name="owner_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Person Name</FormLabel>
+                    <FormLabel>Owner Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Full Name" {...field} />
                     </FormControl>
@@ -155,6 +197,8 @@ const SubmitForm = () => {
                 )}
               />
             </div>
+
+            {/* Email */}
             <div className="mb-4">
               <FormField
                 control={form.control}
@@ -170,13 +214,15 @@ const SubmitForm = () => {
                 )}
               />
             </div>
+
+            {/* Phone */}
             <div className="mb-4">
               <FormField
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Phone</FormLabel>
+                    <FormLabel>Phone</FormLabel>
                     <FormControl>
                       <Input placeholder="+44 2012345678" {...field} />
                     </FormControl>
@@ -185,45 +231,35 @@ const SubmitForm = () => {
                 )}
               />
             </div>
+
+             {/* Document */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="textArea"
+                name="document"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Swite Something</FormLabel>
-                    <FormControl {...field}>
-                      <Textarea
-                        className="[resize:none] h-44"
-                        placeholder="Tell us about your products, audience and why you want to join.."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <p className="common-text text-sm">
-              *Please enter any further details relating to your request and
-              provide relevant attachments below. A member of the team will
-              follow up with you soon.
-            </p>
-
-            <div className="mb-4 mt-10">
-              <FormField
-                control={form.control}
-                name="fileUpload"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-2xl">
-                      Attachments(Optional)
+                    <FormLabel className="text-sky-500 italic">
+                      Upload Document
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="file"
-                        placeholder="Add file or Drop file here"
-                        {...field}
-                        className="w-full"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          const frontFile = form.getValues("document");
+
+                          if (frontFile && file?.name === frontFile[0]?.name) {
+                            toast.error(
+                              "You have already uploaded this file as front side."
+                            );
+                            e.target.value = "";
+                            return;
+                          }
+
+                          field.onChange(e.target.files);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -232,8 +268,82 @@ const SubmitForm = () => {
               />
             </div>
 
+
+              {/* Brand Logo */}
+            <div className="mb-4">
+              <FormField
+                control={form.control}
+                name="brand_logo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sky-500 italic">
+                      Upload Brand Logo
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          const frontFile = form.getValues("brand_logo");
+
+                          if (frontFile && file?.name === frontFile[0]?.name) {
+                            toast.error(
+                              "You have already uploaded this file as front side."
+                            );
+                            e.target.value = "";
+                            return;
+                          }
+
+                          field.onChange(e.target.files);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+
+            {/* Address Line 1 */}
+            <div className="mb-4">
+              <FormField
+                control={form.control}
+                name="address_line1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address Line 1</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Address Line 1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Address Line 2 */}
+            <div className="mb-4">
+              <FormField
+                control={form.control}
+                name="address_line2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address Line 2</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Address Line 2" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+           
+
             <Button
-              className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer "
+              className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer mb-12"
               type="submit"
             >
               Submit Your Application

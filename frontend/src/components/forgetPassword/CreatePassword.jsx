@@ -18,14 +18,17 @@ import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import { BASE_URL } from "@/config/config";
+import { useContext } from "react";
+import { PasswordContext } from "@/providers/PasswordProvider";
+import { useRouter } from "next/navigation";
 
 // ✅ Zod schema
 const formSchema = z
   .object({
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Enter a valid email address" }),
+    // email: z
+    //   .string()
+    //   .min(1, { message: "Email is required" })
+    //   .email({ message: "Enter a valid email address" }),
     newPassword: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -44,12 +47,15 @@ const CreatePassword = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      // email: "",
       newPassword: "",
       confirmPassword: "",
     },
   });
 
+  const {passInfo} =  useContext(PasswordContext)
+  const router = useRouter()
+  console.log(passInfo)
 
   const onSubmit = async (values) => {
     try {
@@ -57,7 +63,7 @@ const CreatePassword = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: values.email,
+          email: passInfo.email,
           password: values.newPassword,
           confirm_password: values.confirmPassword,
         }),
@@ -69,10 +75,11 @@ const CreatePassword = () => {
       if (res.ok) {
         Swal.fire({
           title: "Password Updated Successfully!",
-          text: `Password for ${values.email} has been updated.`,
+          text: `Password for ${passInfo.email} has been updated.`,
           icon: "success",
         });
         form.reset(); 
+        router.push("/login")
       } else {
         toast.error(data.detail || "Failed to update password");
       }
@@ -127,7 +134,7 @@ const CreatePassword = () => {
                 className="space-y-6"
               >
                 {/* ✅ Email Field */}
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -146,7 +153,7 @@ const CreatePassword = () => {
                       <FormMessage className="text-red-500 text-sm mt-1" />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 {/* New Password */}
                 <FormField

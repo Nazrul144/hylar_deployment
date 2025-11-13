@@ -1,23 +1,13 @@
 "use client";
 import Image from "next/image";
 import React, { useContext } from "react";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
+import { SignupContext } from "@/providers/SignupProvider";
+
+
 
 const formSchema = z.object({
   checkbox: z.boolean().refine((val) => val === true, {
@@ -26,9 +16,9 @@ const formSchema = z.object({
 });
 
 const Register8 = () => {
-  const router = useRouter();
 
-  const { signupData, setSignupData } = useContext(SignupContext);
+
+  const {userProfile} = useContext(SignupContext)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -37,13 +27,50 @@ const Register8 = () => {
     },
   });
 
-  const handleCheckboxSubmit = (data) => {
-    data;
-    setSignupData((prev) => ({
-      ...prev,
-      ...data,
-    }));
-  };
+  console.log(userProfile)
+
+  // const handleCheckboxSubmit = (data) => {
+  //   data;
+  //   setSignupData((prev) => ({
+  //     ...prev,
+  //     ...data,
+  //   }));
+  // };
+
+const handlePayment = async () => {
+  try {
+    const response = await fetch(
+      "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/subscriptions/create-mandate/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify( {userProfile} ), 
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Payment creation failed");
+    }
+
+    const data = await response.json();
+
+    console.log("Billing response:", data);
+
+    if (data.authorisation_url) {
+      window.location.href = data.authorisation_url;
+    } else {
+      alert("authorisation_url missing from server response");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong while creating the payment.");
+  }
+};
+
+
 
   return (
     <div>
@@ -81,8 +108,7 @@ const Register8 = () => {
             </div>
 
             <div className="flex justify-end mt-12">
-              <Button
-                type="submit"
+              <Button onClick={handlePayment}
                 className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-12 flex items-center justify-center gap-1 cursor-pointer"
               >
                 <span className="text-lg font-semibold">Pay Now</span>

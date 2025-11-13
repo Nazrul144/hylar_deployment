@@ -25,7 +25,7 @@ const formSchema = z.object({
     .min(2, { message: "Brand Sector is required" })
     .max(150),
 
-  websiteLink: z
+  website_link: z
     .string()
     .min(2, { message: "Website link is required" })
     .max(150),
@@ -72,7 +72,7 @@ const SubmitForm = () => {
     defaultValues: {
       brand_name: "",
       brand_sector: "",
-      websiteLink: "",
+      website_link: "",
       owner_name: "",
       email: "",
       phone: "",
@@ -83,23 +83,54 @@ const SubmitForm = () => {
     },
   });
 
-  const handleFormSubmit = async(data) => {
+  // const handleFormSubmit = async(data) => {
 
-      try {
-        const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`,{
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-        const result = await res.json()
-        console.log(result)
-      } catch (error) {
-        console.log(error)
-      }
-    form.reset();
-  };
+  //     try {
+  //       const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`,{
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json"
+  //         },
+  //         body: JSON.stringify(data)
+  //       })
+  //       const result = await res.json()
+  //       console.log(result)
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   form.reset();
+  // };
+
+  const handleFormSubmit = async (data) => {
+  const formData = new FormData();
+
+  formData.append("brand_name", data.brand_name);
+  formData.append("brand_sector", data.brand_sector);
+  formData.append("website_link", data.website_link);
+  formData.append("owner_name", data.owner_name);
+  formData.append("contact_email", data.email);
+  formData.append("contact_phone", data.phone);
+
+  formData.append("address_line1", data.address_line1);
+  formData.append("address_line2", data.address_line2);
+
+  // Files
+  formData.append("document", data.document[0]);
+  formData.append("brand_logo", data.brand_logo[0]);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   return (
     <div>
@@ -168,7 +199,7 @@ const SubmitForm = () => {
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="websiteLink"
+                name="website_link"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Website Link</FormLabel>

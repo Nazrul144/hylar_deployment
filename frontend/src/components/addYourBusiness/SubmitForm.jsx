@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { BASE_URL } from "@/config/config";
-
+import Swal from "sweetalert2";
 
 const formSchema = z.object({
   brand_name: z.string().min(2, { message: "Brand Name is required" }).max(150),
@@ -35,23 +35,23 @@ const formSchema = z.object({
     .min(2, { message: "Contact Person Name is required" })
     .max(150),
 
-  email: z
+  contact_email: z
     .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" }),
+    .min(1, { message: "contact_email is required" })
+    .email({ message: "Invalid contact_email address" }),
 
-  phone: z
+  contact_phone: z
     .string()
     .trim()
     .regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
-      message: "Enter a valid UK phone number (e.g., +447911123456 )",
+      message: "Enter a valid UK contact_phone number (e.g., +447911123456 )",
     }),
 
-     document: z.any().refine((files) => files && files.length > 0, {
+  document: z.any().refine((files) => files && files.length > 0, {
     message: "File is required",
   }),
 
-   brand_logo: z.any().refine((files) => files && files.length > 0, {
+  brand_logo: z.any().refine((files) => files && files.length > 0, {
     message: "Logo is required",
   }),
 
@@ -63,7 +63,6 @@ const formSchema = z.object({
     .string()
     .min(3, { message: "Address Line 2 is required" })
     .max(200),
- 
 });
 
 const SubmitForm = () => {
@@ -74,8 +73,8 @@ const SubmitForm = () => {
       brand_sector: "",
       website_link: "",
       owner_name: "",
-      email: "",
-      phone: "",
+      contact_email: "",
+      contact_phone: "",
       document: undefined,
       brand_logo: undefined,
       address_line1: "",
@@ -102,35 +101,43 @@ const SubmitForm = () => {
   // };
 
   const handleFormSubmit = async (data) => {
-  const formData = new FormData();
+    const formData = new FormData();
 
-  formData.append("brand_name", data.brand_name);
-  formData.append("brand_sector", data.brand_sector);
-  formData.append("website_link", data.website_link);
-  formData.append("owner_name", data.owner_name);
-  formData.append("contact_email", data.email);
-  formData.append("contact_phone", data.phone);
+    formData.append("brand_name", data.brand_name);
+    formData.append("brand_sector", data.brand_sector);
+    formData.append("website_link", data.website_link);
+    formData.append("owner_name", data.owner_name);
+    formData.append("contact_email", data.contact_email);
+    formData.append("contact_phone", data.contact_phone);
 
-  formData.append("address_line1", data.address_line1);
-  formData.append("address_line2", data.address_line2);
+    formData.append("address_line1", data.address_line1);
+    formData.append("address_line2", data.address_line2);
 
-  // Files
-  formData.append("document", data.document[0]);
-  formData.append("brand_logo", data.brand_logo[0]);
+    // Files
+    formData.append("document", data.document[0]);
+    formData.append("brand_logo", data.brand_logo[0]);
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`, {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/accounts/brand-account-request/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    const result = await res.json();
-    console.log(result);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+      const result = await res.json();
+      if (result.status_code === 201) {
+        Swal.fire({
+          title: "Submitted!",
+          text: "Your form submitted successfully!",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -229,14 +236,14 @@ const SubmitForm = () => {
               />
             </div>
 
-            {/* Email */}
+            {/* contact_email */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="contact_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Email</FormLabel>
+                    <FormLabel>Contact contact_email</FormLabel>
                     <FormControl>
                       <Input placeholder="example@gmail.com" {...field} />
                     </FormControl>
@@ -246,14 +253,14 @@ const SubmitForm = () => {
               />
             </div>
 
-            {/* Phone */}
+            {/* contact_phone */}
             <div className="mb-4">
               <FormField
                 control={form.control}
-                name="phone"
+                name="contact_phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>contact_phone</FormLabel>
                     <FormControl>
                       <Input placeholder="+44 2012345678" {...field} />
                     </FormControl>
@@ -263,7 +270,7 @@ const SubmitForm = () => {
               />
             </div>
 
-             {/* Document */}
+            {/* Document */}
             <div className="mb-4">
               <FormField
                 control={form.control}
@@ -299,8 +306,7 @@ const SubmitForm = () => {
               />
             </div>
 
-
-              {/* Brand Logo */}
+            {/* Brand Logo */}
             <div className="mb-4">
               <FormField
                 control={form.control}
@@ -336,7 +342,6 @@ const SubmitForm = () => {
               />
             </div>
 
-
             {/* Address Line 1 */}
             <div className="mb-4">
               <FormField
@@ -370,8 +375,6 @@ const SubmitForm = () => {
                 )}
               />
             </div>
-
-           
 
             <Button
               className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer mb-12"

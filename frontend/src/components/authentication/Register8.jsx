@@ -29,7 +29,7 @@ const Register8 = () => {
 
   console.log(userProfile)
 
-  // const handleCheckboxSubmit = (data) => {
+  
   //   data;
   //   setSignupData((prev) => ({
   //     ...prev,
@@ -39,12 +39,15 @@ const Register8 = () => {
 
 const handlePayment = async () => {
   try {
+    const token = localStorage.getItem("access_token");
+
     const response = await fetch(
       "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/subscriptions/create-mandate/",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,   
         },
         body: JSON.stringify( {userProfile} ), 
       }

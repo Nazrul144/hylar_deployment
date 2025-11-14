@@ -7,7 +7,6 @@ import { Toaster } from "react-hot-toast";
 import SubscribePopup from "@/components/subscribePopup/SubscribePopup";
 import BookmarkProvider from "@/providers/BookmarkProvider";
 import CategoriesProvider from "@/providers/CategoriesProvider";
-import AuthProvider from "@/providers/AuthProvider";
 import SignupProvider from "@/providers/SignupProvider";
 import { ThemeProvider } from "@/components/themeProvider/theme.provider";
 import UserProvider from "@/providers/UserProvider";
@@ -50,8 +49,7 @@ export default function RootLayout({ children }) {
       >
           <ThemeProvider>
               <UserProvider>
-                 <AuthProvider>
-            <SignupProvider>
+                 <SignupProvider>
               <CategoriesProvider>
             <BookmarkProvider>
              <NavHeader />
@@ -65,7 +63,6 @@ export default function RootLayout({ children }) {
            </BookmarkProvider>
            </CategoriesProvider>
             </SignupProvider>
-           </AuthProvider>
               </UserProvider>
           </ThemeProvider>
       </body>

@@ -13,12 +13,14 @@ import Finance from "@/components/UserLandingPage/Finance";
 import Hero from "@/components/UserLandingPage/Hero";
 import HomeAndLifeStyle from "@/components/UserLandingPage/HomeAndLifeStyle";
 import Travel from "@/components/UserLandingPage/Travel";
-import { useState } from "react";
+import { UserContext } from "@/providers/UserProvider";
+import { useContext, useState } from "react";
 
 
 export default function Home() {
+    const { user, loading } = useContext(UserContext);
 
-  const [isLogin, setIsLogin] = useState(false)
+  const [isLogin, setIsLogin] = useState(true)
 
   if(isLogin){
     return (

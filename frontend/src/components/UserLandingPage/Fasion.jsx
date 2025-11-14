@@ -1,7 +1,6 @@
 import React from 'react'
 import UserLandingPageCard from './UserLandingPageCard/UserLandingPageCard'
 import { Inter, Montserrat } from "next/font/google";
-import { Button } from '../ui/button';
 import Link from 'next/link';
 
 const interFont = Inter({ subsets: ["latin"] });

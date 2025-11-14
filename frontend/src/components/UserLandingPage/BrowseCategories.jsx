@@ -42,3 +42,4 @@ const BrowseCategories = () => {
 }
 
 export default BrowseCategories
+

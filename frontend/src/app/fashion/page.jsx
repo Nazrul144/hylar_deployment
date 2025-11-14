@@ -1,7 +1,6 @@
 'use client'
 import Fashion from '@/components/browseCaterories/Fashion'
 import FashionAndClothingDiscounts from '@/components/discountLandingPage/FashionAndClothingDiscounts'
-import { UserContext } from '@/providers/AuthProvider'
 import React, { useContext, useEffect, useState } from 'react'
 
 const FasionPage = () => {

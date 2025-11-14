@@ -8,9 +8,8 @@ import React, { useContext } from "react";
 const BusinessPage = () => {
   const { user, loading } = useContext(UserContext);
 
-
   if (loading) {
-    return <p>Loading...</p>; 
+    return <h1 className="text-center mt-12">Loading...</h1>; 
   }
 
   return (

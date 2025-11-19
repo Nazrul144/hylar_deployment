@@ -5,6 +5,7 @@ import { Search, X } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import { BASE_URL } from "@/config/config";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -13,14 +14,33 @@ const fadeInUp = {
 
 const Hero = () => {
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]); 
+  const [loading, setLoading] = useState(false);
 
-  const handleClear = () => setQuery("");
-  const handleSearch = () => {
-    ("Searching for:", query);
+  const handleClear = () => {
+    setQuery("");
+    setResults([]); 
+  };
+
+  const handleSearch = async () => {
+    if (!query.trim()) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/offers/searched-offer/?q=${query}`
+      );
+      const data = await response.json();
+      setResults(data); 
+    } catch (error) {
+      console.error("Search API error:", error);
+      setResults([]);
+    }
+    setLoading(false);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-96 bg-[#00308F] px-4 lg:px-4">
+    <div className="flex flex-col items-center justify-center bg-[#00308F] px-4 lg:px-4 py-10 min-h-[500px]">
       {/* Title */}
       <motion.h1
         initial="hidden"
@@ -90,6 +110,30 @@ const Hero = () => {
           Search
         </Button>
       </motion.div>
+
+      {/* Search Results Placeholder */}
+      <div className="mt-8 w-full max-w-2xl">
+        {loading ? (
+          <p className="text-white text-center">Searching...</p>
+        ) : results.length > 0 ? (
+          <div className="space-y-4">
+            {results.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white p-4 rounded-lg shadow-md text-gray-800"
+              >
+                <h3 className="font-bold">{item.title || "Unnamed offer"}</h3>
+                <p className="text-sm text-gray-600">
+                  {item.description || "No description available"}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          query &&
+          !loading && <p className="text-gray-300 text-center">No results found</p>
+        )}
+      </div>
     </div>
   );
 };

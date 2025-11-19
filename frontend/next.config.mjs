@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-    domains: ['10.10.12.111'], // tumar backend domain
+    domains: ['16.16.104.87'], // backend domain
   },
   
 };

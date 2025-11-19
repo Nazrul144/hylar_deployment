@@ -1,77 +1,118 @@
+"use client";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { FaGift } from "react-icons/fa6";
 import { LuSend } from "react-icons/lu";
 import { ConfettiButton } from "../ui/confetti";
+import { Spinner } from "../ui/spinner";
 import Image from "next/image";
+import { BASE_URL } from "@/config/config";
 
-export function DialogDemo() {
+export function DialogDemo({ offerId }) {
+  const [couponCode, setCouponCode] = useState("");
+  const [discountPercent, setDiscountPercent] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCoupon = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("access_token"); // Get token
+
+      const res = await fetch(`${BASE_URL}/api/offers/voucher/${offerId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Unauthorized or Token expired");
+      }
+
+      const data = await res.json();
+      setCouponCode(data?.coupon_code || "N/A");
+      setDiscountPercent(data?.discount || 0);
+    } catch (err) {
+      console.error("Failed to fetch coupon code:", err);
+      setCouponCode("Error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="bg-[#00308F] text-white font-bold text-lg lg:w-[600px] py-6 cursor-pointer">
-            View Coupon
-            <LuSend className="mt-1" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <div className="flex justify-center text-3xl text-[#00308F] mt-10 mb-3 relative">
-              <FaGift />
-              <div className="absolute bottom-[-160px] w-[430px]">
-                <Image
-                src={'/cong.png'}
-                width={500}
-                height={400}
-                alt="cong_image"
-                className="w-full"
-                objectFit="cover"
-                />
-              </div>
-            </div>
-            <DialogTitle className="text-center text-gray-700 font-bold">
-              Surprise gift for you
-            </DialogTitle>
-            <h1 className="text-center text-4xl font-bold text-[#00308F] mt-6">
-              50% OFF
-            </h1>
-            <h3 className="text-xl mb-10 text-center">Entire Purchase</h3>
-            <div className="flex justify-center">
-              <div className="border-1 border-dashed p-10">
-                <h1 className="text-center text-lg text-[#7D7878]">
-                  Your coupon code
-                </h1>
-                <h1 className="text-center font-bold text-2xl">DH3YHZXB</h1>
-              </div>
-            </div>
-          </DialogHeader>
+      <DialogTrigger asChild>
+        <Button
+          className="bg-[#00308F] text-white font-bold text-lg lg:w-[600px] py-6 cursor-pointer"
+          onClick={fetchCoupon}
+        >
+          View Coupon
+          <LuSend className="mt-1 ml-2" />
+        </Button>
+      </DialogTrigger>
 
-          <DialogFooter className="mt-16 mb-4">
-            <DialogClose asChild>
-              <div className="relative w-full">
-                <ConfettiButton
-                  className="bg-[#00308F] py-6 text-white text-xl w-full cursor-pointer"
-                  variant="outline"
-                >
-                  Redeem Coupon 🎁
-                </ConfettiButton>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <div className="flex justify-center text-3xl text-[#00308F] mt-10 mb-6 relative">
+            <FaGift />
+            <Image
+              src="/cong.png"
+              width={500}
+              height={400}
+              alt="congrats"
+              className="absolute bottom-[-120px] w-full"
+            />
+          </div>
+
+          <DialogTitle className="text-center text-gray-700 font-bold">
+            Your Reward Awaits 🎉
+          </DialogTitle>
+
+          {isLoading ? (
+            <div className="flex justify-center mt-8">
+              <Spinner className="size-8" />
+            </div>
+          ) : (
+            <>
+              <h1 className="text-center text-4xl font-bold text-[#00308F] mt-6">
+                {discountPercent || 0}% OFF
+              </h1>
+              <h3 className="text-xl mb-10 text-center">On your next purchase</h3>
+
+              <div className="flex justify-center">
+                <div className="border-2 border-dashed px-6 py-3 rounded-md">
+                  <h1 className="text-center text-lg text-[#7D7878]">
+                    Your coupon code
+                  </h1>
+                  <h1 className="text-center font-bold text-2xl mt-2">
+                    {couponCode}
+                  </h1>
+                </div>
               </div>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+            </>
+          )}
+        </DialogHeader>
+
+        <DialogFooter className="mt-14">
+          <DialogClose asChild>
+            <ConfettiButton
+              className="bg-[#00308F] py-6 text-white text-xl w-full"
+              disabled={isLoading}
+            >
+              Redeem Coupon 🎁
+            </ConfettiButton>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

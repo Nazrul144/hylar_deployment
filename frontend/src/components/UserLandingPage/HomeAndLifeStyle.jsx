@@ -1,66 +1,80 @@
-import React from 'react'
-import Furniture from './UserLandingPageCard/HomeAndLifestyleComponents/Furniture'
-import HomeDecor from './UserLandingPageCard/HomeAndLifestyleComponents/HomeDecor'
-import BeddingAndBath from './UserLandingPageCard/HomeAndLifestyleComponents/BeddingAndBath'
-import KitchenAndDining from './UserLandingPageCard/HomeAndLifestyleComponents/KitchenAndDining'
-import HomeAndLifestyleHero from '../browseCaterories/HomeAndLifestyleHero'
-import FAQ from '../addYourBusiness/FAQ'
-import { Oleo_Script } from 'next/font/google'
-import { Button } from '../ui/button'
-import Link from 'next/link'
+"use client";
+import React, { useContext, useEffect, useState } from "react";
+import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
+import { Inter, Montserrat } from "next/font/google";
+import Link from "next/link";
+import { BASE_URL } from "@/config/config";
+import { CategoriesContext } from "@/providers/CategoriesProvider";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
 
-const oleo = Oleo_Script({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
+const interFont = Inter({ subsets: ["latin"] });
+const montSerrat = Montserrat({ subsets: ["latin"] });
 
 const HomeAndLifeStyle = () => {
+  const { categories } = useContext(CategoriesContext);
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+
+  const [homeOffers, setHomeOffers] = useState([]);
+
+  useEffect(() => {
+    if (!categories.length) return;
+
+    // Normalize category name for comparison
+    const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const targetNames = ["homeandlifestyle", "homeandlifestyles"];
+
+    const homeCategory = categories.find((cat) =>
+      targetNames.includes(normalize(cat.category_name))
+    );
+
+    if (homeCategory) {
+      const allOffers = homeCategory.subcategories.flatMap(
+        (sub) => sub.offers || []
+      );
+
+      setHomeOffers(allOffers.slice(0, 3)); // Show first 3 only
+    } else {
+      console.warn("Home & Lifestyle category not found in:", categories);
+    }
+  }, [categories]);
+
+  // Do not render section if empty
+  if (!homeOffers.length) return null;
+
   return (
-    <div className='lg:w-7xl mx-auto mt-10 lg:mt-20 mb-11 px-2'>
-            <h1
-        className={`${oleo.className} font-bold text-xl lg:text-5xl text-[#00308F] text-center mb-4`}
-      >
+    <div className="flex flex-col items-center justify-center pt-24">
+      {/* Title */}
+      <h1 className="text-[#000000] font-bold text-5xl inter-text">
         Home & Lifestyle
       </h1>
-      <p className="text-center lg:text-lg mb-12">
-        A trusted platform built for high-impact results. <br /> With over a
-        million verified members and thousands of trusted partners, we help your
-        business stand out. Whether you're a local shop or a national brand,
-        your offers gain powerful exposure across our app, website, and
-        marketing channels — without the stress of setup fees or long
-        commitments. You bring the offer, we bring the audience
-      </p>
-       <div className="lg:flex justify-center ml-28 lg:ml-0 mb-6">
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
-               hover:bg-[#002766] hover:text-gray-300 transition-colors"
-        >
-          <Link href="/register" className="text-white">
-            Sign Up
-          </Link>
-        </Button>
-      </div>
-      <div>
-        <HomeAndLifestyleHero/>
-      </div>
-       <h1 className={`${oleo.className} font-bold mt-8 text-xl lg:text-5xl text-center mb-4`}>
-          Over <span className="text-[#00308F] mb-8">$300,000,000</span> saved
-          by our <br /> members in the past year.
-        </h1>
-        <h1 className="text-center lg:text-lg">
-          Don't miss out — join the Blue Light Card community today and start
-          saving on the <br /> brands you love!
-        </h1>
-        <Furniture/>
-        <HomeDecor/>
-        <BeddingAndBath/>
-        <KitchenAndDining/>
-        <FAQ/>
-    </div>
-  )
-}
 
-export default HomeAndLifeStyle
+      {/* Cards */}
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 pt-11">
+        {homeOffers.map((offer) => (
+          <UserLandingPageCard
+            key={offer.id}
+            id={offer.id} // Passing the offer ID
+            imageName={`${BASE_URL}${offer.image}`}
+            descriptionBoldText={offer.brand_name}
+            descriptionLightText={`${offer.discount_percent}% OFF`}
+            descriptionFont={interFont}
+            buttonName="Redeem"
+            buttonFont={montSerrat}
+            isBookmarked={bookmarks.some((b) => b.id === offer.id)}
+            onBookmarkClick={() => toggleBookmark(offer)}
+          />
+        ))}
+      </div>
+
+      {/* View All Link */}
+      <Link
+        href={`/categories/home&lifestyle`}
+        className={`bg-[#00308F] text-[#FFFFFF] mt-12 px-6 py-2 rounded-sm cursor-pointer ${montSerrat.className}`}
+      >
+        View All {">>"}
+      </Link>
+    </div>
+  );
+};
+
+export default HomeAndLifeStyle;

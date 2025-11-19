@@ -4,16 +4,20 @@ import { IoCheckmark } from "react-icons/io5";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { SignupContext } from "@/providers/SignupProvider";
+import { BASE_URL } from "@/config/config";
+import { UserContext } from "@/providers/UserProvider";
 
 const Subscription = () => {
   const { userProfile } = useContext(SignupContext);
+  const {user} = useContext(UserContext);
+  console.log(user)
   
   const handlePayment = async () => {
     try {
       const token = localStorage.getItem("access_token");
 
       const response = await fetch(
-        "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/subscriptions/create-mandate/",
+        `${BASE_URL}/api/subscriptions/create-mandate/`,
         {
           method: "POST",
           headers: {

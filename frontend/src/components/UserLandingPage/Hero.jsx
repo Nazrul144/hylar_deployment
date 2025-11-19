@@ -1,8 +1,15 @@
-import Image from "next/image";
+"use client"
 import React from "react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+  const router = useRouter()
+  const handeNavigate = ()=>{
+    router.push('/business')
+    
+  }
+  
   return (
     <div>
       <div className="relative w-full h-[550px] pt-8 flex flex-col items-center justify-center">
@@ -33,7 +40,7 @@ const Hero = () => {
           >
             Get access to curated deals across various categories
           </p>
-          <Button
+          <Button onClick={handeNavigate}
             className={`
     ring-2 ring-white 
     rounded-lg px-4 py-2 mt-4 inter-text cursor-pointer
@@ -47,11 +54,6 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="pt-12 flex flex-col lg:flex-row items-center justify-center gap-8">
-        <Image src="/1.jpg" alt="1" width={300} height={100} />
-        <Image src="/2.jpg" alt="2" width={300} height={100} />
-        <Image src="/3.jpg" alt="3" width={300} height={100} />
-      </div>
     </div>
   );
 };

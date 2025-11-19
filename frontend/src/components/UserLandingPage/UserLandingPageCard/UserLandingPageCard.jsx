@@ -1,26 +1,70 @@
-import Image from 'next/image'
-import React from 'react'
+"use client";
 
-const UserLandingPageCard = ({ imageName, descriptionBoldText, descriptionLightText, descriptionFont,
-    buttonName, buttonFont, bookMarkIcon }) => {
+import Image from "next/image";
+import Link from "next/link";
+import { useContext } from "react";
+import { CiBookmark } from "react-icons/ci";
+import { Button } from "@/components/ui/button";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
+
+const UserLandingPageCard = ({
+  id,
+  imageName,
+  descriptionBoldText,
+  descriptionLightText,
+  descriptionFont,
+  buttonName = "Redeem >>",
+  buttonFont,
+}) => {
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const isBookmarked = bookmarks.some((item) => item.id === id);
+
   return (
-    <div>
-      <div className="max-w-[352px] h-[313px] border-2 z-30">
-            <div className="w-full h-[60%] relative">
-                <Image src={`/${imageName}.jpg`} alt={`imageName`} fill />
-            </div>
-            <div className="w-full h-[40%] pl-6">
-                <p className={`text-[#000000] font-bold pt-2 ${descriptionFont.className}`}>
-                    {descriptionBoldText} <span className="font-normal">{descriptionLightText}</span></p>
-                <div className="flex gap-5 pt-4">
-                    <button className={`text-[#747474] ring-2 px-4 py-1 ${buttonFont.className}`}>{buttonName} {'>>'}</button>
-                    <button className="text-[#747474] ring-2 px-4 py-1"><Image src={`/${bookMarkIcon}.svg`} alt="bookMarkIcon"
-                        width={20} height={20} /></button>
-                </div>
-            </div>
-        </div>
-    </div>
-  )
-}
+    <div className="shadow-lg p-4 rounded-md max-w-[300px] relative">
+      {/* Image */}
+      <div className="relative w-full h-[200px] mb-4 rounded-md overflow-hidden">
+        <Image
+          src={imageName || "/fallback.jpg"}
+          alt={descriptionBoldText}
+          fill
+          className="object-cover"
+        />
+      </div>
 
-export default UserLandingPageCard
+      {/* Offer Texts */}
+      <h2 className={`text-xl font-semibold ${descriptionFont?.className}`}>
+        {descriptionBoldText}
+      </h2>
+      <p className={`text-gray-600 ${descriptionFont?.className}`}>
+        {descriptionLightText}
+      </p>
+
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between mt-4">
+        <Button
+          className={`border-2 rounded-none text-lg ${buttonFont?.className}`}
+          variant="none"
+          asChild
+        >
+          <Link href={`/redeem_details/${id}`}>
+            {buttonName} {">>"}
+          </Link>
+        </Button>
+
+        <Button
+          className={`border-2 rounded-none text-lg cursor-pointer ${
+            isBookmarked
+              ? "bg-[#3366CC] text-white hover:bg-[#3366CC] hover:text-white"
+              : "bg-white text-black hover:bg-gray-100 hover:text-black"
+          }`}
+          variant="ghost"
+          onClick={() => toggleBookmark({ id, imageName, descriptionBoldText })}
+        >
+          <CiBookmark />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default UserLandingPageCard;

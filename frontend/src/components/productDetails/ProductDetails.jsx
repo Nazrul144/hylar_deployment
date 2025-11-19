@@ -32,16 +32,16 @@ const ProductDetails = ({ id }) => {
         const res = await fetch(`${BASE_URL}/api/offers/categories`);
         const data = await res.json();
 
-        // Flatten all offers
+       
         const allOffers = data.data
           .flatMap((cat) => cat.subcategories)
           .flatMap((sub) => sub.offers || []);
 
-        // Find the offer by id
+        
         const item = allOffers.find((offer) => offer.id === Number(id));
         setSingleItem(item || null);
 
-        // Initialize countdown
+        
         if (item?.end_date) {
           const endTime = new Date(item.end_date).getTime();
           const updateCountdown = () => {
@@ -80,17 +80,20 @@ const ProductDetails = ({ id }) => {
 
   if (!singleItem) return <p className="text-center mt-10">Item not found.</p>;
 
+
+  
+
   return (
     <div className="lg:w-7xl mx-auto px-2">
       {/* Banner */}
-      <div className="relative w-full pt-6 flex items-center justify-center">
+      <div className="relative w-full pt-6 flex items-center justify-center ">
         <Image
           src={`${BASE_URL}${singleItem.image}`}
           alt="banner test"
           width={500}
           height={400}
         />
-        <div className="absolute w-full h-full bg-black/40 z-10" />
+        <div className="absolute w-full h-full  z-10" />
         <div className="absolute z-20 text-center">
           <h1 className="text-5xl lg:text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
             {singleItem.brand_name}

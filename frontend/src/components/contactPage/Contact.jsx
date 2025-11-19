@@ -79,7 +79,7 @@ const sendEmail = async (data) => {
       icon: "success",
     });
 
-    form.reset(); // Reset RHF form
+    form.reset(); 
 
   } catch (error) {
     console.log("ERROR:", error);
@@ -87,10 +87,7 @@ const sendEmail = async (data) => {
 };
 
 
-  // const handleFormSubmit = (data) => {
-  //   console.log(data);
-  //   form.reset()
-  // };
+
 
   return (
     <div className="py-16 px-4 md:px-12 border-1 rounded-sm">

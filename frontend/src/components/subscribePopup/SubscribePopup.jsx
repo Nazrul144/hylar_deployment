@@ -27,7 +27,7 @@ const SubscribePopup = () => {
       if (!localStorage.getItem("subscribed")) {
         setIsOpen(true);
       }
-    }, 5000);
+    }, 300000);
   };
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

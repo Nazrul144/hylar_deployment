@@ -13,50 +13,54 @@ const ProductDetails = ({ id }) => {
   const [singleItem, setSingleItem] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [time, setTime] = useState({
+  const [offerCountdown, setOfferCountdown] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
 
-  singleItem;
+  // Voucher Cooldown
+  const [voucherCooldownSec, setVoucherCooldownSec] = useState(null);
+  const [onCooldown, setOnCooldown] = useState(false);
 
-  const formatNumber = (num) => String(num).padStart(2, "0");
+  const formatNumber = (n) => String(n).padStart(2, "0");
 
+  /** Fetch offer details */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch all categories
         const res = await fetch(`${BASE_URL}/api/offers/categories`);
         const data = await res.json();
 
-       
         const allOffers = data.data
           .flatMap((cat) => cat.subcategories)
           .flatMap((sub) => sub.offers || []);
 
-        
         const item = allOffers.find((offer) => offer.id === Number(id));
         setSingleItem(item || null);
 
-        
+        /** Countdown for offer ending */
         if (item?.end_date) {
           const endTime = new Date(item.end_date).getTime();
+
           const updateCountdown = () => {
-            const now = new Date().getTime();
+            const now = Date.now();
             const diff = endTime - now;
+
             if (diff > 0) {
-              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-              const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-              const minutes = Math.floor((diff / (1000 * 60)) % 60);
-              const seconds = Math.floor((diff / 1000) % 60);
-              setTime({ days, hours, minutes, seconds });
+              setOfferCountdown({
+                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((diff / (1000 * 60)) % 60),
+                seconds: Math.floor((diff / 1000) % 60),
+              });
             } else {
-              setTime({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+              setOfferCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
             }
           };
+
           updateCountdown();
           const interval = setInterval(updateCountdown, 1000);
           return () => clearInterval(interval);
@@ -71,6 +75,92 @@ const ProductDetails = ({ id }) => {
     if (id) fetchData();
   }, [id]);
 
+  /** Fetch Voucher Cooldown (same logic as DialogDemo) */
+  useEffect(() => {
+    if (!singleItem) return;
+
+    const checkVoucherCooldown = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return; // not logged in
+
+        const res = await fetch(
+          `${BASE_URL}/api/offers/voucher/${singleItem.id}/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const json = await res.json();
+
+        // Backend returning error because user is on cooldown
+        if (res.status === 425 && json?.data) {
+          const voucher = json.data;
+          const offer = json.data.offer;
+
+          const lastClaim = new Date(voucher.claimed_at).getTime();
+          const now = Date.now();
+          const hours = offer.voucher_cooldown_hours || 24;
+          const cooldownMs = hours * 60 * 60 * 1000;
+          const remainingMs = cooldownMs - (now - lastClaim);
+
+          if (remainingMs > 0) {
+            setOnCooldown(true);
+            setVoucherCooldownSec(Math.floor(remainingMs / 1000));
+          }
+          return;
+        }
+
+        // If successful response
+        if (res.ok && json?.data?.claimed && json?.data?.claimed_at) {
+          const voucher = json.data;
+          const offer = json.data.offer;
+
+          const lastClaimTs = new Date(voucher.claimed_at).getTime();
+          const cooldownMs =
+            (offer.voucher_cooldown_hours || 24) * 60 * 60 * 1000;
+
+          const remaining = cooldownMs - (Date.now() - lastClaimTs);
+
+          if (remaining > 0) {
+            setOnCooldown(true);
+            setVoucherCooldownSec(Math.floor(remaining / 1000));
+          }
+        }
+      } catch (err) {
+        console.error("Voucher cooldown check failed:", err);
+      }
+    };
+
+    checkVoucherCooldown();
+  }, [singleItem]);
+
+  /** Live countdown for voucher cooldown */
+  useEffect(() => {
+    if (!voucherCooldownSec) return;
+
+    const interval = setInterval(() => {
+      setVoucherCooldownSec((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setOnCooldown(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [voucherCooldownSec]);
+
+  const formatCooldown = (sec) => {
+    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
+    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+    const s = String(sec % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
+
+  /** If loading */
   if (loading)
     return (
       <div className="flex justify-center mt-10">
@@ -80,20 +170,16 @@ const ProductDetails = ({ id }) => {
 
   if (!singleItem) return <p className="text-center mt-10">Item not found.</p>;
 
-
-  
-
   return (
     <div className="lg:w-7xl mx-auto px-2">
       {/* Banner */}
       <div className="relative w-full pt-6 flex items-center justify-center ">
         <Image
           src={`${BASE_URL}${singleItem.image}`}
-          alt="banner test"
+          alt="banner"
           width={500}
           height={400}
         />
-        <div className="absolute w-full h-full  z-10" />
         <div className="absolute z-20 text-center">
           <h1 className="text-5xl lg:text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
             {singleItem.brand_name}
@@ -106,35 +192,37 @@ const ProductDetails = ({ id }) => {
         <h1 className="font-bold text-xl lg:text-4xl text-[#00308F] mb-4">
           Voucher Gift – Get {singleItem.discount_percent || 0}% OFF!
         </h1>
-        <p className="text-xl mb-2">{singleItem.description}</p>
-        <p className="text-lg">
-          Brand:{" "}
-          <a
-            href={singleItem.brand_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline"
-          >
-            {singleItem.brand_name}
-          </a>
-        </p>
-        <p className="text-gray-500 mt-2">
-          Offer ends in: {time.days}d {time.hours}h {time.minutes}m{" "}
-          {time.seconds}s
+
+        {/* VOUCHER COOLDOWN TIMER */}
+        {onCooldown ? (
+          <p className="text-red-600 font-semibold text-xl mt-4">
+            New voucher available in:{" "}
+            <span className="font-bold text-[#00308F]">
+              {formatCooldown(voucherCooldownSec)}
+            </span>
+          </p>
+        ) : (
+          <p className="text-green-600 text-lg font-semibold">Voucher Available ✔</p>
+        )}
+
+        <p className="text-gray-500 mt-4">
+          Offer ends in: {offerCountdown.days}d {offerCountdown.hours}h{" "}
+          {offerCountdown.minutes}m {offerCountdown.seconds}s
         </p>
       </div>
 
-      {/* Countdown */}
+      {/* Countdown Grid */}
       <div className="mt-10 text-center">
         <h2 className="text-2xl text-gray-700 mb-4">
           Hurry, Before It's Too Late!
         </h2>
+
         <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
           {[
-            { label: "Days", value: time.days },
-            { label: "Hr", value: time.hours },
-            { label: "Mins", value: time.minutes },
-            { label: "Sec", value: time.seconds },
+            { label: "Days", value: offerCountdown.days },
+            { label: "Hr", value: offerCountdown.hours },
+            { label: "Mins", value: offerCountdown.minutes },
+            { label: "Sec", value: offerCountdown.seconds },
           ].map((item, idx) => (
             <div
               key={idx}
@@ -154,30 +242,11 @@ const ProductDetails = ({ id }) => {
         <h2 className="text-xl lg:text-3xl font-bold text-[#00308F]">
           Visit Our Shop
         </h2>
-        <p className="mt-2 mb-4 text-xl">
-          We welcome you to our cozy space where taste meets comfort. Stop by
-          for a memorable experience.
-        </p>
-        <div className="flex justify-center mt-10">
-          <div className="text-xl space-y-3">
-            <div className="flex items-center gap-2">
-              <IoLocationSharp className="text-[#00308F] text-2xl" />
-              <span className="font-bold">Address:</span> Maximum Savings
-            </div>
-            <div className="flex items-center gap-2">
-              <FaPhoneAlt className="text-[#00308F] text-2xl" />
-              <span className="font-bold">Phone:</span> +44 4344 43453
-            </div>
-            <div className="flex items-center gap-2">
-              <MdEmail className="text-[#00308F] text-2xl" />
-              <span className="font-bold">Email:</span> example@gmail.com
-            </div>
-          </div>
-        </div>
 
         {/* Buttons */}
         <div className="flex items-center justify-center gap-4 mt-6">
-          <DialogDemo />
+          <DialogDemo offerId={singleItem?.id} />
+
           <button
             onClick={() => window.location.reload()}
             className="flex items-center justify-center w-12 h-12 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors"

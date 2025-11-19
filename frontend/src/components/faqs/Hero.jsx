@@ -6,6 +6,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { BASE_URL } from "@/config/config";
+import toast from "react-hot-toast";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -14,30 +15,59 @@ const fadeInUp = {
 
 const Hero = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]); 
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleClear = () => {
     setQuery("");
-    setResults([]); 
+    setResults([]);
   };
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
+const handleSearch = async () => {
+  if (!query.trim()) return;
 
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${BASE_URL}/api/offers/searched-offer/?q=${query}`
-      );
-      const data = await response.json();
-      setResults(data); 
-    } catch (error) {
-      console.error("Search API error:", error);
+  setLoading(true);
+
+  try {
+    const token = localStorage.getItem("access_token");
+
+    const response = await fetch(
+      `${BASE_URL}/api/offers/searched-offer/?q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          "Authorization": token ? `Bearer ${token}` : "",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("Search result:", data); 
+
+   
+    if (data?.error === "SUBSCRIPTION_REQUIRED") {
       setResults([]);
+      toast.error("You need an active subscription to search offers.")
+      return;
     }
-    setLoading(false);
-  };
+
+  
+    if (!response.ok) {
+      setResults([]);
+      return;
+    }
+
+ 
+    setResults(Array.isArray(data) ? data : []);
+
+  } catch (error) {
+    console.error("Search API error:", error);
+    setResults([]);
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#00308F] px-4 lg:px-4 py-10 min-h-[500px]">
@@ -131,7 +161,9 @@ const Hero = () => {
           </div>
         ) : (
           query &&
-          !loading && <p className="text-gray-300 text-center">No results found</p>
+          !loading && (
+            <p className="text-gray-300 text-center">No results found</p>
+          )
         )}
       </div>
     </div>

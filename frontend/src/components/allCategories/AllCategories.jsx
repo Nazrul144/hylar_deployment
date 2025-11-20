@@ -14,12 +14,11 @@ import { UserContext } from "@/providers/UserProvider";
 const AllCategories = () => {
   const params = useParams();
   const id = Number(params.id);
-
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+ 
   const { categories } = useContext(CategoriesContext);
-  const {user} = useContext(UserContext);
   const [categoryData, setCategoryData] = useState(null);
-
-  const router = useRouter()
 
   useEffect(() => {
     if (!categories.length) return;
@@ -35,7 +34,6 @@ const AllCategories = () => {
     );
   }
 
-
   const containerVariants = {
     show: { transition: { staggerChildren: 0.2 } },
   };
@@ -46,20 +44,11 @@ const AllCategories = () => {
   };
 
   const OfferCard = React.memo(({ item }) => {
-
-    if (!user) {
-    router.push("/register"); 
-    return;
-  }
-
     const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
     const isBookmarked = bookmarks.some((b) => b.id === item.id);
 
     return (
-      <motion.div
-        variants={cardVariants}
-        className="shadow-xl p-4 rounded-sm"
-      >
+      <motion.div variants={cardVariants} className="shadow-xl p-4 rounded-sm">
         <Image
           src={item.image ? `${BASE_URL}${item.image}` : "/fallback.jpg"}
           width={400}
@@ -88,7 +77,13 @@ const AllCategories = () => {
                 : "bg-white text-black hover:bg-gray-100"
             }`}
             variant="ghost"
-            onClick={() => toggleBookmark(item)}
+            onClick={() => {
+              if (!user) {
+                router.push("/register");
+                return;
+              }
+              toggleBookmark(item);
+            }}
           >
             <CiBookmark />
           </Button>

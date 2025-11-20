@@ -4,8 +4,7 @@
 
 // export default config;
 
-
-module.exports = {
+export default {
   plugins: {
     "@tailwindcss/postcss": {},
     autoprefixer: {},

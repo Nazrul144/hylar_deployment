@@ -53,7 +53,7 @@ const Register7 = () => {
       address_line1: "",
       address_line2: "",
       city: "",
-      country: "United States",
+      country: "United Kingdom",
       postcode: "",
     },
   });

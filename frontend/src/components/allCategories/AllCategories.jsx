@@ -6,16 +6,20 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CiBookmark } from "react-icons/ci";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { CategoriesContext } from "@/providers/CategoriesProvider";
 import { BASE_URL } from "@/config/config";
+import { UserContext } from "@/providers/UserProvider";
 
 const AllCategories = () => {
   const params = useParams();
   const id = Number(params.id);
 
   const { categories } = useContext(CategoriesContext);
+  const {user} = useContext(UserContext);
   const [categoryData, setCategoryData] = useState(null);
+
+  const router = useRouter()
 
   useEffect(() => {
     if (!categories.length) return;
@@ -42,6 +46,12 @@ const AllCategories = () => {
   };
 
   const OfferCard = React.memo(({ item }) => {
+
+    if (!user) {
+    router.push("/register"); 
+    return;
+  }
+
     const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
     const isBookmarked = bookmarks.some((b) => b.id === item.id);
 

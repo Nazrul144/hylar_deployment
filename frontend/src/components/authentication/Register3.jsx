@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -20,6 +20,7 @@ import { Checkbox } from "../ui/checkbox";
 import Link from "next/link";
 import { BASE_URL } from "@/config/config";
 import toast from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const formSchema = z
   .object({
@@ -56,6 +57,9 @@ const Register3 = () => {
   const router = useRouter();
   const { signupData, setSignupData } = useContext(SignupContext);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,8 +84,6 @@ const Register3 = () => {
         ...data,
         date_of_birth: formattedDate,
       };
-
-      console.log("Final payload:", allData);
 
       const res = await fetch(`${BASE_URL}/api/accounts/register/`, {
         method: "POST",
@@ -125,7 +127,7 @@ const Register3 = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)}>
             <div className="relative w-96 h-10 mb-8 mx-auto mt-12">
-              {/* Label on border */}
+
               <FormField
                 control={form.control}
                 name="password"
@@ -135,16 +137,27 @@ const Register3 = () => {
                       <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
                         Password
                       </Label>
+
                       <Input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         {...field}
-                        className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                        className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 pr-10"
                       />
+
+                      {/* 👁️ Eye Icon */}
+                      <span
+                        className="absolute right-3 top-3 cursor-pointer text-gray-600"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </span>
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+             
               <FormField
                 control={form.control}
                 name="confirm_password"
@@ -154,17 +167,27 @@ const Register3 = () => {
                       <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
                         Confirm Password
                       </Label>
+
                       <Input
-                        type="password"
+                        type={showConfirm ? "text" : "password"}
                         {...field}
-                        className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                        className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 pr-10"
                       />
+
+                      {/* 👁️ Eye Icon */}
+                      <span
+                        className="absolute right-3 top-3 cursor-pointer text-gray-600"
+                        onClick={() => setShowConfirm(!showConfirm)}
+                      >
+                        {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                      </span>
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* Checkboxes and Submit */}
               <FormField
                 control={form.control}
                 name="agreed_to_terms_and_conditions"
@@ -178,7 +201,6 @@ const Register3 = () => {
                           checked={field.value}
                         />
                         <Label htmlFor="agreed_to_terms_and_conditions">
-                          {" "}
                           I agree to the{" "}
                           <Link
                             className="text-blue-600 hover:text-blue-800 underline"
@@ -193,6 +215,7 @@ const Register3 = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="agreed_to_policy"
@@ -206,7 +229,6 @@ const Register3 = () => {
                           checked={field.value}
                         />
                         <Label htmlFor="agreed_to_policy">
-                          {" "}
                           I agree to the{" "}
                           <Link
                             className="text-blue-600 hover:text-blue-800 underline"

@@ -1,3 +1,5 @@
+// --- FULL NAVBAR CODE WITH FIXES ---
+
 "use client";
 import { cn } from "@/lib/utils";
 import {
@@ -37,7 +39,6 @@ import { UserContext } from "@/providers/UserProvider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
 
-// All routes and submenus here:
 const navItems = [
   { title: "Home", path: "/" },
   { title: "How It Works", path: "/work" },
@@ -52,7 +53,7 @@ export default function Navbar({ montserrat }) {
   const [open, setOpen] = useState(false);
   const { categories, loading } = useContext(CategoriesContext);
   const { bookmarks } = useContext(BookmarkContext);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [photo, setPhoto] = useState("/profile.png");
 
   const pathName = usePathname();
@@ -71,19 +72,13 @@ export default function Navbar({ montserrat }) {
   }, [user]);
 
   useEffect(() => {
-    const handleScrolled = () => {
-      if (window.scrollY > 10) setScrolled(true);
-      else setScrolled(false);
-    };
-    addEventListener("scroll", handleScrolled);
+    const handleScrolled = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScrolled);
     return () => window.removeEventListener("scroll", handleScrolled);
   }, []);
 
   const handleCloseClick = () => setOpen(false);
 
-  const { setUser } = useContext(UserContext);
-
-  //Handle logout:
   const handleLogout = async () => {
     try {
       const access_token = localStorage.getItem("access_token");
@@ -148,15 +143,12 @@ export default function Navbar({ montserrat }) {
                 >
                   <path
                     d="M4 12L20 12"
-                    className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
+                    className="origin-center -translate-y-[7px] transition-all duration-300"
                   />
+                  <path d="M4 12H20" className="origin-center transition-all duration-300" />
                   <path
                     d="M4 12H20"
-                    className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-                  />
-                  <path
-                    d="M4 12H20"
-                    className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
+                    className="origin-center translate-y-[7px] transition-all duration-300"
                   />
                 </svg>
               </Button>
@@ -173,40 +165,31 @@ export default function Navbar({ montserrat }) {
                       >
                         <DropdownMenuTrigger asChild>
                           <Button
-                            className="text-gray-900 dark:text-gray-100"
-                            variant={"ghost"}
+                            className="text-gray-900 dark:text-gray-100 whitespace-nowrap"
+                            variant="ghost"
                           >
                             {navItem.title}
                           </Button>
                         </DropdownMenuTrigger>
-                        {/* <DropdownMenuContent onClick={handleCloseClick}>
-                          {categories.map((feature) => (
-                            <DropdownMenuItem
-                              key={feature.id}
-                              className="dark:text-gray-100"
-                            >
-                              <Link href={`/category/${feature.id}`}>
-                                {feature.name}
-                              </Link>
+
+                        <DropdownMenuContent className="w-56">
+                          {loading ? (
+                            <DropdownMenuItem disabled>
+                              Loading...
                             </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent> */}
-                        {loading ? (
-                          <DropdownMenuItem disabled>
-                            Loading...
-                          </DropdownMenuItem>
-                        ) : (
-                          categories.map((feature) => (
-                            <DropdownMenuItem
-                              key={feature.id}
-                              className="dark:text-gray-100"
-                            >
-                              <Link href={`/category/${feature.id}`}>
-                                {feature.name}
-                              </Link>
-                            </DropdownMenuItem>
-                          ))
-                        )}
+                          ) : (
+                            categories.map((feature) => (
+                              <DropdownMenuItem
+                                key={feature.id}
+                                className="dark:text-gray-100 whitespace-nowrap"
+                              >
+                                <Link href={`/category/${feature.id}`}>
+                                  {feature.name}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))
+                          )}
+                        </DropdownMenuContent>
                       </DropdownMenu>
                     ) : (
                       <NavigationMenuItem key={navItem.path}>
@@ -240,7 +223,10 @@ export default function Navbar({ montserrat }) {
             </Link>
 
             <NavigationMenu viewport={false} className="max-md:hidden">
-              <NavigationMenuList className="gap-6">
+              <NavigationMenuList
+                className="gap-6 flex-nowrap" 
+                // COMMENT: FIXED → prevents wrapping on medium screens
+              >
                 {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
                     <DropdownMenu
@@ -250,32 +236,20 @@ export default function Navbar({ montserrat }) {
                     >
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="text-gray-900 dark:text-gray-100"
+                          className="text-gray-900 dark:text-gray-100 whitespace-nowrap" 
+                          // COMMENT: FIXED → prevent breaking text
                           variant={"ghost"}
                         >
                           {navItem.title}
                           <IoIosArrowDown className="mt-0.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      {/* <DropdownMenuContent>
-                        {categories.map((category) => (
-                          <DropdownMenuItem
-                            key={category.id}
-                            onClick={handleCloseClick}
-                            className="dark:text-gray-100"
-                          >
-                            <Link href={`/category/${category.id}`}>
-                              {category.category_name}
-                            </Link>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent> */}
                       <DropdownMenuContent>
                         {loading ? (
                           <DropdownMenuItem disabled>
                             Loading...
                             <div className="flex justify-center items-center">
-                              <Spinner className={cn("size-8 animate-spin")}/>
+                              <Spinner className={cn("size-8 animate-spin")} />
                             </div>
                           </DropdownMenuItem>
                         ) : (
@@ -283,7 +257,7 @@ export default function Navbar({ montserrat }) {
                             <DropdownMenuItem
                               key={category.id}
                               onClick={handleCloseClick}
-                              className="dark:text-gray-100"
+                              className="dark:text-gray-100 whitespace-nowrap"
                             >
                               <Link href={`/category/${category.id}`}>
                                 {category.category_name}
@@ -300,7 +274,9 @@ export default function Navbar({ montserrat }) {
                         className={cn(
                           pathName === navItem.path
                             ? "text-blue-800 underline font-bold dark:text-blue-400"
-                            : "text-gray-900 dark:text-gray-100"
+                            : "text-gray-900 dark:text-gray-100",
+                          "whitespace-nowrap" 
+                          // COMMENT: FIXED → prevents text wrapping
                         )}
                       >
                         {navItem.title}
@@ -313,6 +289,7 @@ export default function Navbar({ montserrat }) {
           </div>
         </div>
 
+        {/* RIGHT PART */}
         <div>
           {user ? (
             <div className="flex items-center gap-8">

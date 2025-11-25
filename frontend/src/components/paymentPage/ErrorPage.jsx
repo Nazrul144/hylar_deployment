@@ -1,6 +1,36 @@
+<<<<<<< HEAD
 import React from "react";
 
 const ErrorPage = () => {
+=======
+'use client'
+import { motion } from "framer-motion";
+import { XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const ErrorPage = () => {
+  const router = useRouter();
+    const [counter, setCounter] = useState(5);
+  
+    useEffect(() => {
+      // Countdown interval
+      const interval = setInterval(() => {
+        setCounter((prev) => prev - 1);
+      }, 1000);
+  
+      // Redirect after 5 seconds
+      const timer = setTimeout(() => {
+        router.push("/register/register2/register3/register4/register5/register6/register7/register8");
+      }, 5000);
+  
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
+    }, []);
+
+>>>>>>> 3a8bff25a3cc9682e8a53afbb30acb8b5e51e0a3
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-200 p-6">
       <motion.div
@@ -14,9 +44,16 @@ const ErrorPage = () => {
         <p className="text-gray-600 text-lg mb-6">
           Something went wrong while processing your payment. Please try again.
         </p>
+<<<<<<< HEAD
         <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all">
           Try Again
         </button>
+=======
+        <p className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all">
+          Redirecting in{" "}
+          {counter} seconds...
+        </p>
+>>>>>>> 3a8bff25a3cc9682e8a53afbb30acb8b5e51e0a3
       </motion.div>
     </div>
   );

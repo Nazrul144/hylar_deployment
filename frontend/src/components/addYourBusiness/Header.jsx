@@ -4,6 +4,7 @@ import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -61,9 +62,9 @@ const Header = () => {
           whileInView={{ opacity: 1, scale: 1, transition: { delay: 0.6, duration: 0.6 } }}
           viewport={{ once: false, amount: 0.3 }}
         >
-          <Button className="bg-[#7BB662] cursor-pointer text-lg text-white px-6 py-3 rounded transition-all duration-300 ease-in-out hover:bg-[#5FA145] hover:scale-105 hover:shadow-lg">
+          <Link href={"/submit_form"} className="bg-[#7BB662] cursor-pointer text-lg text-white px-6 py-3 rounded transition-all duration-300 ease-in-out hover:bg-[#5FA145] hover:scale-105 hover:shadow-lg">
             Add Your Business
-          </Button>
+          </Link>
         </motion.div>
       </motion.div>
     </div>

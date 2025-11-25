@@ -1,6 +1,8 @@
 
 import About from '@/components/landingPage/About'
-import SuccessPage from '@/components/paymentPage/successPage'
+
+
+
 import React from 'react'
 
 export const metadata = {
@@ -11,8 +13,7 @@ export const metadata = {
 const AboutPage = () => {
   return (
     <div>
-      {/* <About/> */}
-      <SuccessPage/>
+      <About/>
     </div>
   )
 }

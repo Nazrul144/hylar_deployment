@@ -133,6 +133,7 @@ const SubmitForm = () => {
           text: "Your form submitted successfully!",
           icon: "success",
         });
+        form.reset();
       }
     } catch (error) {
       console.log(error);

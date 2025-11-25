@@ -104,7 +104,7 @@ const handlePayment = async () => {
                 </h1>
                 <h4 className="ml-6 pb-8">
                   Enter your delivery address and unlock two years of exclusive
-                  access <br /> for just $5.99.
+                  access <br /> for just $4.99.
                 </h4>
                 <hr className="border-blue-800 border-[3px] lg:w-[640px] mx-auto" />
               </div>

@@ -79,7 +79,7 @@ const sendEmail = async (data) => {
       icon: "success",
     });
 
-    form.reset(); // Reset RHF form
+    form.reset(); 
 
   } catch (error) {
     console.log("ERROR:", error);
@@ -87,10 +87,7 @@ const sendEmail = async (data) => {
 };
 
 
-  // const handleFormSubmit = (data) => {
-  //   console.log(data);
-  //   form.reset()
-  // };
+
 
   return (
     <div className="py-16 px-4 md:px-12 border-1 rounded-sm">
@@ -101,7 +98,7 @@ const sendEmail = async (data) => {
         </h2>
 
         <p className="text-gray-600 mt-2 dark:text-white">
-          Have a question or want to work with us? Fill out the form and we’ll
+          Have a question or want to work with us? Fill out <br /> the form and we’ll
           get back to you.
         </p>
       </div>
@@ -116,13 +113,13 @@ const sendEmail = async (data) => {
 
           <div className="space-y-4 mt-6">
             <p className="flex items-center gap-3 text-gray-700 dark:text-white">
-              <FaPhoneAlt /> +880 1234 567 890
+              <FaPhoneAlt /> +44 7123 456 ...
             </p>
             <p className="flex items-center gap-3 text-gray-700 dark:text-white">
               <FaEnvelope /> contact@yourcompany.com
             </p>
             <p className="flex items-center gap-3 text-gray-700 dark:text-white">
-              <FaMapMarkerAlt /> 1200 Gulshan Avenue, Dhaka, Bangladesh
+              <FaMapMarkerAlt /> 1200 Abc Avenue, London, UK
             </p>
           </div>
 

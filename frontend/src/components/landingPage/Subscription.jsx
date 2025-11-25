@@ -4,16 +4,20 @@ import { IoCheckmark } from "react-icons/io5";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { SignupContext } from "@/providers/SignupProvider";
+import { BASE_URL } from "@/config/config";
+import { UserContext } from "@/providers/UserProvider";
 
 const Subscription = () => {
   const { userProfile } = useContext(SignupContext);
+  const {user} = useContext(UserContext);
+  console.log(user)
   
   const handlePayment = async () => {
     try {
       const token = localStorage.getItem("access_token");
 
       const response = await fetch(
-        "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/subscriptions/create-mandate/",
+        `${BASE_URL}/api/subscriptions/create-mandate/`,
         {
           method: "POST",
           headers: {
@@ -77,38 +81,7 @@ const Subscription = () => {
             duration: 1,
           }}
         >
-          <article className="rounded-sm border border-blue-900 border-b-4 p-4 lg:w-[442px] h-[450px]">
-            <h2 className=" text-xl lg:text-4xl font-bold inter-text common-text text-center mt-10 mb-2">
-              Basic
-            </h2>
-            <h1 className="lg:text-3xl inter-text text-center mb-2">$5.99</h1>
-            <h5 className="text-center text-sm montserrat-text ">
-              One-time free
-            </h5>
-
-            <div className="flex justify-center items-center mt-8">
-              <div>
-                <div className="flex items-center gap-2">
-                  <IoCheckmark className="text-green-500 font-bold text-2xl" />
-                  <p className="montserrat-text text-sm">
-                    Access to selected discounts
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <IoCheckmark className="text-green-500 font-bold text-2xl" />
-                  <p className="montserrat-text text-sm">Email support</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <IoCheckmark className="text-green-500 font-bold text-2xl" />
-                  <p className="montserrat-text text-sm">Basic verification</p>
-                </div>
-              </div>
-            </div>
-
-            <Button onClick={handlePayment} className="lg:w-88 h-12 text-lg text-white inter-text common-bg mt-16 mx-auto block cursor-pointer hover:bg-common-bg hover:scale-105 transition-all duration-300">
-              Get Basic
-            </Button>
-          </article>
+     
         </motion.div>
 
         <motion.div
@@ -126,9 +99,9 @@ const Subscription = () => {
             <h2 className="text-xl lg:text-4xl font-bold inter-text common-text text-center mt-10 mb-2">
               Premium
             </h2>
-            <h1 className="lg:text-3xl inter-text text-center mb-2">$5.99</h1>
+            <h1 className="lg:text-3xl inter-text text-center mb-2">$4.99</h1>
             <h5 className="text-center text-sm montserrat-text ">
-              One-time free
+              Yearly
             </h5>
 
             <div className="flex justify-center items-center mt-8">

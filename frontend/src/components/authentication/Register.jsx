@@ -44,11 +44,9 @@ const formSchema = z.object({
   phone_no: z
     .string()
     .trim()
-    .min(11, { message: "phone_no number must be at least 11 digits" })
-    .max(14, { message: "phone_no number must not exceed 14 digits" })
-    // .regex(/^\+?[1-9]\d{6,14}$/, {
-    //   message: "Enter a valid phone_no number",
-    // }),
+    .regex(/^(07|\+447|00447)\d{9}$/, {
+      message: "Invalid UK phone number format",
+    }),
 });
 
 const Register = () => {
@@ -259,7 +257,7 @@ const Register = () => {
                         </Label>
                         <Input
                           {...field}
-                          placeholder="+1"
+                          placeholder="+44 XXX XXX XXX"
                           className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
                         />
                       </div>

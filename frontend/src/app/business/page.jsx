@@ -1,31 +1,24 @@
 "use client";
 
-import FAQ from "@/components/addYourBusiness/FAQ";
-import Header from "@/components/addYourBusiness/Header";
-import Partner from "@/components/addYourBusiness/Partner";
-import WhatYouGet from "@/components/addYourBusiness/WhatYouGet";
-import Works from "@/components/addYourBusiness/Works";
+import AddUserBusiness from "@/components/addYourBusiness/userBusinessSide/AddUserBusiness";
 import BlogPage from "@/components/blogPage/BlogPage";
-import Subscription from "@/components/landingPage/Subscription";
-import { UserContext } from "@/providers/AuthProvider";
+import { UserContext } from "@/providers/UserProvider";
 import React, { useContext } from "react";
 
 const BusinessPage = () => {
-  const user = useContext(UserContext); // context থেকে user info নাও
- 
+  const { user, loading } = useContext(UserContext);
+
+  if (loading) {
+    return <h1 className="text-center mt-12">Loading...</h1>; 
+  }
 
   return (
     <div>
-      {user?.isLoggedIn ? ( // user login আছে কিনা check করো
-        <BlogPage />
+      {user ? (   
+          <AddUserBusiness/>
       ) : (
         <>
-          <Header />
-          <Partner />
-          <Works />
-          <Subscription />
-          <WhatYouGet />
-          <FAQ />
+          <BlogPage />
         </>
       )}
     </div>

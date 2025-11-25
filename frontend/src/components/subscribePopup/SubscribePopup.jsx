@@ -13,21 +13,22 @@ const SubscribePopup = () => {
 
   useEffect(() => {
     const subscribedFlag = localStorage.getItem("subscribed");
-    if (subscribedFlag) {
+    const popupClosed = localStorage.getItem("popup_closed");
+
+    if (subscribedFlag || popupClosed) {
+
       setSubscribed(true);
       setIsOpen(false);
     } else {
+  
       setIsOpen(true);
     }
   }, []);
 
   const closePopup = () => {
     setIsOpen(false);
-    setTimeout(() => {
-      if (!localStorage.getItem("subscribed")) {
-        setIsOpen(true);
-      }
-    }, 5000);
+
+    localStorage.setItem("popup_closed", "true");
   };
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -40,9 +41,11 @@ const SubscribePopup = () => {
       return;
     }
 
+  
     localStorage.setItem("subscribed", "true");
     setSubscribed(true);
     setIsOpen(false);
+
     Swal.fire({
       title: "Thank you for subscribing!",
       icon: "success",
@@ -60,7 +63,7 @@ const SubscribePopup = () => {
 
           {/* Popup */}
           <div className="fixed top-1/2 left-1/2 z-50 w-[90%] max-w-[750px] bg-white rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2 flex flex-col md:flex-row overflow-hidden">
-            {/* Left Side with Image */}
+            {/* Left Side Image */}
             <div className="w-full md:w-1/2 h-64 md:h-auto relative">
               <Image
                 src="/subscribe_image/subscribe.jpg"
@@ -70,9 +73,9 @@ const SubscribePopup = () => {
               />
             </div>
 
-            {/* Right Side with Content */}
+            
             <div className="w-full md:w-1/2 p-6 md:p-8 relative flex flex-col justify-center">
-              {/* Close button */}
+          
               <Button
                 variant="ghost"
                 onClick={closePopup}
@@ -86,11 +89,10 @@ const SubscribePopup = () => {
                 Subscribe Now
               </h2>
               <p className="text-gray-600 text-center mb-6 text-sm md:text-base">
-                Join our community and get the latest offers straight to your
-                inbox.
+                Join our community and get the latest offers straight to your inbox.
               </p>
 
-              {/* Form */}
+         
               <form onSubmit={handleSubscribe} className="flex flex-col space-y-4">
                 <input
                   type="email"
@@ -100,17 +102,16 @@ const SubscribePopup = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
+
                 <Button
                   type="submit"
                   className="bg-[#00308F] text-white py-4 md:py-6 text-lg md:text-xl rounded hover:bg-blue-700 transition cursor-pointer"
                 >
                   Subscribe
                 </Button>
+
                 <h3 className="text-center text-sm md:text-base">
-                  Hurry!{" "}
-                  <span role="img" aria-label="lightning">
-                    ⚡
-                  </span>
+                  Hurry! ⚡
                 </h3>
               </form>
             </div>

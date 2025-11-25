@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BASE_URL } from "@/config/config";
 import { Button } from "../ui/button";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 const LatestNews = () => {
   const [latestNews, setLatestNews] = useState([]);
@@ -50,23 +49,25 @@ const LatestNews = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ delay: index * 0.2 }} // stagger effect
+            transition={{ delay: index * 0.2 }}
           >
             <Link
               href={`newsDetails/${news.slug}`}
               className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-black h-full flex flex-col"
             >
-              <div className="w-full h-56">
+              <div className="relative w-full h-56 overflow-hidden rounded-md">
                 <Image
                   width={400}
                   height={300}
                   alt="image"
                   src={news.image}
-                  className="mt-3 flex flex-col flex-grow"
+                  className="object-cover w-full h-full"
                 />
+            
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
               </div>
 
-              <div className="mt-2">
+              <div className="mt-3">
                 <div>
                   <h3 className="text-lg font-bold inter-text">{news.title}</h3>
                   <div
@@ -74,8 +75,8 @@ const LatestNews = () => {
                     dangerouslySetInnerHTML={{
                       __html:
                         news.content
-                          ?.split(" ") // split into words
-                          ?.slice(0, 20) // show first 20
+                          ?.split(" ")
+                          ?.slice(0, 20)
                           ?.join(" ") + " ...",
                     }}
                   ></div>
@@ -92,7 +93,6 @@ const LatestNews = () => {
           className="common-bg text-lg mt-10 flex items-center gap-2 hover:scale-105 transition-all duration-300 dark:text-white"
         >
           {showAll ? "Load Less" : "Load More"} 
-          {/* <MdKeyboardDoubleArrowRight /> */}
         </Button>
       </div>
     </div>

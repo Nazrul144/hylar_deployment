@@ -35,6 +35,7 @@ import {
 import { ModeToggle } from "../themeProvider/ModeToggle";
 import { UserContext } from "@/providers/UserProvider";
 import toast from "react-hot-toast";
+import { Spinner } from "../ui/spinner";
 
 // All routes and submenus here:
 const navItems = [
@@ -56,14 +57,14 @@ export default function Navbar({ montserrat }) {
 
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const router = useRouter()
- 
+  const router = useRouter();
+
   useEffect(() => {
     if (user && user.profile_picture) {
       const fullUrl = user.profile_picture.startsWith("http")
         ? user.profile_picture
         : `${BASE_URL}${user.profile_picture}`;
-      setPhoto(`${fullUrl}?t=${Date.now()}`); 
+      setPhoto(`${fullUrl}?t=${Date.now()}`);
     } else {
       setPhoto("/profile.png");
     }
@@ -80,45 +81,40 @@ export default function Navbar({ montserrat }) {
 
   const handleCloseClick = () => setOpen(false);
 
-const {setUser} = useContext(UserContext)
+  const { setUser } = useContext(UserContext);
 
   //Handle logout:
- const handleLogout = async () => {
-  try {
-    const access_token = localStorage.getItem("access_token");
-    const refresh_token = localStorage.getItem("refresh_token");
+  const handleLogout = async () => {
+    try {
+      const access_token = localStorage.getItem("access_token");
+      const refresh_token = localStorage.getItem("refresh_token");
 
-    const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`, 
-      },
-      body: JSON.stringify({ refresh_token }),
-    });
+      const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({ refresh_token }),
+      });
 
-    const result = await res.json(); 
+      const result = await res.json();
 
-    if (res.ok || result.status_code === 200) {
-      toast.success("You’ve been logged out successfully!");
-    } else {
-      toast.error(result?.detail || "Logout failed from server");
+      if (res.ok || result.status_code === 200) {
+        toast.success("You’ve been logged out successfully!");
+      } else {
+        toast.error(result?.detail || "Logout failed from server");
+      }
+
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+      setUser(null);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-
-    
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
-    setUser(null);
-    router.push("/login");
-
-  } catch (error) {
-    console.error("Logout error:", error);
-  }
-};
-
-
-
+  };
 
   return (
     <header
@@ -183,7 +179,7 @@ const {setUser} = useContext(UserContext)
                             {navItem.title}
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent onClick={handleCloseClick}>
+                        {/* <DropdownMenuContent onClick={handleCloseClick}>
                           {categories.map((feature) => (
                             <DropdownMenuItem
                               key={feature.id}
@@ -194,7 +190,23 @@ const {setUser} = useContext(UserContext)
                               </Link>
                             </DropdownMenuItem>
                           ))}
-                        </DropdownMenuContent>
+                        </DropdownMenuContent> */}
+                        {loading ? (
+                          <DropdownMenuItem disabled>
+                            Loading...
+                          </DropdownMenuItem>
+                        ) : (
+                          categories.map((feature) => (
+                            <DropdownMenuItem
+                              key={feature.id}
+                              className="dark:text-gray-100"
+                            >
+                              <Link href={`/category/${feature.id}`}>
+                                {feature.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))
+                        )}
                       </DropdownMenu>
                     ) : (
                       <NavigationMenuItem key={navItem.path}>
@@ -245,7 +257,7 @@ const {setUser} = useContext(UserContext)
                           <IoIosArrowDown className="mt-0.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      {/* <DropdownMenuContent>
                         {categories.map((category) => (
                           <DropdownMenuItem
                             key={category.id}
@@ -257,6 +269,28 @@ const {setUser} = useContext(UserContext)
                             </Link>
                           </DropdownMenuItem>
                         ))}
+                      </DropdownMenuContent> */}
+                      <DropdownMenuContent>
+                        {loading ? (
+                          <DropdownMenuItem disabled>
+                            Loading...
+                            <div className="flex justify-center items-center">
+                              <Spinner className={cn("size-8 animate-spin")}/>
+                            </div>
+                          </DropdownMenuItem>
+                        ) : (
+                          categories.map((category) => (
+                            <DropdownMenuItem
+                              key={category.id}
+                              onClick={handleCloseClick}
+                              className="dark:text-gray-100"
+                            >
+                              <Link href={`/category/${category.id}`}>
+                                {category.category_name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ) : (
@@ -335,7 +369,8 @@ const {setUser} = useContext(UserContext)
                     </Button>
                   </li>
                   <li>
-                    <Button onClick={handleLogout}
+                    <Button
+                      onClick={handleLogout}
                       variant="ghost"
                       size="sm"
                       className="w-full justify-between dark:text-gray-100"

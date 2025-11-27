@@ -75,7 +75,7 @@ const About = () => {
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6 montserrat-text lg:text-xl text-justify mt-8 ">
             We empower essential workers by providing access to exclusive
-            discounts across thousands of top UK brands. Whether you’re part of
+            discounts across thousands of top UK brands. Whether you&apos;re part of
             the NHS, emergency services, or armed forces, we make life more
             affordable for those who serve.
           </p>

@@ -20,18 +20,3 @@ export const getAllCategoriesData = async () => {
 };
 
 
-// export const getLatestNews = async()=>{
-//     try {
-//         const res = await fetch('https://jsonplaceholder.typicode.com/users', {
-//         cache: "no-store"
-//     })
-//     if(!res.ok){
-//         throw new Error("Fail to fetch latest news..!!")
-//     }
-//     return res;
-//     } catch (error) {
-//         console.error("something went wrong")
-//         return []
-//     }
-// }
-

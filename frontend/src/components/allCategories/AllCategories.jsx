@@ -20,6 +20,9 @@ const AllCategories = () => {
   const { categories } = useContext(CategoriesContext);
   const [categoryData, setCategoryData] = useState(null);
 
+  console.log(categories)
+  console.log(categoryData)
+
   useEffect(() => {
     if (!categories?.length) return;
     const category = categories.find((cat) => cat.id === id);

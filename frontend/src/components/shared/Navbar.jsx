@@ -60,7 +60,6 @@ export default function Navbar({ montserrat }) {
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
 
-  console.log("Categories data for navbar:", categories)
 
   useEffect(() => {
     if (user && user.profile_picture) {

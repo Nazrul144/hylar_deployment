@@ -1,263 +1,203 @@
 "use client";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { FaPhoneAlt } from "react-icons/fa";
-import { IoLocationSharp } from "react-icons/io5";
-import { MdEmail } from "react-icons/md";
-import { DialogDemo } from "../dialog/DialogDemo";
-import { FiRefreshCw } from "react-icons/fi";
-import { Spinner } from "../ui/spinner";
 import { BASE_URL } from "@/config/config";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState, useContext } from "react";
+import { Inter, Montserrat } from "next/font/google";
+import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
+import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { UserContext } from "@/providers/UserProvider";
+import { useRouter } from "next/navigation";
 
-const ProductDetails = ({ id }) => {
-  const [singleItem, setSingleItem] = useState(null);
-  const [loading, setLoading] = useState(false);
+const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
-  const [offerCountdown, setOfferCountdown] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+const BrowseCategories = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter();
 
-  // Voucher Cooldown
-  const [voucherCooldownSec, setVoucherCooldownSec] = useState(null);
-  const [onCooldown, setOnCooldown] = useState(false);
-
-  const formatNumber = (n) => String(n).padStart(2, "0");
-
-  /** Fetch offer details */
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const fetchCategories = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/offers/categories`);
-        const data = await res.json();
+        setLoading(true);
+        setError(null);
 
-        const allOffers = data.data
-          .flatMap((cat) => cat.subcategories)
-          .flatMap((sub) => sub.offers || []);
+        const response = await fetch(`${BASE_URL}/api/offers/categories`);
 
-        const item = allOffers.find((offer) => offer.id === Number(id));
-        setSingleItem(item || null);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        /** Countdown for offer ending */
-        if (item?.end_date) {
-          const endTime = new Date(item.end_date).getTime();
+        const result = await response.json();
+        console.log("Browse Categories API Response:", result);
 
-          const updateCountdown = () => {
-            const now = Date.now();
-            const diff = endTime - now;
-
-            if (diff > 0) {
-              setOfferCountdown({
-                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((diff / (1000 * 60)) % 60),
-                seconds: Math.floor((diff / 1000) % 60),
-              });
-            } else {
-              setOfferCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-            }
-          };
-
-          updateCountdown();
-          const interval = setInterval(updateCountdown, 1000);
-          return () => clearInterval(interval);
+        if (result.status === "success" && result.data) {
+          setCategories(result.data);
+        } else if (Array.isArray(result.data)) {
+          setCategories(result.data);
+        } else {
+          throw new Error("Invalid API response structure");
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching categories:", err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchData();
-  }, [id]);
+    fetchCategories();
+  }, []);
 
-  /** Fetch Voucher Cooldown (same logic as DialogDemo) */
-  useEffect(() => {
-    if (!singleItem) return;
-
-    const checkVoucherCooldown = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        if (!token) return; // not logged in
-
-        const res = await fetch(
-          `${BASE_URL}/api/offers/voucher/${singleItem.id}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        const json = await res.json();
-
-        // Backend returning error because user is on cooldown
-        if (res.status === 425 && json?.data) {
-          const voucher = json.data;
-          const offer = json.data.offer;
-
-          const lastClaim = new Date(voucher.claimed_at).getTime();
-          const now = Date.now();
-          const hours = offer.voucher_cooldown_hours || 24;
-          const cooldownMs = hours * 60 * 60 * 1000;
-          const remainingMs = cooldownMs - (now - lastClaim);
-
-          if (remainingMs > 0) {
-            setOnCooldown(true);
-            setVoucherCooldownSec(Math.floor(remainingMs / 1000));
-          }
-          return;
-        }
-
-        // If successful response
-        if (res.ok && json?.data?.claimed && json?.data?.claimed_at) {
-          const voucher = json.data;
-          const offer = json.data.offer;
-
-          const lastClaimTs = new Date(voucher.claimed_at).getTime();
-          const cooldownMs =
-            (offer.voucher_cooldown_hours || 24) * 60 * 60 * 1000;
-
-          const remaining = cooldownMs - (Date.now() - lastClaimTs);
-
-          if (remaining > 0) {
-            setOnCooldown(true);
-            setVoucherCooldownSec(Math.floor(remaining / 1000));
-          }
-        }
-      } catch (err) {
-        console.error("Voucher cooldown check failed:", err);
-      }
-    };
-
-    checkVoucherCooldown();
-  }, [singleItem]);
-
-  /** Live countdown for voucher cooldown */
-  useEffect(() => {
-    if (!voucherCooldownSec) return;
-
-    const interval = setInterval(() => {
-      setVoucherCooldownSec((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setOnCooldown(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [voucherCooldownSec]);
-
-  const formatCooldown = (sec) => {
-    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
-    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
-    const s = String(sec % 60).padStart(2, "0");
-    return `${h}:${m}:${s}`;
+  const handleRedeemClick = (e, offerId) => {
+    if (!user) {
+      e.preventDefault();
+      router.push("/login");
+    }
   };
 
-  /** If loading */
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex justify-center mt-10">
-        <Spinner className="size-8" />
+      <div className="pt-22 flex justify-center items-center h-[40vh]">
+        <span className="loading loading-bars loading-lg"></span>
       </div>
     );
+  }
 
-  if (!singleItem) return <p className="text-center mt-10">Item not found.</p>;
+  if (error) {
+    return (
+      <div className="pt-22 flex flex-col justify-center items-center h-[40vh]">
+        <p className="text-red-600 text-xl mb-4">⚠️ {error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-blue-600 text-white px-6 py-2 rounded-sm"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!categories || categories.length === 0) {
+    return <p className="text-center mt-10 text-xl">No categories available</p>;
+  }
 
   return (
-    <div className="lg:w-7xl mx-auto px-2">
-      {/* Banner */}
-      <div className="relative w-full pt-6 flex items-center justify-center ">
-        <Image
-          src={`${BASE_URL}${singleItem.image}`}
-          alt="banner"
-          width={500}
-          height={400}
-        />
-        <div className="absolute z-20 text-center">
-          <h1 className="text-5xl lg:text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
-            {singleItem.brand_name}
-          </h1>
-        </div>
-      </div>
+    <div className="pt-22 flex flex-col items-center justify-center gap-8 py-16">
+      {/* Browse Categories Header */}
+      <h1 className="text-[#00308F] font-medium md:font-bold text-5xl text-center inter-text">
+        Browse Categories
+      </h1>
 
-      {/* Product Info */}
-      <div className="text-center mt-16 mb-10">
-        <h1 className="font-bold text-xl lg:text-4xl text-[#00308F] mb-4">
-          Voucher Gift – Get {singleItem.discount_percent || 0}% OFF!
-        </h1>
-
-        {/* VOUCHER COOLDOWN TIMER */}
-        {onCooldown ? (
-          <p className="text-red-600 font-semibold text-xl mt-4">
-            New voucher available in:{" "}
-            <span className="font-bold text-[#00308F]">
-              {formatCooldown(voucherCooldownSec)}
-            </span>
-          </p>
-        ) : (
-          <p className="text-green-600 text-lg font-semibold">Voucher Available ✔</p>
-        )}
-
-        <p className="text-gray-500 mt-4">
-          Offer ends in: {offerCountdown.days}d {offerCountdown.hours}h{" "}
-          {offerCountdown.minutes}m {offerCountdown.seconds}s
+      <div className="flex flex-col items-center justify-center">
+        <p className="text-[#000000] text-center montserrat-text">
+          Must see offers from some of Blue Light Card
+        </p>
+        <p className="text-[#000000] text-center montserrat-text">
+          members' best-loved partners.
         </p>
       </div>
 
-      {/* Countdown Grid */}
-      <div className="mt-10 text-center">
-        <h2 className="text-2xl text-gray-700 mb-4">
-          Hurry, Before It's Too Late!
-        </h2>
+      {/* Category Cards */}
+      <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-20 max-w-7xl mx-auto px-4">
+        {categories.map((category) => {
+          const imageUrl = category.banner_image 
+            ? `${BASE_URL}${category.banner_image}` 
+            : "/fallback.jpg";
 
-        <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
-          {[
-            { label: "Days", value: offerCountdown.days },
-            { label: "Hr", value: offerCountdown.hours },
-            { label: "Mins", value: offerCountdown.minutes },
-            { label: "Sec", value: offerCountdown.seconds },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-center justify-center w-20 h-24 bg-white shadow-md rounded-xl"
+          return (
+            <Link
+              key={category.id}
+              href={`/category/${category.id}`}
+              className="w-60 h-60 relative overflow-hidden group block rounded-lg shadow-lg hover:shadow-xl transition-shadow"
             >
-              <span className="text-3xl font-mono font-bold text-gray-800">
-                {formatNumber(item.value)}
-              </span>
-              <span className="text-sm text-gray-500 mt-1">{item.label}</span>
-            </div>
-          ))}
-        </div>
+              <Image
+                src={imageUrl}
+                alt={category.category_name || "Category"}
+                fill
+                sizes="240px"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                priority={false}
+                unoptimized={true}
+              />
+
+              <div className="absolute inset-x-0 bottom-0 h-1/4 backdrop-blur-sm bg-black/40" />
+              <p className="absolute bottom-4 inset-x-0 text-center text-white text-2xl font-semibold inter-text px-2">
+                {category.category_name}
+              </p>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* Shop Info */}
-      <div className="mt-16 text-center">
-        <h2 className="text-xl lg:text-3xl font-bold text-[#00308F]">
-          Visit Our Shop
-        </h2>
+      {/* Mixed Offers from All Categories */}
+      <div className="w-full max-w-7xl mx-auto px-4 mt-16">
+        {categories.map((category) => {
+          // Get all offers from this category
+          const allOffers = category.subcategories?.flatMap(
+            (sub) => sub?.offers || []
+          ) || [];
 
-        {/* Buttons */}
-        <div className="flex items-center justify-center gap-4 mt-6">
-          <DialogDemo offerId={singleItem?.id} />
+          // Only show if there are offers
+          if (allOffers.length === 0) return null;
 
-          <button
-            onClick={() => window.location.reload()}
-            className="flex items-center justify-center w-12 h-12 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors"
-            title="Refresh Page"
-          >
-            <FiRefreshCw className="text-xl text-gray-700" />
-          </button>
-        </div>
+          // Show first 6 offers
+          const displayOffers = allOffers.slice(0, 6);
+
+          return (
+            <div key={category.id} className="mb-20">
+              {/* Category Section Header */}
+              <div className="text-center mb-8">
+                <h2 className={`text-[#000000] dark:text-white font-bold text-4xl lg:text-5xl ${interFont.className}`}>
+                  {category.category_name}
+                </h2>
+              </div>
+
+              {/* Offers Grid */}
+              <div className="flex flex-col lg:flex-row items-center justify-center gap-8 flex-wrap">
+                {displayOffers.map((offer) => (
+                  <UserLandingPageCard
+                    key={offer.id}
+                    id={offer.id}
+                    imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
+                    descriptionBoldText={offer.brand_name}
+                    descriptionLightText={`${offer.discount_percent || 0}% OFF`}
+                    descriptionFont={interFont}
+                    discountClass="text-red-500 font-bold"   
+                    priceClass="text-red-500"      
+                    buttonName="Redeem"
+                    buttonFont={montSerrat}
+                    bookMarkIcon="bookmark"
+                    bookmarkColor="dark"
+                    isBookmarked={bookmarks.some((b) => b.id === offer.id)}
+                    onBookmarkClick={() => toggleBookmark(offer)}
+                    user={user}
+                    onRedeemClick={handleRedeemClick}
+                  />
+                ))}
+              </div>
+
+              {/* View All Button - show if more than 6 offers */}
+              {allOffers.length > 6 && (
+                <div className="text-center mt-10">
+                  <Link
+                    href={`/category/${category.id}`}
+                    className={`bg-[#00308F] text-[#FFFFFF] px-8 py-3 rounded-sm cursor-pointer inline-block hover:bg-[#002070] transition-colors ${montSerrat.className}`}
+                  >
+                    View All {category.category_name} {">>"}
+                  </Link>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
 
-export default ProductDetails;
+export default BrowseCategories;

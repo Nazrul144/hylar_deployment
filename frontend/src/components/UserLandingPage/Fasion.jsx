@@ -19,19 +19,31 @@ const Fashion = () => {
   const [fashionCategoryId, setFashionCategoryId] = useState(null);
 
   useEffect(() => {
+
+    if (!categories || !Array.isArray(categories) || categories.length === 0) {
+      return;
+    }
+
     const fashionCategory = categories.find(
-      (cat) => cat.category_name.toLowerCase() === "fashion"
+      (cat) => cat?.category_name?.toLowerCase() === "fashion"
     );
 
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
-      const allOffers = fashionCategory.subcategories.flatMap(
-        (sub) => sub.offers || []
-      );
+      // Check if subcategories exist before using flatMap
+      if (fashionCategory.subcategories && Array.isArray(fashionCategory.subcategories)) {
+        const allOffers = fashionCategory.subcategories.flatMap(
+          (sub) => sub?.offers || []
+        );
 
-      setTotalFashionOffers(allOffers.length);
-      setFashionOffers(allOffers.slice(0, 3));
+        setTotalFashionOffers(allOffers.length);
+        setFashionOffers(allOffers.slice(0, 3));
+      } else {
+        // No subcategories found
+        setTotalFashionOffers(0);
+        setFashionOffers([]);
+      }
     }
   }, [categories]);
 
@@ -50,7 +62,7 @@ const Fashion = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={`${BASE_URL}${offer.image}`}
+            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}

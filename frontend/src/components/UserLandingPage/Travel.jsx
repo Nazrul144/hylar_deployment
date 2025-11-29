@@ -19,20 +19,32 @@ const Travel = () => {
   const [travelCategoryId, setTravelCategoryId] = useState(null);
 
   useEffect(() => {
-    const normalize = (str) => str.toLowerCase().replace(/[& ]/g, "");
+    // Check if categories exist and is an array
+    if (!categories || !Array.isArray(categories) || categories.length === 0) {
+      return;
+    }
+
+    const normalize = (str) => str?.toLowerCase().replace(/[& ]/g, "") || "";
     const travelCategory = categories.find(
-      (cat) => normalize(cat.category_name) === "travel"
+      (cat) => normalize(cat?.category_name) === "travel"
     );
 
     if (travelCategory) {
       setTravelCategoryId(travelCategory.id);
 
-      const allOffers = travelCategory.subcategories.flatMap(
-        (sub) => sub.offers || []
-      );
+      // Check if subcategories exist before using flatMap
+      if (travelCategory.subcategories && Array.isArray(travelCategory.subcategories)) {
+        const allOffers = travelCategory.subcategories.flatMap(
+          (sub) => sub?.offers || []
+        );
 
-      setTotalTravelOffers(allOffers.length); 
-      setTravelOffers(allOffers.slice(0, 3)); 
+        setTotalTravelOffers(allOffers.length); 
+        setTravelOffers(allOffers.slice(0, 3)); 
+      } else {
+        // No subcategories found
+        setTotalTravelOffers(0);
+        setTravelOffers([]);
+      }
     }
   }, [categories]);
 
@@ -49,7 +61,7 @@ const Travel = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={`${BASE_URL}${offer.image}`}
+            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}

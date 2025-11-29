@@ -19,20 +19,32 @@ const Finance = () => {
   const [financeCategoryId, setFinanceCategoryId] = useState(null);
 
   useEffect(() => {
-    const normalize = (str) => str.toLowerCase().replace(/[& ]/g, "");
+    // Check if categories exist and is an array
+    if (!categories || !Array.isArray(categories) || categories.length === 0) {
+      return;
+    }
+
+    const normalize = (str) => str?.toLowerCase().replace(/[& ]/g, "") || "";
     const financeCategory = categories.find(
-      (cat) => normalize(cat.category_name) === "finance"
+      (cat) => normalize(cat?.category_name) === "finance"
     );
 
     if (financeCategory) {
       setFinanceCategoryId(financeCategory.id);
 
-      const allOffers = financeCategory.subcategories.flatMap(
-        (sub) => sub.offers || []
-      );
+      // Check if subcategories exist before using flatMap
+      if (financeCategory.subcategories && Array.isArray(financeCategory.subcategories)) {
+        const allOffers = financeCategory.subcategories.flatMap(
+          (sub) => sub?.offers || []
+        );
 
-      setTotalFinanceOffers(allOffers.length); 
-      setFinanceOffers(allOffers.slice(0, 3)); 
+        setTotalFinanceOffers(allOffers.length); 
+        setFinanceOffers(allOffers.slice(0, 3)); 
+      } else {
+        // No subcategories found
+        setTotalFinanceOffers(0);
+        setFinanceOffers([]);
+      }
     }
   }, [categories]);
 
@@ -49,7 +61,7 @@ const Finance = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={`${BASE_URL}${offer.image}`}
+            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
@@ -64,7 +76,6 @@ const Finance = () => {
           />
         ))}
       </div>
-
 
       {financeCategoryId && totalFinanceOffers >= 6 && (
         <Link

@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import React from "react";
 import { CiBookmark } from "react-icons/ci";
 import { Button } from "@/components/ui/button";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
 
-const UserLandingPageCard = ({
+const UserLandingPageCard = React.memo(({
   id,
   imageName,
   descriptionBoldText,
@@ -18,13 +17,11 @@ const UserLandingPageCard = ({
   buttonName = "Redeem >>",
   buttonFont,
   bookmarkColor = "light",
+  isBookmarked,
+  onBookmarkClick,
 }) => {
-  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-  const isBookmarked = bookmarks.some((item) => item.id === id);
-
   return (
     <div className="shadow-lg p-4 rounded-md w-full max-w-[450px] relative bg-white dark:bg-gray-900">
-      {/* Image */}
       <div className="relative w-full h-[200px] mb-4 rounded-md overflow-hidden">
         <Image
           src={imageName || "/fallback.jpg"}
@@ -34,12 +31,10 @@ const UserLandingPageCard = ({
         />
       </div>
 
-   
       <h2 className={`text-xl font-semibold ${descriptionFont?.className}`}>
         {descriptionBoldText}
       </h2>
 
-     
       <p className={`${discountClass} ${descriptionFont?.className}`}>
         {descriptionLightText}
       </p>
@@ -64,9 +59,7 @@ const UserLandingPageCard = ({
             }
           `}
           variant="ghost"
-          onClick={() =>
-            toggleBookmark({ id, imageName, descriptionBoldText })
-          }
+          onClick={onBookmarkClick}
         >
           <CiBookmark
             className={`text-2xl ${
@@ -77,6 +70,8 @@ const UserLandingPageCard = ({
       </div>
     </div>
   );
-};
+});
+
+UserLandingPageCard.displayName = "UserLandingPageCard";
 
 export default UserLandingPageCard;

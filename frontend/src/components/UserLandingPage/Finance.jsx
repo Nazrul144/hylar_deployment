@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
@@ -18,8 +18,11 @@ const Finance = () => {
   const [totalFinanceOffers, setTotalFinanceOffers] = useState(0);
   const [financeCategoryId, setFinanceCategoryId] = useState(null);
 
+  const bookmarkIds = useMemo(() => {
+    return new Set(bookmarks.map(b => b.id));
+  }, [bookmarks]);
+
   useEffect(() => {
-    // Check if categories exist and is an array
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
       return;
     }
@@ -32,7 +35,6 @@ const Finance = () => {
     if (financeCategory) {
       setFinanceCategoryId(financeCategory.id);
 
-      // Check if subcategories exist before using flatMap
       if (financeCategory.subcategories && Array.isArray(financeCategory.subcategories)) {
         const allOffers = financeCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
@@ -41,12 +43,15 @@ const Finance = () => {
         setTotalFinanceOffers(allOffers.length); 
         setFinanceOffers(allOffers.slice(0, 3)); 
       } else {
-        // No subcategories found
         setTotalFinanceOffers(0);
         setFinanceOffers([]);
       }
     }
   }, [categories]);
+
+  const handleBookmarkClick = useCallback((offer) => {
+    toggleBookmark(offer);
+  }, [toggleBookmark]);
 
   if (!financeOffers.length) return null;
 
@@ -71,8 +76,8 @@ const Finance = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarks.some((b) => b.id === offer.id)}
-            onBookmarkClick={() => toggleBookmark(offer)}
+            isBookmarked={bookmarkIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer)}
           />
         ))}
       </div>

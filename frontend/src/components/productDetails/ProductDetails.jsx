@@ -4,56 +4,58 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
 import { Inter, Montserrat } from "next/font/google";
-import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { UserContext } from "@/providers/UserProvider";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
-const BrowseCategories = () => {
-  const [categories, setCategories] = useState([]);
+const ProductDetails = () => {
+  const { id } = useParams(); 
+  const [offer, setOffer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
   const { user } = useContext(UserContext);
+
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    if (!id) return;
+
+    const fetchOfferDetails = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${BASE_URL}/api/offers/categories`);
+        const response = await fetch(`${BASE_URL}/api/offers/${id}/`);
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`Failed to load offer details`);
         }
 
         const result = await response.json();
-        console.log("Browse Categories API Response:", result);
+        console.log("Offer Details API Response:", result);
 
         if (result.status === "success" && result.data) {
-          setCategories(result.data);
-        } else if (Array.isArray(result.data)) {
-          setCategories(result.data);
+          setOffer(result.data);
         } else {
           throw new Error("Invalid API response structure");
         }
       } catch (err) {
-        console.error("Error fetching categories:", err);
+        console.error("Error fetching offer details:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategories();
-  }, []);
+    fetchOfferDetails();
+  }, [id]);
 
-  const handleRedeemClick = (e, offerId) => {
+  const handleRedeemClick = (e) => {
     if (!user) {
       e.preventDefault();
       router.push("/login");
@@ -82,122 +84,58 @@ const BrowseCategories = () => {
     );
   }
 
-  if (!categories || categories.length === 0) {
-    return <p className="text-center mt-10 text-xl">No categories available</p>;
+  if (!offer) {
+    return <p className="text-center mt-10 text-xl">No offer details found</p>;
   }
 
+  const imageUrl = offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg";
+  const isBookmarked = bookmarks.some((b) => b.id === offer.id);
+
   return (
-    <div className="pt-22 flex flex-col items-center justify-center gap-8 py-16">
-      {/* Browse Categories Header */}
+    <div className="pt-22 flex flex-col items-center justify-center gap-8 py-16 max-w-4xl mx-auto px-4">
+
+      {/* MAIN IMAGE */}
+      <div className="w-full h-72 md:h-96 relative rounded-lg overflow-hidden shadow">
+        <Image
+          src={imageUrl}
+          alt={offer.brand_name}
+          fill
+          className="object-cover"
+          unoptimized
+        />
+      </div>
+
+      {/* PRODUCT DETAILS */}
       <h1 className="text-[#00308F] font-medium md:font-bold text-5xl text-center inter-text">
-        Browse Categories
+        {offer.brand_name}
       </h1>
 
-      <div className="flex flex-col items-center justify-center">
-        <p className="text-[#000000] text-center montserrat-text">
-          Must see offers from some of Blue Light Card
-        </p>
-        <p className="text-[#000000] text-center montserrat-text">
-          members' best-loved partners.
-        </p>
-      </div>
+      <p className="text-[#000000] text-center montserrat-text text-xl">
+        {offer.discount_percent}% OFF
+      </p>
 
-      {/* Category Cards */}
-      <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-20 max-w-7xl mx-auto px-4">
-        {categories.map((category) => {
-          const imageUrl = category.banner_image 
-            ? `${BASE_URL}${category.banner_image}` 
-            : "/fallback.jpg";
+      <p className="text-gray-700 text-center max-w-2xl leading-relaxed">
+        {offer.description}
+      </p>
 
-          return (
-            <Link
-              key={category.id}
-              href={`/category/${category.id}`}
-              className="w-60 h-60 relative overflow-hidden group block rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <Image
-                src={imageUrl}
-                alt={category.category_name || "Category"}
-                fill
-                sizes="240px"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                priority={false}
-                unoptimized={true}
-              />
+      {/* Bookmark Button */}
+      <button
+        onClick={() => toggleBookmark(offer)}
+        className="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded transition"
+      >
+        {isBookmarked ? "★ Bookmarked" : "☆ Add to Bookmark"}
+      </button>
 
-              <div className="absolute inset-x-0 bottom-0 h-1/4 backdrop-blur-sm bg-black/40" />
-              <p className="absolute bottom-4 inset-x-0 text-center text-white text-2xl font-semibold inter-text px-2">
-                {category.category_name}
-              </p>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Mixed Offers from All Categories */}
-      <div className="w-full max-w-7xl mx-auto px-4 mt-16">
-        {categories.map((category) => {
-          // Get all offers from this category
-          const allOffers = category.subcategories?.flatMap(
-            (sub) => sub?.offers || []
-          ) || [];
-
-          // Only show if there are offers
-          if (allOffers.length === 0) return null;
-
-          // Show first 6 offers
-          const displayOffers = allOffers.slice(0, 6);
-
-          return (
-            <div key={category.id} className="mb-20">
-              {/* Category Section Header */}
-              <div className="text-center mb-8">
-                <h2 className={`text-[#000000] dark:text-white font-bold text-4xl lg:text-5xl ${interFont.className}`}>
-                  {category.category_name}
-                </h2>
-              </div>
-
-              {/* Offers Grid */}
-              <div className="flex flex-col lg:flex-row items-center justify-center gap-8 flex-wrap">
-                {displayOffers.map((offer) => (
-                  <UserLandingPageCard
-                    key={offer.id}
-                    id={offer.id}
-                    imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
-                    descriptionBoldText={offer.brand_name}
-                    descriptionLightText={`${offer.discount_percent || 0}% OFF`}
-                    descriptionFont={interFont}
-                    discountClass="text-red-500 font-bold"   
-                    priceClass="text-red-500"      
-                    buttonName="Redeem"
-                    buttonFont={montSerrat}
-                    bookMarkIcon="bookmark"
-                    bookmarkColor="dark"
-                    isBookmarked={bookmarks.some((b) => b.id === offer.id)}
-                    onBookmarkClick={() => toggleBookmark(offer)}
-                    user={user}
-                    onRedeemClick={handleRedeemClick}
-                  />
-                ))}
-              </div>
-
-              {/* View All Button - show if more than 6 offers */}
-              {allOffers.length > 6 && (
-                <div className="text-center mt-10">
-                  <Link
-                    href={`/category/${category.id}`}
-                    className={`bg-[#00308F] text-[#FFFFFF] px-8 py-3 rounded-sm cursor-pointer inline-block hover:bg-[#002070] transition-colors ${montSerrat.className}`}
-                  >
-                    View All {category.category_name} {">>"}
-                  </Link>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {/* Redeem Button */}
+      <Link
+        href={offer.redeem_url || "#"}
+        onClick={handleRedeemClick}
+        className={`bg-[#00308F] text-[#FFFFFF] px-8 py-3 rounded-sm cursor-pointer inline-block hover:bg-[#002070] transition-colors ${montSerrat.className}`}
+      >
+        Redeem
+      </Link>
     </div>
   );
 };
 
-export default BrowseCategories;
+export default ProductDetails;

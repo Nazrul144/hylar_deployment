@@ -9,6 +9,7 @@ const BrowseCategories = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -107,7 +108,7 @@ const BrowseCategories = () => {
 
               <div className="absolute inset-x-0 bottom-0 h-1/4 backdrop-blur-sm bg-black/40" />
               <p className="absolute bottom-4 inset-x-0 text-center text-white text-2xl font-semibold inter-text px-2">
-                {category.category_name}
+                {category.category_name} 
               </p>
             </Link>
           );

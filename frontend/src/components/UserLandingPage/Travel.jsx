@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
@@ -18,8 +18,11 @@ const Travel = () => {
   const [totalTravelOffers, setTotalTravelOffers] = useState(0);
   const [travelCategoryId, setTravelCategoryId] = useState(null);
 
+  const bookmarkIds = useMemo(() => {
+    return new Set(bookmarks.map(b => b.id));
+  }, [bookmarks]);
+
   useEffect(() => {
-    // Check if categories exist and is an array
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
       return;
     }
@@ -32,7 +35,6 @@ const Travel = () => {
     if (travelCategory) {
       setTravelCategoryId(travelCategory.id);
 
-      // Check if subcategories exist before using flatMap
       if (travelCategory.subcategories && Array.isArray(travelCategory.subcategories)) {
         const allOffers = travelCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
@@ -41,12 +43,15 @@ const Travel = () => {
         setTotalTravelOffers(allOffers.length); 
         setTravelOffers(allOffers.slice(0, 3)); 
       } else {
-        // No subcategories found
         setTotalTravelOffers(0);
         setTravelOffers([]);
       }
     }
   }, [categories]);
+
+  const handleBookmarkClick = useCallback((offer) => {
+    toggleBookmark(offer);
+  }, [toggleBookmark]);
 
   if (!travelOffers.length) return null;
 
@@ -71,13 +76,12 @@ const Travel = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarks.some((b) => b.id === offer.id)}
-            onBookmarkClick={() => toggleBookmark(offer)}
+            isBookmarked={bookmarkIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer)}
           />
         ))}
       </div>
 
-      {/* Show "View All" only if total offers >= 6 */}
       {travelCategoryId && totalTravelOffers >= 6 && (
         <Link
           href={`/category/${travelCategoryId}`}

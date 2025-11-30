@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
@@ -18,8 +18,11 @@ const Fashion = () => {
   const [totalFashionOffers, setTotalFashionOffers] = useState(0);
   const [fashionCategoryId, setFashionCategoryId] = useState(null);
 
-  useEffect(() => {
+  const bookmarkIds = useMemo(() => {
+    return new Set(bookmarks.map(b => b.id));
+  }, [bookmarks]);
 
+  useEffect(() => {
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
       return;
     }
@@ -31,7 +34,6 @@ const Fashion = () => {
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
-      // Check if subcategories exist before using flatMap
       if (fashionCategory.subcategories && Array.isArray(fashionCategory.subcategories)) {
         const allOffers = fashionCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
@@ -40,12 +42,15 @@ const Fashion = () => {
         setTotalFashionOffers(allOffers.length);
         setFashionOffers(allOffers.slice(0, 3));
       } else {
-        // No subcategories found
         setTotalFashionOffers(0);
         setFashionOffers([]);
       }
     }
   }, [categories]);
+
+  const handleBookmarkClick = useCallback((offer) => {
+    toggleBookmark(offer);
+  }, [toggleBookmark]);
 
   if (!fashionOffers?.length) return null;
 
@@ -72,8 +77,8 @@ const Fashion = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarks.some((b) => b.id === offer.id)}
-            onBookmarkClick={() => toggleBookmark(offer)}
+            isBookmarked={bookmarkIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer)}
           />
         ))}
       </div>

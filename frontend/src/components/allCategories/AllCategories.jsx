@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CiBookmark } from "react-icons/ci";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
@@ -20,6 +19,10 @@ const AllCategories = () => {
   const [categoryData, setCategoryData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const bookmarkIds = useMemo(() => {
+    return new Set(bookmarks.map(b => b.id));
+  }, [bookmarks]);
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -44,7 +47,6 @@ const AllCategories = () => {
         const result = await response.json();
         console.log("API Response:", result);
 
-        // Handle the response structure
         if (result.status === "success" && result.data) {
           setCategoryData(result.data);
         } else if (result.data) {
@@ -73,18 +75,6 @@ const AllCategories = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-[60vh] px-4">
-        <p className="text-red-600 text-xl mb-4">⚠️ {error}</p>
-        <p className="text-gray-600 text-sm mb-4">
-          Category ID: {id} | Endpoint: {BASE_URL}/api/offers/category/{id}/
-        </p>
-        <Button onClick={() => window.location.reload()}>Try Again</Button>
-      </div>
-    );
-  }
-
   if (!categoryData) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -93,17 +83,8 @@ const AllCategories = () => {
     );
   }
 
-  const containerVariants = {
-    show: { transition: { staggerChildren: 0.2 } },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6 } },
-  };
-
   const OfferCard = React.memo(({ item }) => {
-    const isBookmarked = bookmarks.some((b) => b.id === item.id);
+    const isBookmarked = bookmarkIds.has(item.id);
 
     const handleRedeemClick = (e) => {
       if (!user) {
@@ -113,7 +94,7 @@ const AllCategories = () => {
     };
 
     return (
-      <motion.div variants={cardVariants} className="shadow-xl p-4 rounded-sm">
+      <div className="shadow-xl p-4 rounded-sm">
         <Image
           src={item.image ? `${BASE_URL}${item.image}` : "/fallback.jpg"}
           width={400}
@@ -144,7 +125,7 @@ const AllCategories = () => {
           </Button>
 
           <Button
-            className={`border-2 rounded-none text-lg transition-colors duration-200 ${
+            className={`border-2 rounded-none text-lg ${
               isBookmarked
                 ? "bg-[#3366CC] text-white hover:bg-[#3366CC]"
                 : "bg-white text-black hover:bg-gray-100"
@@ -161,14 +142,13 @@ const AllCategories = () => {
             <CiBookmark />
           </Button>
         </div>
-      </motion.div>
+      </div>
     );
   });
   OfferCard.displayName = "OfferCard";
 
   const RenderSection = React.memo(
     ({ title, description, items, subcategoryId, categoryId }) => {
-      // Hide section if no items
       if (!items || items.length === 0) return null;
 
       const visibleItems = items.slice(0, 6);
@@ -180,16 +160,11 @@ const AllCategories = () => {
             <p className="text-gray-600">{description}</p>
           </div>
 
-          <motion.div
-            className="grid lg:grid-cols-3 gap-4"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-          >
+          <div className="grid lg:grid-cols-3 gap-4">
             {visibleItems.map((item) => (
               <OfferCard key={item.id} item={item} />
             ))}
-          </motion.div>
+          </div>
 
           {items.length > 6 && (
             <div className="flex justify-center mt-10">
@@ -209,7 +184,6 @@ const AllCategories = () => {
 
   return (
     <div>
-      {/* Banner Section */}
       {categoryData.banner_image && (
         <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
           <Image
@@ -227,7 +201,6 @@ const AllCategories = () => {
         </div>
       )}
 
-      {/* Subcategories Sections */}
       {categoryData.subcategories && categoryData.subcategories.length > 0 ? (
         categoryData.subcategories.map((sub) => (
           <RenderSection

@@ -34,12 +34,16 @@ const BrowseCategories = () => {
         {categories.map((category) => (
           <Link
             key={category.id}
-            href={`/category/${category.id}`}   
+            href={`/category/${category.id}`}
             className="w-60 h-60 relative overflow-hidden group block"
           >
             <Image
-              src={`${BASE_URL}${category.banner_image}`}
-              alt={category.category_name}
+              src={
+                category.banner_image
+                  ? `${BASE_URL}${category.banner_image}`
+                  : "/placeholder.png"
+              }
+              alt={category.category_name || "Category"}
               fill
               className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
             />

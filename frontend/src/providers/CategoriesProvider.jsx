@@ -18,6 +18,8 @@ const CategoriesProvider = ({ children }) => {
     fetchData();
   }, []);
 
+  console.log("from context", categories)
+
   return (
     <CategoriesContext.Provider value={{ categories, loading }}>
       {children}

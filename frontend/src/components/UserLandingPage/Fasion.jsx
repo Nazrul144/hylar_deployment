@@ -7,8 +7,14 @@ import { CategoriesContext } from "@/providers/CategoriesProvider";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { BASE_URL } from "@/config/config";
 
-const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const interFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const montSerrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const Fashion = () => {
   const { categories } = useContext(CategoriesContext);
@@ -26,7 +32,7 @@ const Fashion = () => {
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
-      const allOffers = fashionCategory.subcategories.flatMap(
+      const allOffers = (fashionCategory.subcategories || []).flatMap(
         (sub) => sub.offers || []
       );
 
@@ -54,8 +60,8 @@ const Fashion = () => {
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
-            discountClass="text-red-500 font-bold"   
-            priceClass="text-red-500"      
+            discountClass="text-red-500 font-bold"
+            priceClass="text-red-500"
             buttonName="Redeem"
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"

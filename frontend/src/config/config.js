@@ -1,2 +1,2 @@
 // config/api.js
-export const BASE_URL = "http://16.16.104.87";
+export const BASE_URL = "http://13.61.254.207";

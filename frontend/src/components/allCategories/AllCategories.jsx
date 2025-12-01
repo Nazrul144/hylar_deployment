@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { CiBookmark } from "react-icons/ci";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { useParams, useRouter } from "next/navigation";
-import { CategoriesContext } from "@/providers/CategoriesProvider";
 import { BASE_URL } from "@/config/config";
 import { UserContext } from "@/providers/UserProvider";
 
@@ -17,16 +16,44 @@ const AllCategories = () => {
   const router = useRouter();
   const { user } = useContext(UserContext);
 
-  const { categories } = useContext(CategoriesContext);
   const [categoryData, setCategoryData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!categories?.length) return;
-    const category = categories.find((cat) => cat.id === id);
-    setCategoryData(category);
-  }, [categories, id]);
+    const fetchCategoryData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        setCategoryData(null); // Reset data on route change
 
-  if (!categoryData) {
+        const response = await fetch(`${BASE_URL}/api/offers/category/${id}/`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch category data: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.status === "success" && result.data) {
+          setCategoryData(result.data);
+        } else {
+          throw new Error("Invalid data structure from API");
+        }
+      } catch (err) {
+        console.error("Error fetching category:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchCategoryData();
+    }
+  }, [id]);
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <span className="loading loading-bars loading-lg"></span>
@@ -34,139 +61,197 @@ const AllCategories = () => {
     );
   }
 
-  const containerVariants = {
-    show: { transition: { staggerChildren: 0.2 } },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6 } },
-  };
-
-  const OfferCard = React.memo(({ item }) => {
-    const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-    const isBookmarked = bookmarks.some((b) => b.id === item.id);
-
+  if (error) {
     return (
-      <motion.div variants={cardVariants} className="shadow-xl p-4 rounded-sm">
-        <Image
-          src={item.image ? `${BASE_URL}${item.image}` : "/fallback.jpg"}
-          width={400}
-          height={200}
-          alt={item.brand_name}
-          className="object-contain w-full h-[200px]"
-        />
-
-        <h2 className="mt-2 text-lg font-semibold">{item.brand_name}</h2>
-
-        {item.discount_percent && (
-          <p className="text-red-600 font-bold text-xl mt-1">
-            {item.discount_percent}% OFF
-          </p>
-        )}
-
-        <div className="flex items-center gap-3 mt-3">
-          <Button className="border-2 rounded-none text-lg" variant="none">
-            <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
-          </Button>
-
-          <Button
-            className={`border-2 rounded-none text-lg transition-colors duration-200 ${
-              isBookmarked
-                ? "bg-[#3366CC] text-white hover:bg-[#3366CC]"
-                : "bg-white text-black hover:bg-gray-100"
-            }`}
-            variant="ghost"
-            onClick={() => {
-              if (!user) {
-                router.push("/register");
-                return;
-              }
-              toggleBookmark(item);
-            }}
-          >
-            <CiBookmark />
-          </Button>
-        </div>
-      </motion.div>
-    );
-  });
-  OfferCard.displayName = "OfferCard";
-
-  /**
-   * RenderSection:
-   * - Hides itself (returns null) when `items` is empty (no title shown)
-   * - Shows up to 6 items here
-   * - If items.length > 6, shows a Link "View All" to the dedicated page for that subcategory
-   */
-  const RenderSection = React.memo(({ title, description, items, subcategoryId }) => {
-    // Hide the whole section if there are no items
-    if (!items || items.length === 0) return null;
-
-    // show at most 6 on this page
-    const visibleItems = items.slice(0, 6);
-
-    return (
-      <div className="lg:w-7xl mx-auto mt-16 px-2">
-        <div className="text-center mb-8">
-          <h1 className="font-bold text-4xl lg:text-5xl mb-2">{title}</h1>
-          <p className="text-gray-600">{description}</p>
-        </div>
-
-        <motion.div
-          className="grid lg:grid-cols-3 gap-4"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-        >
-          {visibleItems.map((item) => (
-            <OfferCard key={item.id} item={item} />
-          ))}
-        </motion.div>
-
-        {/* only show View All if there are more than 6 items */}
-        {items.length > 6 && (
-          <div className="flex justify-center mt-10">
-            <Link
-              href={`/view_all/${subcategoryId}`}
-              className="bg-[#00308F] text-white px-6 py-2 rounded-sm inline-block"
-            >
-              View All
-            </Link>
-          </div>
-        )}
+      <div className="flex flex-col justify-center items-center h-[60vh]">
+        <p className="text-red-600 dark:text-red-400 text-xl mb-4">Error: {error}</p>
+        <Button onClick={() => router.push("/")}>Go Back Home</Button>
       </div>
     );
-  });
-  RenderSection.displayName = "RenderSection";
+  }
+
+  if (!categoryData) {
+    return (
+      <div className="flex flex-col justify-center items-center h-[60vh]">
+        <p className="text-gray-600 dark:text-gray-400 text-xl mb-4">Category not found</p>
+        <Button onClick={() => router.push("/")}>Go Back Home</Button>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
-        <Image
-          src={`${BASE_URL}${categoryData.banner_image}`}
-          alt="Banner"
-          fill
-          className="object-cover"
-        />
-        <div className="absolute w-full h-full z-10" />
-        <div className="absolute z-20 text-center">
-          <h1 className="text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
-            {categoryData.category_name}
-          </h1>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Banner Section */}
+      {categoryData.banner_image && categoryData.banner_image !== "undefined" ? (
+        <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center">
+          <Image
+            src={`${BASE_URL}${categoryData.banner_image}`}
+            alt={`${categoryData.category_name} Banner`}
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute w-full h-full z-10  dark:bg-black/60" />
+          <div className="absolute z-20 text-center">
+            <h1 className="text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
+              {categoryData.category_name}
+            </h1>
+          </div>
         </div>
+      ) : (
+        <div className="relative w-full h-[550px] pt-6 flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-800">
+          <div className="absolute z-20 text-center">
+            <h1 className="text-7xl font-extrabold uppercase text-white drop-shadow-lg">
+              {categoryData.category_name}
+            </h1>
+          </div>
+        </div>
+      )}
+
+    
+      {categoryData.subcategories && 
+       Array.isArray(categoryData.subcategories) && 
+       categoryData.subcategories.length > 0 ? (
+        <div>
+          {categoryData.subcategories.map((sub) => (
+            <SubcategorySection
+              key={sub.id}
+              subcategory={sub}
+              user={user}
+              router={router}
+            />
+          ))}
+          
+          {categoryData.subcategories.every(sub => !sub.offers || sub.offers.length === 0) && (
+            <div className="text-center py-20">
+              <p className="text-gray-600 dark:text-gray-400 text-xl">No offers available in this category yet</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="text-center py-20">
+          <p className="text-gray-600 dark:text-gray-400 text-xl">No subcategories available for this category</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+const SubcategorySection = ({ subcategory, user, router }) => {
+  // Don't render if no offers
+  if (!subcategory.offers || subcategory.offers.length === 0) {
+    return null;
+  }
+
+  const visibleItems = subcategory.offers.slice(0, 6);
+  const hasMore = subcategory.offers.length > 6;
+
+  return (
+    <div className="lg:max-w-7xl mx-auto mt-16 px-4">
+      <div className="text-center mb-8">
+        <h1 className="font-bold text-4xl lg:text-5xl mb-2 text-gray-900 dark:text-white">
+          {subcategory.subcategory_name}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          {subcategory.description || "Explore our best deals for you."}
+        </p>
       </div>
 
-      {categoryData.subcategories.map((sub) => (
-        <RenderSection
-          key={sub.id}
-          subcategoryId={sub.id}
-          title={sub.subcategory_name}
-          description={sub.description || "Explore our best deals for you."}
-          items={sub.offers || []}
-        />
-      ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {visibleItems.map((item, index) => (
+          <OfferCard
+            key={item.id}
+            item={item}
+            user={user}
+            router={router}
+            index={index}
+          />
+        ))}
+      </div>
+
+      {hasMore && (
+        <div className="flex justify-center mt-10">
+          <Link
+            href={`/view_all/${subcategory.id}`}
+            className="bg-[#00308F] dark:bg-blue-600 text-white px-6 py-3 rounded-sm hover:bg-[#002366] dark:hover:bg-blue-700 transition-colors inline-block font-semibold"
+          >
+            View All
+          </Link>
+        </div>
+      )}
     </div>
+  );
+};
+
+// Offer Card Component
+const OfferCard = ({ item, user, router, index }) => {
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const isBookmarked = bookmarks?.some((b) => b.id === item.id) || false;
+
+  const getImageUrl = () => {
+    if (!item.image || item.image === "undefined" || item.image === "null") {
+      return "/fallback.jpg";
+    }
+    if (item.image.startsWith('http')) {
+      return item.image;
+    }
+    const imagePath = item.image.startsWith('/') ? item.image : `/${item.image}`;
+    return `${BASE_URL}${imagePath}`;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      className="shadow-xl dark:shadow-gray-800 p-4 rounded-sm bg-white dark:bg-gray-800 hover:shadow-2xl dark:hover:shadow-gray-700 transition-shadow border border-transparent dark:border-gray-700"
+    >
+      <div className="relative w-full h-[200px] mb-3 bg-gray-100 dark:bg-gray-700 rounded">
+        <Image
+          src={getImageUrl()}
+          fill
+          alt={item.brand_name || "Offer"}
+          className="object-contain"
+        />
+      </div>
+
+      <h2 className="mt-2 text-lg font-semibold line-clamp-2 text-gray-900 dark:text-white">
+        {item.brand_name}
+      </h2>
+
+      {item.discount_percent && parseFloat(item.discount_percent) > 0 && (
+        <p className="text-red-600 dark:text-red-400 font-bold text-xl mt-1">
+          {item.discount_percent}% OFF
+        </p>
+      )}
+
+      <div className="flex items-center gap-3 mt-3">
+        <Button className="border-2 border-gray-300 dark:border-gray-600 rounded-none text-lg flex-1 bg-white dark:bg-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600" variant="none">
+          <Link href={`/redeem_details/${item.id}`} className="w-full">
+            Redeem {">>"}
+          </Link>
+        </Button>
+
+        <Button
+          className={`border-2 rounded-none text-lg transition-colors duration-200 ${
+            isBookmarked
+              ? "bg-[#3366CC] dark:bg-blue-600 text-white hover:bg-[#2855b3] dark:hover:bg-blue-700 border-[#3366CC] dark:border-blue-600"
+              : "bg-white dark:bg-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 border-gray-300 dark:border-gray-600"
+          }`}
+          variant="ghost"
+          onClick={() => {
+            if (!user) {
+              router.push("/register");
+              return;
+            }
+            toggleBookmark(item);
+          }}
+        >
+          <CiBookmark size={24} />
+        </Button>
+      </div>
+    </motion.div>
   );
 };
 

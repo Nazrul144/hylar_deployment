@@ -6,7 +6,6 @@ export const PasswordContext = createContext();
 const PasswordProvider = ({ children }) => {
 
   const [passInfo, setPassInfo] = useState(null);
-  console.log("From Context:", passInfo);
 
   return (
     <PasswordContext.Provider value={{ passInfo, setPassInfo }}>

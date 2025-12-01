@@ -211,14 +211,13 @@ const AllCategories = () => {
           />
           <div className="absolute w-full h-full z-10 " />
           <div className="absolute z-20 text-center">
-            <h1 className="text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
+            <h1 className="text-7xl font-extrabold uppercase bg-linear-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
               {categoryData.category_name}
             </h1>
           </div>
         </div>
       )}
 
-      {/* IMPROVED: Added Array.isArray check */}
       {Array.isArray(categoryData.subcategories) && categoryData.subcategories.length > 0 ? (
         categoryData.subcategories.map((sub) => (
           <RenderSection

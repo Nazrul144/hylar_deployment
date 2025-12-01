@@ -8,7 +8,7 @@ export const CategoriesContext = createContext();
 const CategoriesProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true)
-  console.log(categories)
+
 
   useEffect(() => {
     const fetchData = async () => {

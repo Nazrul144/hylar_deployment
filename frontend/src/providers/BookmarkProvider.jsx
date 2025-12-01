@@ -2,24 +2,47 @@
 
 import { createContext, useEffect, useState } from "react"
 
-export const BookmarkContext =  createContext()
+
+export const BookmarkContext = createContext({
+  bookmarks: [],
+  toggleBookmark: () => {},
+  removeBookmark: () => {}
+});
 
 const BookmarkProvider = ({children}) => {
+  const [bookmarks, setBookmarks] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-    const [bookmarks, setBookmarks] = useState([]);
-
-  // Load from localStorage on first render
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("bookmark") || "[]");
-    setBookmarks(saved);
+
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem("bookmark");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setBookmarks(Array.isArray(parsed) ? parsed : []);
+        }
+      } catch (error) {
+        console.error("Error loading bookmarks:", error);
+        setBookmarks([]);
+      } finally {
+        setIsLoaded(true);
+      }
+    }
   }, []);
 
-  // Update localStorage whenever bookmarks change
-  useEffect(() => {
-    localStorage.setItem("bookmark", JSON.stringify(bookmarks));
-  }, [bookmarks]);
 
-  // Toggle add/remove (for ManswearCard)
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined') {
+      try {
+        localStorage.setItem("bookmark", JSON.stringify(bookmarks));
+      } catch (error) {
+        console.error("Error saving bookmarks:", error);
+      }
+    }
+  }, [bookmarks, isLoaded]);
+
+
   const toggleBookmark = (item) => {
     setBookmarks((prev) => {
       const exists = prev.some((i) => i.id === item.id);
@@ -30,19 +53,16 @@ const BookmarkProvider = ({children}) => {
     });
   };
 
-  // Remove only (for StorageItem)
+
   const removeBookmark = (id) => {
     setBookmarks((prev) => prev.filter((i) => i.id !== id));
   };
     
   return (
-    <div>
-      <BookmarkContext.Provider value={{bookmarks, toggleBookmark, removeBookmark}}>
-            {children}
-      </BookmarkContext.Provider>
-    </div>
+    <BookmarkContext.Provider value={{bookmarks, toggleBookmark, removeBookmark}}>
+      {children}
+    </BookmarkContext.Provider>
   )
 }
 
 export default BookmarkProvider
-

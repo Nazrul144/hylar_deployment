@@ -9,11 +9,7 @@ const SignupProvider = ({children}) => {
   const [userProfile, setUserProfile] = useState({})
   const [userCreated, setUserCreated] = useState(false)
 
-    console.log("from context", signupData, "userCreated:", userCreated);
-    console.log("from context", userProfile,);
-
-
-
+   
   return (
     <SignupContext.Provider value={{signupData, setSignupData, userProfile, setUserProfile, userCreated, setUserCreated}}>
         {children}

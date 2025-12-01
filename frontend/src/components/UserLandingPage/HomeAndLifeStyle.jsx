@@ -19,7 +19,7 @@ const HomeAndLifeStyle = () => {
   useEffect(() => {
     if (!categories.length) return;
 
-    // Normalize category name for comparison
+  
     const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
     const targetNames = ["homeandlifestyle", "homeandlifestyles"];
 
@@ -32,28 +32,28 @@ const HomeAndLifeStyle = () => {
         (sub) => sub.offers || []
       );
 
-      setHomeOffers(allOffers.slice(0, 3)); // Show first 3 only
+      setHomeOffers(allOffers.slice(0, 3)); 
     } else {
       console.warn("Home & Lifestyle category not found in:", categories);
     }
   }, [categories]);
 
-  // Do not render section if empty
+ 
   if (!homeOffers.length) return null;
 
   return (
     <div className="flex flex-col items-center justify-center pt-24">
-      {/* Title */}
+     
       <h1 className="text-[#000000] font-bold text-5xl inter-text">
         Home & Lifestyle
       </h1>
 
-      {/* Cards */}
+      
       <div className="flex flex-col lg:flex-row items-center justify-center gap-8 pt-11">
         {homeOffers.map((offer) => (
           <UserLandingPageCard
             key={offer.id}
-            id={offer.id} // Passing the offer ID
+            id={offer.id} 
             imageName={`${BASE_URL}${offer.image}`}
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent}% OFF`}

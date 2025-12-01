@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useContext, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -14,14 +14,15 @@ const AllCategories = () => {
   const id = Number(params.id);
   const router = useRouter();
   const { user } = useContext(UserContext);
-  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const { bookmarks = [], toggleBookmark } = useContext(BookmarkContext);
 
   const [categoryData, setCategoryData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // FIXED: Added safety check for bookmarks
   const bookmarkIds = useMemo(() => {
-    return new Set(bookmarks.map(b => b.id));
+    return new Set((bookmarks || []).map(b => b.id));
   }, [bookmarks]);
 
   useEffect(() => {
@@ -71,6 +72,18 @@ const AllCategories = () => {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <span className="loading loading-bars loading-lg"></span>
+      </div>
+    );
+  }
+
+  // IMPROVED: Better error handling
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="text-center">
+          <p className="text-red-600 text-xl mb-2">Error loading category</p>
+          <p className="text-gray-600">{error}</p>
+        </div>
       </div>
     );
   }
@@ -136,7 +149,10 @@ const AllCategories = () => {
                 router.push("/register");
                 return;
               }
-              toggleBookmark(item);
+              // IMPROVED: Added safety check for toggleBookmark
+              if (toggleBookmark) {
+                toggleBookmark(item);
+              }
             }}
           >
             <CiBookmark />
@@ -149,7 +165,8 @@ const AllCategories = () => {
 
   const RenderSection = React.memo(
     ({ title, description, items, subcategoryId, categoryId }) => {
-      if (!items || items.length === 0) return null;
+      // IMPROVED: More defensive checking
+      if (!Array.isArray(items) || items.length === 0) return null;
 
       const visibleItems = items.slice(0, 6);
 
@@ -201,7 +218,8 @@ const AllCategories = () => {
         </div>
       )}
 
-      {categoryData.subcategories && categoryData.subcategories.length > 0 ? (
+      {/* IMPROVED: Added Array.isArray check */}
+      {Array.isArray(categoryData.subcategories) && categoryData.subcategories.length > 0 ? (
         categoryData.subcategories.map((sub) => (
           <RenderSection
             key={sub.id}

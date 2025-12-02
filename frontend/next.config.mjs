@@ -19,7 +19,7 @@ const nextConfig = {
         pathname: '/media/**',
       },
     ],
-    // Fallback for older Next.js versions
+
     domains: ['13.61.254.207'],
   },
 };

@@ -23,6 +23,10 @@ const HomeAndLifeStyle = () => {
   useEffect(() => {
     if (!categories.length) return;
 
+<<<<<<< HEAD
+=======
+  
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
     const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
     const targetNames = ["homeandlifestyle", "homeandlifestyles"];
 
@@ -35,29 +39,49 @@ const HomeAndLifeStyle = () => {
         (sub) => sub.offers || []
       );
 
+<<<<<<< HEAD
       setHomeOffers(allOffers.slice(0, 3));
+=======
+      setHomeOffers(allOffers.slice(0, 3)); 
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
     } else {
       console.warn("Home & Lifestyle category not found in:", categories);
     }
   }, [categories]);
 
+<<<<<<< HEAD
   const handleBookmarkClick = useCallback((offer) => {
     toggleBookmark(offer);
   }, [toggleBookmark]);
 
+=======
+ 
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
   if (!homeOffers.length) return null;
 
   return (
     <div className="flex flex-col items-center justify-center pt-24">
+<<<<<<< HEAD
+=======
+     
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
       <h1 className="text-[#000000] font-bold text-5xl inter-text">
         Home & Lifestyle
       </h1>
 
+<<<<<<< HEAD
+=======
+      
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
       <div className="flex flex-col lg:flex-row items-center justify-center gap-8 pt-11">
         {homeOffers.map((offer) => (
           <UserLandingPageCard
             key={offer.id}
+<<<<<<< HEAD
             id={offer.id}
+=======
+            id={offer.id} 
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
             imageName={`${BASE_URL}${offer.image}`}
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent}% OFF`}

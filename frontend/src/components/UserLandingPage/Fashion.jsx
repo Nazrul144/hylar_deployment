@@ -7,8 +7,14 @@ import { CategoriesContext } from "@/providers/CategoriesProvider";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { BASE_URL } from "@/config/config";
 
-const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const interFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const montSerrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const Fashion = () => {
   const { categories } = useContext(CategoriesContext);
@@ -34,10 +40,16 @@ const Fashion = () => {
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
+<<<<<<< HEAD:frontend/src/components/UserLandingPage/Fashion.jsx
       if (fashionCategory.subcategories && Array.isArray(fashionCategory.subcategories)) {
         const allOffers = fashionCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
         );
+=======
+      const allOffers = (fashionCategory.subcategories || []).flatMap(
+        (sub) => sub.offers || []
+      );
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c:frontend/src/components/UserLandingPage/Fasion.jsx
 
         setTotalFashionOffers(allOffers.length);
         setFashionOffers(allOffers.slice(0, 3));
@@ -71,8 +83,8 @@ const Fashion = () => {
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
-            discountClass="text-red-500 font-bold"   
-            priceClass="text-red-500"      
+            discountClass="text-red-500 font-bold"
+            priceClass="text-red-500"
             buttonName="Redeem"
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"

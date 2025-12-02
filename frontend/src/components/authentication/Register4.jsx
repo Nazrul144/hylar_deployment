@@ -16,7 +16,7 @@ const Register4 = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(30); // Start with 30s cooldown
+  const [resendCooldown, setResendCooldown] = useState(30); 
   const [otp, setOtp] = useState("");
   const router = useRouter();
   const { signupData } = useContext(SignupContext);

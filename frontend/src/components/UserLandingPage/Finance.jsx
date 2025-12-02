@@ -7,8 +7,14 @@ import { CategoriesContext } from "@/providers/CategoriesProvider";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { BASE_URL } from "@/config/config";
 
-const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const interFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const montSerrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const Finance = () => {
   const { categories } = useContext(CategoriesContext);
@@ -35,6 +41,7 @@ const Finance = () => {
     if (financeCategory) {
       setFinanceCategoryId(financeCategory.id);
 
+<<<<<<< HEAD
       if (financeCategory.subcategories && Array.isArray(financeCategory.subcategories)) {
         const allOffers = financeCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
@@ -46,6 +53,13 @@ const Finance = () => {
         setTotalFinanceOffers(0);
         setFinanceOffers([]);
       }
+=======
+      const allOffers =
+        financeCategory.subcategories?.flatMap((sub) => sub.offers || []) || [];
+
+      setTotalFinanceOffers(allOffers.length);
+      setFinanceOffers(allOffers.slice(0, 3));
+>>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
     }
   }, [categories]);
 
@@ -57,7 +71,9 @@ const Finance = () => {
 
   return (
     <div className="flex flex-col items-center justify-center pt-24 mb-16">
-      <h1 className={`text-[#000000] dark:text-white font-bold text-5xl ${interFont.className}`}>
+      <h1
+        className={`text-[#000000] dark:text-white font-bold text-5xl ${interFont.className}`}
+      >
         Finance
       </h1>
 

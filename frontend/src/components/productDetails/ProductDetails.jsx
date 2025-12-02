@@ -6,13 +6,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { Inter, Montserrat } from "next/font/google";
 import { BookmarkContext } from "@/providers/BookmarkProvider";
 import { UserContext } from "@/providers/UserProvider";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
-const ProductDetails = () => {
-  const { id } = useParams(); 
+const ProductDetails = ({ id }) => {
   const [offer, setOffer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,14 +29,44 @@ const ProductDetails = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${BASE_URL}/api/offers/${id}/`);
+  
+        const token = localStorage.getItem("access_token");
 
-        if (!response.ok) {
-          throw new Error(`Failed to load offer details`);
+      
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
         }
 
+        const response = await fetch(`${BASE_URL}/api/offers/${id}/`, {
+          method: "GET",
+          headers: headers,
+          credentials: "include",
+        });
+
         const result = await response.json();
-        console.log("Offer Details API Response:", result);
+      
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem("access_token");
+            router.push("/login");
+            throw new Error("Please login to view offer details");
+          }
+          if (response.status === 403) {
+           
+            if (result.error === "SUBSCRIPTION_REQUIRED") {
+              router.push("/subscription")
+            }
+            if(result.error === "PROFILE_NOT_FILLED"){
+              router.push("/profile")
+            }
+          }
+        }
 
         if (result.status === "success" && result.data) {
           setOffer(result.data);
@@ -53,7 +82,7 @@ const ProductDetails = () => {
     };
 
     fetchOfferDetails();
-  }, [id]);
+  }, [id, router]);
 
   const handleRedeemClick = (e) => {
     if (!user) {
@@ -70,19 +99,6 @@ const ProductDetails = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="pt-22 flex flex-col justify-center items-center h-[40vh]">
-        <p className="text-red-600 text-xl mb-4">⚠️ {error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="bg-blue-600 text-white px-6 py-2 rounded-sm"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
 
   if (!offer) {
     return <p className="text-center mt-10 text-xl">No offer details found</p>;
@@ -94,7 +110,6 @@ const ProductDetails = () => {
   return (
     <div className="pt-22 flex flex-col items-center justify-center gap-8 py-16 max-w-4xl mx-auto px-4">
 
-      {/* MAIN IMAGE */}
       <div className="w-full h-72 md:h-96 relative rounded-lg overflow-hidden shadow">
         <Image
           src={imageUrl}
@@ -105,7 +120,7 @@ const ProductDetails = () => {
         />
       </div>
 
-      {/* PRODUCT DETAILS */}
+    
       <h1 className="text-[#00308F] font-medium md:font-bold text-5xl text-center inter-text">
         {offer.brand_name}
       </h1>

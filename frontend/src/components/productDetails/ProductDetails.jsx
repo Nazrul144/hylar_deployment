@@ -1,12 +1,13 @@
 "use client";
-import { BASE_URL } from "@/config/config";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState, useContext } from "react";
 import { Inter, Montserrat } from "next/font/google";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
-import { UserContext } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "../../config/config";
+import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { UserContext } from "../../providers/UserProvider";
 
 const interFont = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 const montSerrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });

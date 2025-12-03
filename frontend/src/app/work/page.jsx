@@ -1,6 +1,6 @@
 
-import Works from '@/components/addYourBusiness/Works'
 import React from 'react'
+import Works from '../../components/addYourBusiness/Works'
 
 export const metadata = {
   title: "How It Works || Maximum Savings",

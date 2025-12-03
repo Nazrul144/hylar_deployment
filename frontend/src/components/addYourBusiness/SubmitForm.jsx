@@ -14,7 +14,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import Swal from "sweetalert2";
 
 const formSchema = z.object({

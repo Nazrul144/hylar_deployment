@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../Header'
 import Partner from '../Partner'
 import Works from '../Works'
-import Subscription from '@/components/landingPage/Subscription'
+import Subscription from '../../landingPage/Subscription'
 import WhatYouGet from '../WhatYouGet'
 import FAQ from '../FAQ'
 

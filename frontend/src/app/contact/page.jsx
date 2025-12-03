@@ -1,5 +1,4 @@
-import Contact from '@/components/contactPage/Contact'
-import React from 'react'
+import Contact from '../../components/contactPage/Contact'
 
 export const metadata = {
   title: "Contact || Maximum Savings",

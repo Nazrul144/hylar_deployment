@@ -4,8 +4,8 @@ import { useContext, useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { User, MapPin, Globe, CreditCard } from "lucide-react";
 import Image from "next/image";
-import { BASE_URL } from "@/config/config";
-import { UserContext } from "@/providers/UserProvider";
+import { BASE_URL } from "../../config/config";
+import { UserContext } from "../../providers/UserProvider";
 import { UserUpdate } from "../ui/UserUpdate";
 
 const UserProfile = () => {

@@ -1,7 +1,5 @@
 'use client'
-import React, { useContext } from 'react'
 import {motion} from 'framer-motion'
-import { CategoriesContext } from '@/providers/CategoriesProvider'
 
 const Works = () => {
 

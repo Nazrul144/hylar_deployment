@@ -1,12 +1,13 @@
 "use client";
 
 import { useContext } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { CiBookmark } from "react-icons/ci";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
-import { BASE_URL } from "@/config/config";
+import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { BASE_URL } from "../../config/config";
+
 
 const StorageItem = () => {
   const { bookmarks, removeBookmark } = useContext(BookmarkContext);

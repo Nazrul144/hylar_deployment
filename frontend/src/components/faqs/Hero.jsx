@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import toast from "react-hot-toast";
 
 const fadeInUp = {

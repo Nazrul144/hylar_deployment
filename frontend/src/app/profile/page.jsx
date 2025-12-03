@@ -1,4 +1,4 @@
-import UserProfile from '@/components/profile/UserProfile'
+import UserProfile from '../../components/profile/UserProfile'
 import React from 'react'
 
 const UserProfilePage = () => {

@@ -1,5 +1,5 @@
 
-import About from '@/components/landingPage/About'
+import About from '../../components/landingPage/About'
 
 
 

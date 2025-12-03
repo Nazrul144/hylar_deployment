@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./button";
 import {
   Dialog,
   DialogClose,
@@ -10,13 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "./dialog";
+import { Input } from "./input";
+import { Label } from "./label";
 import { FiCamera } from "react-icons/fi";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import toast from "react-hot-toast";
-import { UserContext } from "@/providers/UserProvider";
+import { UserContext } from "../../providers/UserProvider";
 
 export function UserUpdate({
   currentFirstName,

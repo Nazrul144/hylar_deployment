@@ -1,6 +1,4 @@
-import StorageItem from '@/components/savePage/StorageItem'
-import React from 'react'
-
+import StorageItem from '../../components/savePage/StorageItem'
 const page = () => {
   return (
     <div>

@@ -1,8 +1,8 @@
 "use client";
 
-import AddUserBusiness from "@/components/addYourBusiness/userBusinessSide/AddUserBusiness";
-import BlogPage from "@/components/blogPage/BlogPage";
-import { UserContext } from "@/providers/UserProvider";
+import AddUserBusiness from "../../components/addYourBusiness/userBusinessSide/AddUserBusiness";
+import BlogPage from "../../components/blogPage/BlogPage";
+import { UserContext } from "../../providers/UserProvider";
 import React, { useContext } from "react";
 
 const BusinessPage = () => {

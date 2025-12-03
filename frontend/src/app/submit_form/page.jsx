@@ -1,6 +1,4 @@
-import SubmitForm from '@/components/addYourBusiness/SubmitForm'
-import React from 'react'
-
+import SubmitForm from '../../components/addYourBusiness/SubmitForm'
 const SubmitFromPage = () => {
   return (
     <div>

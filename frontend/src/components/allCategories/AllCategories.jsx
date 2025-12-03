@@ -92,15 +92,15 @@ const AllCategories = () => {
             className="object-cover"
             priority
           />
-          <div className="absolute w-full h-full z-10 bg-black/40 dark:bg-black/60" />
+          <div className="absolute w-full h-full z-10 dark:bg-black/60" />
           <div className="absolute z-20 text-center px-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold uppercase bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold uppercase bg-linear-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
               {categoryData.category_name}
             </h1>
           </div>
         </div>
       ) : (
-        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] pt-6 flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-800">
+        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] pt-6 flex flex-col items-center justify-center bg-linear-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-800">
           <div className="absolute z-20 text-center px-4">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold uppercase text-white drop-shadow-lg">
               {categoryData.category_name}

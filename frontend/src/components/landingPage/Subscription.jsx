@@ -3,9 +3,9 @@ import React, { useContext } from "react";
 import { IoCheckmark } from "react-icons/io5";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import { SignupContext } from "@/providers/SignupProvider";
-import { BASE_URL } from "@/config/config";
-import { UserContext } from "@/providers/UserProvider";
+import { SignupContext } from "../../providers/SignupProvider";
+import { BASE_URL } from "../../config/config";
+import { UserContext } from "../../providers/UserProvider";
 
 const Subscription = () => {
   const { userProfile } = useContext(SignupContext);

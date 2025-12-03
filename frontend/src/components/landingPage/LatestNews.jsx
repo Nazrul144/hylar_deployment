@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import { Button } from "../ui/button";
 
 const LatestNews = () => {

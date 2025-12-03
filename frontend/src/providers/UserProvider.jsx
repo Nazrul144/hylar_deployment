@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useEffect, useState } from "react";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../config/config";
 
 // FIXED: Provide default values in createContext
 export const UserContext = createContext({

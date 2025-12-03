@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useId } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "../ui/input";
 import Image from "next/image";
 import { BiSend } from "react-icons/bi";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 
 const Footer = () => {
   const [email, setEmail] = useState("");

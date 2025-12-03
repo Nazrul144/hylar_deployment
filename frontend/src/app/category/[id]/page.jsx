@@ -1,4 +1,4 @@
-import AllCategories from '@/components/allCategories/AllCategories'
+import AllCategories from '../../../components/allCategories/AllCategories'
 import React from 'react'
 // SEO meta data
 export const metadata = {

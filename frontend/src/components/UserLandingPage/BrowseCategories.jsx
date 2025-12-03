@@ -1,5 +1,5 @@
 "use client";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -84,31 +84,11 @@ const BrowseCategories = () => {
         </p>
       </div>
 
-<<<<<<< HEAD
       <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-20 max-w-7xl mx-auto px-4">
         {categories.map((category) => {
           const imageUrl = category.banner_image 
             ? `${BASE_URL}${category.banner_image}` 
             : "/fallback.jpg";
-=======
-      <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-20">
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/category/${category.id}`}
-            className="w-60 h-60 relative overflow-hidden group block"
-          >
-            <Image
-              src={
-                category.banner_image
-                  ? `${BASE_URL}${category.banner_image}`
-                  : "/placeholder.png"
-              }
-              alt={category.category_name || "Category"}
-              fill
-              className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
-            />
->>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
 
           return (
             <Link

@@ -3,9 +3,10 @@ import React, { useContext, useEffect, useState, useCallback, useMemo } from "re
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
-import { CategoriesContext } from "@/providers/CategoriesProvider";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
-import { BASE_URL } from "@/config/config";
+import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { BASE_URL } from "../../config/config";
+import { CategoriesContext } from "../../providers/CategoriesProvider";
+
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -40,16 +41,10 @@ const Fashion = () => {
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
-<<<<<<< HEAD:frontend/src/components/UserLandingPage/Fashion.jsx
       if (fashionCategory.subcategories && Array.isArray(fashionCategory.subcategories)) {
         const allOffers = fashionCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
         );
-=======
-      const allOffers = (fashionCategory.subcategories || []).flatMap(
-        (sub) => sub.offers || []
-      );
->>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c:frontend/src/components/UserLandingPage/Fasion.jsx
 
         setTotalFashionOffers(allOffers.length);
         setFashionOffers(allOffers.slice(0, 3));

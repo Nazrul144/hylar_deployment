@@ -1,22 +1,25 @@
 // --- FULL NAVBAR CODE WITH FIXES ---
 
 "use client";
-import { cn } from "@/lib/utils";
+"use client";
+import { cn } from "../../lib/utils";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+} from "../ui/navigation-menu";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "../ui/popover";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "../../providers/BookmarkProvider";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -26,8 +29,8 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { IoIosArrowDown } from "react-icons/io";
-import { CategoriesContext } from "@/providers/CategoriesProvider";
-import { BASE_URL } from "@/config/config";
+import { CategoriesContext } from "../../providers/CategoriesProvider";
+import { BASE_URL } from "../../config/config";
 import {
   Tooltip,
   TooltipTrigger,
@@ -35,7 +38,7 @@ import {
   TooltipProvider,
 } from "../ui/tooltip";
 import { ModeToggle } from "../themeProvider/ModeToggle";
-import { UserContext } from "@/providers/UserProvider";
+import { UserContext } from "../../providers/UserProvider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
 

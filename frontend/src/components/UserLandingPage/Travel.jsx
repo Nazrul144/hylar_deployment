@@ -3,9 +3,9 @@ import React, { useContext, useEffect, useState, useCallback, useMemo } from "re
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
-import { CategoriesContext } from "@/providers/CategoriesProvider";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
-import { BASE_URL } from "@/config/config";
+import { CategoriesContext } from "../../providers/CategoriesProvider";
+import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { BASE_URL } from "../../config/config";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -41,7 +41,6 @@ const Travel = () => {
     if (travelCategory) {
       setTravelCategoryId(travelCategory.id);
 
-<<<<<<< HEAD
       if (travelCategory.subcategories && Array.isArray(travelCategory.subcategories)) {
         const allOffers = travelCategory.subcategories.flatMap(
           (sub) => sub?.offers || []
@@ -53,14 +52,6 @@ const Travel = () => {
         setTotalTravelOffers(0);
         setTravelOffers([]);
       }
-=======
-      const allOffers = (travelCategory.subcategories || []).flatMap(
-        (sub) => sub.offers || []
-      );
-
-      setTotalTravelOffers(allOffers.length);
-      setTravelOffers(allOffers.slice(0, 3));
->>>>>>> ef789bdf02f912e3e547c210f8013129d8727b1c
     }
   }, [categories]);
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { CiBookmark } from "react-icons/ci";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../ui/button";
 
 const UserLandingPageCard = React.memo(({
   id,

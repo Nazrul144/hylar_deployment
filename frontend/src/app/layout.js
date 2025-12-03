@@ -1,16 +1,18 @@
 import { Geist, Geist_Mono, Inter, Montserrat} from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
-import NavHeader from "@/components/shared/NavHeader";
-import Footer from "@/components/shared/Footer";
+
 import { Toaster } from "react-hot-toast";
-import SubscribePopup from "@/components/subscribePopup/SubscribePopup";
-import BookmarkProvider from "@/providers/BookmarkProvider";
-import CategoriesProvider from "@/providers/CategoriesProvider";
-import SignupProvider from "@/providers/SignupProvider";
-import { ThemeProvider } from "@/components/themeProvider/theme.provider";
-import UserProvider from "@/providers/UserProvider";
-import PasswordProvider from "@/providers/PasswordProvider";
+
+import Navbar from "../components/shared/Navbar";
+import NavHeader from "../components/shared/NavHeader";
+import Footer from "../components/shared/Footer";
+import SubscribePopup from "../components/subscribePopup/SubscribePopup";
+import BookmarkProvider from "../providers/BookmarkProvider";
+import { CategoriesProvider } from "../providers/CategoriesProvider";
+import SignupProvider from "../providers/SignupProvider";
+import { ThemeProvider } from "../components/themeProvider/theme.provider";
+import UserProvider from "../providers/UserProvider";
+import PasswordProvider from "../providers/PasswordProvider";
 
 
 const geistSans = Geist({

@@ -17,18 +17,17 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
-import { BASE_URL } from "@/config/config";
-import { useContext } from "react";
-import { PasswordContext } from "@/providers/PasswordProvider";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "../../config/config";
+import { useContext } from "react";
+import { PasswordContext } from "../../providers/PasswordProvider";
+
+
 
 // ✅ Zod schema
 const formSchema = z
   .object({
-    // email: z
-    //   .string()
-    //   .min(1, { message: "Email is required" })
-    //   .email({ message: "Enter a valid email address" }),
+    
     newPassword: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })

@@ -1,4 +1,4 @@
-import CreatePassword from '@/components/forgetPassword/CreatePassword'
+import CreatePassword from '../../../../../components/forgetPassword/CreatePassword'
 import React from 'react'
 
 const CreateNewPasswordPage = () => {

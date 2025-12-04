@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useContext} from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
@@ -10,8 +10,8 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
-import { BASE_URL } from "@/config/config";
-import { PasswordContext } from "@/providers/PasswordProvider";
+import { BASE_URL } from "../../config/config";
+import { PasswordContext } from "../../providers/PasswordProvider";
 
 const VerifyOTP = () => {
   const router = useRouter();

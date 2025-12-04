@@ -15,10 +15,11 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { BASE_URL } from "@/config/config";
-import toast from "react-hot-toast";
 import { useContext } from "react";
-import { PasswordContext } from "@/providers/PasswordProvider";
+import { BASE_URL } from "../../config/config";
+import toast from "react-hot-toast";
+import { PasswordContext } from "../../providers/PasswordProvider";
+
 
 // Zod schema
 const formSchema = z.object({

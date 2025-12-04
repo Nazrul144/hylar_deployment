@@ -1,4 +1,4 @@
-import VerifyOTP from '@/components/forgetPassword/VerifyOTP'
+import VerifyOTP from '../../../../components/forgetPassword/VerifyOTP'
 import React from 'react'
 
 const VerifyOTPPage = () => {

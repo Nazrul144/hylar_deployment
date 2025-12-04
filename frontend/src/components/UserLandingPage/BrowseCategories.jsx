@@ -128,7 +128,7 @@ const BrowseCategories = () => {
         if (response.status === 403) {
           // Check for specific error types
           if (result.error === "PROFILE_NOT_FILLED") {
-            router.push("/profile");
+            router.push("/register5");
             return;
           }
           if (result.error === "SUBSCRIPTION_REQUIRED") {

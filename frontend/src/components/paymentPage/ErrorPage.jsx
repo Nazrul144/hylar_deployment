@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-
-const ErrorPage = () => {
-=======
 'use client'
 import { motion } from "framer-motion";
 import { XCircle } from "lucide-react";
@@ -30,9 +25,8 @@ const ErrorPage = () => {
       };
     }, []);
 
->>>>>>> 3a8bff25a3cc9682e8a53afbb30acb8b5e51e0a3
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-200 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-liner-to-br from-red-50 to-red-200 p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -44,16 +38,10 @@ const ErrorPage = () => {
         <p className="text-gray-600 text-lg mb-6">
           Something went wrong while processing your payment. Please try again.
         </p>
-<<<<<<< HEAD
-        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all">
-          Try Again
-        </button>
-=======
         <p className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all">
           Redirecting in{" "}
           {counter} seconds...
         </p>
->>>>>>> 3a8bff25a3cc9682e8a53afbb30acb8b5e51e0a3
       </motion.div>
     </div>
   );

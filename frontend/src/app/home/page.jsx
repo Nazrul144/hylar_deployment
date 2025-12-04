@@ -1,6 +1,5 @@
+import Header from "../../components/landingPage/Header"
 
-import Header from '@/components/landingPage/Header'
-import React from 'react'
 
 export const metadata = {
   title: "Home || Maximum Savings",

@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 
 const NewsDetails = ({ slug }) => {
   const router = useRouter();

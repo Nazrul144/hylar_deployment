@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
             <PasswordProvider>
               {children}
             </PasswordProvider>
-            <SubscribePopup/>
+            {/* <SubscribePopup/> */}
             <Footer/>
            </BookmarkProvider>
            </CategoriesProvider>

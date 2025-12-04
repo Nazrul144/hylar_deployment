@@ -11,7 +11,7 @@ const Eligible = () => {
             index={i + 1}
             title={item.title}
             body={item.body}
-            reverse={i % 2 === 1} // even items reversed
+            reverse={i % 2 === 1} 
           />
         ))}
       </div>

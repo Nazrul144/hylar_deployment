@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { BASE_URL } from "../../config/config";
 import toast from "react-hot-toast";
+import { useSearch } from "../../providers/SearchContext"; 
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -18,56 +19,67 @@ const Hero = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const { setSearchQuery } = useSearch();
+
   const handleClear = () => {
     setQuery("");
     setResults([]);
+    setSearchQuery(""); 
   };
 
-const handleSearch = async () => {
-  if (!query.trim()) return;
+  const handleSearch = async () => {
+    if (!query.trim()) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const token = localStorage.getItem("access_token");
+    
+    setSearchQuery(query);
 
-    const response = await fetch(
-      `${BASE_URL}/api/offers/searched-offer/?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          "Authorization": token ? `Bearer ${token}` : "",
-        },
+    // Also search offers via API
+    try {
+      const token = localStorage.getItem("access_token");
+
+      const response = await fetch(
+        `${BASE_URL}/api/offers/searched-offer/?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("Search result:", data);
+
+      if (data?.error === "SUBSCRIPTION_REQUIRED") {
+        setResults([]);
+        toast.error("You need an active subscription to search offers.");
+        setLoading(false);
+        return;
       }
-    );
 
-    const data = await response.json();
+      if (!response.ok) {
+        setResults([]);
+        setLoading(false);
+        return;
+      }
 
-    console.log("Search result:", data); 
-
-   
-    if (data?.error === "SUBSCRIPTION_REQUIRED") {
+      setResults(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Search API error:", error);
       setResults([]);
-      toast.error("You need an active subscription to search offers.")
-      return;
     }
 
-  
-    if (!response.ok) {
-      setResults([]);
-      return;
+    setLoading(false);
+  };
+
+  // Handle Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
     }
-
- 
-    setResults(Array.isArray(data) ? data : []);
-
-  } catch (error) {
-    console.error("Search API error:", error);
-    setResults([]);
-  }
-
-  setLoading(false);
-};
-
+  };
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#00308F] px-4 lg:px-4 py-10 min-h-[500px]">
@@ -120,9 +132,10 @@ const handleSearch = async () => {
         </div>
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search FAQs, articles, eligibility..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           className="flex-1 px-2 py-2 text-gray-700 focus:outline-none relative"
         />
         {query && (
@@ -141,12 +154,13 @@ const handleSearch = async () => {
         </Button>
       </motion.div>
 
-      {/* Search Results Placeholder */}
+      {/* Search Results for Offers (API) */}
       <div className="mt-8 w-full max-w-2xl">
         {loading ? (
-          <p className="text-white text-center">Searching...</p>
+          <p className="text-white text-center">Searching offers...</p>
         ) : results.length > 0 ? (
           <div className="space-y-4">
+            <h3 className="text-white font-semibold text-lg mb-2">Offers Found:</h3>
             {results.map((item, index) => (
               <div
                 key={index}
@@ -159,12 +173,7 @@ const handleSearch = async () => {
               </div>
             ))}
           </div>
-        ) : (
-          query &&
-          !loading && (
-            <p className="text-gray-300 text-center">No results found</p>
-          )
-        )}
+        ) : null}
       </div>
     </div>
   );

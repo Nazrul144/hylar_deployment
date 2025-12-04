@@ -1,88 +1,148 @@
 "use client";
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
-const faqs = [
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useFilteredData } from "../../providers/SearchContext";
+
+// Popular FAQs data for Maximum Savings
+const faqsData = [
   {
-    question: "What is Mobbin?",
-    answer: `Mobbin is the world's largest UI & UX reference library. It's always up-to-date, includes mobile and web, and lets you filter by specific app categories, UI elements, flow patterns, and more.
-Join hundreds of thousands of designers using Mobbin to accelerate research, get decision-makers on board, and start designing faster.`,
+    id: 1,
+    question: "How do I start saving with Maximum Savings?",
+    answer:
+      "Simply sign up for a free account, browse our categories of deals, and click through our links before making purchases. You'll automatically earn cashback and access exclusive discounts from thousands of partner retailers.",
+    category: "Getting Started",
   },
   {
-    question: "How often do you update the library?",
-    answer: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-consequuntur distinctio corporis earum similique!`,
+    id: 2,
+    question: "When will I receive my cashback?",
+    answer:
+      "Cashback is typically credited to your account within 24-48 hours after your purchase is confirmed by the retailer. You can withdraw your earnings once you reach the $25 minimum threshold via PayPal, direct deposit, or gift cards.",
+    category: "Cashback",
   },
   {
-    question: "Can I get a free trial?",
-    answer: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-consequuntur distinctio corporis earum similique!`,
+    id: 3,
+    question: "Can I use Maximum Savings with other coupons?",
+    answer:
+      "Yes! Maximum Savings works alongside most manufacturer coupons and store promotions. Simply apply your coupons at checkout as usual, and you'll still earn cashback through our platform. Some exclusions may apply for certain retailers.",
+    category: "Coupons & Deals",
   },
   {
-    question: "Do you have a monthly plan?",
-    answer: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-consequuntur distinctio corporis earum similique!`,
+    id: 4,
+    question: "Is there a mobile app available?",
+    answer:
+      "Yes, Maximum Savings is available on both iOS and Android. The mobile app includes all desktop features plus location-based deals, barcode scanning for in-store offers, and push notifications for flash sales.",
+    category: "Mobile App",
+  },
+  {
+    id: 5,
+    question: "How do I cancel my Premium membership?",
+    answer:
+      "You can cancel your Premium membership anytime from your account settings. Go to Settings > Membership > Cancel Subscription. You'll retain Premium benefits until the end of your current billing period, and there are no cancellation fees.",
+    category: "Account Management",
+  },
+  {
+    id: 6,
+    question: "What if a store doesn't track my purchase?",
+    answer:
+      "If your cashback doesn't appear within 48 hours, submit a missing cashback claim through your account dashboard. Provide your order confirmation email, and our team will investigate. Most claims are resolved within 5-7 business days.",
+    category: "Support",
   },
 ];
 
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
 const PopularFaqs = () => {
+  const [openIndex, setOpenIndex] = useState(null);
+  const filteredFaqs = useFilteredData(faqsData, [
+    "question",
+    "answer",
+    "category",
+  ]);
+
+  const toggleFaq = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
-    <div className="mt-16 max-w-5xl mx-auto px-4 lg:px-0">
-      <h1 className="text-xl lg:text-4xl inter-text font-semibold text-center common-text mb-8">
-        Popular FAQS
-      </h1>
+    <div className="lg:w-7xl mx-auto px-4 lg:px-0 py-16">
+      <motion.h2
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="font-bold text-center text-2xl lg:text-4xl text-[#00308F] mb-4"
+      >
+        Popular FAQs
+      </motion.h2>
 
-      <div className="space-y-4">
-        {faqs.map((faq, idx) => (
-          <details
-            key={idx}
-            className="group [&_summary::-webkit-details-marker]:hidden border border-gray-100 rounded-md overflow-hidden"
-          >
-            <summary className="flex items-center justify-between gap-1.5 bg-gray-50 p-4 text-gray-900 cursor-pointer">
-              <h2 className="text-lg font-medium">{faq.question}</h2>
-              <div className="relative w-6 h-6">
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ rotate: 0 }}
-                  whileParent={{ rotate: 45 }}
-                  animate={{ rotate: "0deg" }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-5 h-5 text-gray-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                </motion.div>
-              </div>
-            </summary>
+      <motion.p
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={{ ...fadeInUp, visible: { ...fadeInUp.visible, transition: { delay: 0.2 } } }}
+        className="text-gray-600 text-center mb-8 dark:text-white"
+      >
+        Quick answers to questions you may have
+      </motion.p>
 
-            <AnimatePresence>
-              <motion.p
-                className="px-4 pt-4 text-gray-900"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.4 }}
+      {filteredFaqs.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-8"
+        >
+          <p className="text-gray-500 text-lg">No FAQs found matching your search.</p>
+        </motion.div>
+      ) : (
+        <div className="space-y-4">
+          {filteredFaqs.map((faq, index) => (
+            <motion.div
+              key={faq.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="border border-gray-200 rounded-lg overflow-hidden"
+            >
+              <button
+                onClick={() => toggleFaq(index)}
+                className="w-full flex items-center justify-between p-4 lg:p-6 bg-white hover:bg-gray-50 transition-colors"
               >
-                {faq.answer}
-              </motion.p>
-            </AnimatePresence>
-          </details>
-        ))}
-      </div>
+                <span className="text-left font-semibold text-gray-800 text-sm lg:text-base">
+                  {faq.question}
+                </span>
+                {openIndex === index ? (
+                  <ChevronUp className="w-5 h-5 text-[#00308F] flex-shrink-0 ml-4" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-[#00308F] flex-shrink-0 ml-4" />
+                )}
+              </button>
+
+              {openIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="px-4 lg:px-6 pb-4 lg:pb-6 bg-gray-50"
+                >
+                  <p className="text-gray-700 text-sm lg:text-base leading-relaxed">
+                    {faq.answer}
+                  </p>
+                  <span className="inline-block mt-3 text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                    {faq.category}
+                  </span>
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

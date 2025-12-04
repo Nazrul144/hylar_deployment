@@ -1,3 +1,4 @@
+
 "use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -11,8 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-import { UserContext } from "@/providers/UserProvider";
-import { BASE_URL } from "@/config/config";
+import { UserContext } from "../../providers/UserProvider";
+import { BASE_URL } from "../../config/config";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({

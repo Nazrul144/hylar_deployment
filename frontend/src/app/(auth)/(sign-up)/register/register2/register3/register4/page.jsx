@@ -1,5 +1,4 @@
-import Register4 from '@/components/authentication/Register4'
-import React from 'react'
+import Register4 from '../../../../../../../components/authentication/Register4'
 
 const Register4Page = () => {
   return (

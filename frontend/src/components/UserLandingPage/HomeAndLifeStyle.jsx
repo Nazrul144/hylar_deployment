@@ -37,9 +37,7 @@ const HomeAndLifeStyle = () => {
       );
 
       setHomeOffers(allOffers.slice(0, 3));
-    } else {
-      console.warn("Home & Lifestyle category not found in:", categories);
-    }
+    } 
   }, [categories]);
 
   const handleBookmarkClick = useCallback((offer) => {

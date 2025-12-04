@@ -1,5 +1,4 @@
-import TermsAndCondition from '@/components/authentication/TermsAndCondition'
-import React from 'react'
+import TermsAndCondition from '../../components/authentication/TermsAndCondition'
 
 const TermsAndConditionPage = () => {
   return (

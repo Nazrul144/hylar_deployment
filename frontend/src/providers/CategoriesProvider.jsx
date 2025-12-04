@@ -18,8 +18,6 @@ export const CategoriesProvider = ({ children }) => {  // ✅ Add 'export' here
     fetchData();
   }, []);
 
-  console.log("from context", categories);
-
   return (
     <CategoriesContext.Provider value={{ categories, loading }}>
       {children}

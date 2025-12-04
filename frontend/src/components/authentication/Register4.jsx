@@ -1,15 +1,15 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect, useContext } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useRouter } from "next/navigation";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import toast from "react-hot-toast";
-import { BASE_URL } from "@/config/config";
-import { SignupContext } from "@/providers/SignupProvider";
+import { BASE_URL } from "../../config/config";
+import { SignupContext } from "../../providers/SignupProvider";
 import Swal from "sweetalert2";
 
 const Register4 = () => {

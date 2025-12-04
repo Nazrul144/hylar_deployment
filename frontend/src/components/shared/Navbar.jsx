@@ -9,11 +9,7 @@ import {
   NavigationMenuList,
 } from "../ui/navigation-menu";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -63,17 +59,22 @@ export default function Navbar({ montserrat }) {
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
 
+ useEffect(() => {
+  console.log("🔔 Navbar: User changed", user);
+  
+  if (user && user.profile_picture) {
+    const fullUrl = user.profile_picture.startsWith("http")
+      ? user.profile_picture
+      : `${BASE_URL}${user.profile_picture}`;
+    const photoWithTimestamp = `${fullUrl}?t=${Date.now()}`;
+    setPhoto(photoWithTimestamp);
+    console.log("📸 Navbar photo updated:", photoWithTimestamp);
+  } else {
+    setPhoto("/profile.png");
+  }
+}, [user, user?.profile_picture, user?.first_name, user?.last_name]); 
 
-  useEffect(() => {
-    if (user && user.profile_picture) {
-      const fullUrl = user.profile_picture.startsWith("http")
-        ? user.profile_picture
-        : `${BASE_URL}${user.profile_picture}`;
-      setPhoto(`${fullUrl}?t=${Date.now()}`);
-    } else {
-      setPhoto("/profile.png");
-    }
-  }, [user]);
+
 
   useEffect(() => {
     const handleScrolled = () => setScrolled(window.scrollY > 10);
@@ -149,7 +150,10 @@ export default function Navbar({ montserrat }) {
                     d="M4 12L20 12"
                     className="origin-center -translate-y-[7px] transition-all duration-300"
                   />
-                  <path d="M4 12H20" className="origin-center transition-all duration-300" />
+                  <path
+                    d="M4 12H20"
+                    className="origin-center transition-all duration-300"
+                  />
                   <path
                     d="M4 12H20"
                     className="origin-center translate-y-[7px] transition-all duration-300"
@@ -228,7 +232,7 @@ export default function Navbar({ montserrat }) {
 
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList
-                className="gap-6 flex-nowrap" 
+                className="gap-6 flex-nowrap"
                 // COMMENT: FIXED → prevents wrapping on medium screens
               >
                 {navItems.map((navItem) =>
@@ -240,7 +244,7 @@ export default function Navbar({ montserrat }) {
                     >
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="text-gray-900 dark:text-gray-100 whitespace-nowrap" 
+                          className="text-gray-900 dark:text-gray-100 whitespace-nowrap"
                           // COMMENT: FIXED → prevent breaking text
                           variant={"ghost"}
                         >
@@ -279,7 +283,7 @@ export default function Navbar({ montserrat }) {
                           pathName === navItem.path
                             ? "text-blue-800 underline font-bold dark:text-blue-400"
                             : "text-gray-900 dark:text-gray-100",
-                          "whitespace-nowrap" 
+                          "whitespace-nowrap"
                           // COMMENT: FIXED → prevents text wrapping
                         )}
                       >

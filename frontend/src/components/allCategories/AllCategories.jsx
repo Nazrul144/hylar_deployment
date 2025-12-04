@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -215,9 +215,9 @@ const OfferCard = ({ item, user, router, index }) => {
       </div>
 
       {/* Content Container - Flex Grow */}
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col grow">
         {/* Brand Name - Fixed Height with Line Clamp */}
-        <h2 className="text-base sm:text-lg font-semibold line-clamp-2 text-gray-900 dark:text-white min-h-[3rem]">
+        <h2 className="text-base sm:text-lg font-semibold line-clamp-2 text-gray-900 dark:text-white min-h-12">
           {item.brand_name}
         </h2>
 
@@ -229,7 +229,7 @@ const OfferCard = ({ item, user, router, index }) => {
         )}
 
         {/* Spacer to push buttons to bottom */}
-        <div className="flex-grow"></div>
+        <div className="grow"></div>
 
         {/* Action Buttons - Fixed at Bottom */}
         <div className="flex items-center gap-2 sm:gap-3 mt-4">

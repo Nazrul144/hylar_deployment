@@ -5,8 +5,7 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignupContext } from "@/providers/SignupProvider";
-
+import { SignupContext } from "../../providers/SignupProvider";
 
 
 const formSchema = z.object({
@@ -29,13 +28,7 @@ const Register8 = () => {
 
   console.log(userProfile)
 
-  
-  //   data;
-  //   setSignupData((prev) => ({
-  //     ...prev,
-  //     ...data,
-  //   }));
-  // };
+
 
 const handlePayment = async () => {
   try {

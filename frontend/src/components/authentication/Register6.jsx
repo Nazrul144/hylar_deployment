@@ -16,7 +16,7 @@ import { Input } from "../ui/input";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
+import { SignupContext } from "../../providers/SignupProvider";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({

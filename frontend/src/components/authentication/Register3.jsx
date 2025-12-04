@@ -15,12 +15,12 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
-import { Checkbox } from "../ui/checkbox";
 import Link from "next/link";
-import { BASE_URL } from "@/config/config";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { SignupContext } from "../../providers/SignupProvider";
+import { Checkbox } from "../ui/checkbox";
+import { BASE_URL } from "../../config/config";
 
 const formSchema = z
   .object({

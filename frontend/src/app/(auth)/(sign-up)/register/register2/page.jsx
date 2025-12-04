@@ -1,5 +1,4 @@
-import Register2 from '@/components/authentication/Register2'
-import React from 'react'
+import Register2 from '../../../../../components/authentication/Register2'
 
 const Register2Page = () => {
   return (
@@ -10,8 +9,3 @@ const Register2Page = () => {
 }
 
 export default Register2Page
-
-
-
-
-

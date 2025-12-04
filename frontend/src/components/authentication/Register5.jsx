@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
+import { SignupContext } from "../../providers/SignupProvider";
 
 const formSchema = z.object({
   employment_status: z.string().min(1, { message: "Select any one" }),

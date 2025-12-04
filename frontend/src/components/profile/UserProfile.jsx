@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "../ui/card";
 import { User, MapPin, Globe, CreditCard } from "lucide-react";
 import Image from "next/image";
@@ -9,8 +9,8 @@ import { UserContext } from "../../providers/UserProvider";
 import { UserUpdate } from "../ui/UserUpdate";
 
 const UserProfile = () => {
-  const { setUser } = useContext(UserContext);
-  const [photo, setPhoto] = useState(null);
+  const { user, setUser } = useContext(UserContext);
+  const [photo, setPhoto] = useState("/profile.png");
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -27,46 +27,82 @@ const UserProfile = () => {
     profile_picture: null,
   });
 
-  useEffect(() => {
-    const fetchUserProfileData = async () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) return;
+  const fetchUserProfile = useCallback(async () => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
 
-      try {
-        const res = await fetch(`${BASE_URL}/api/profiles/`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+    try {
+      console.log("🔄 Fetching profile data...");
+      
+      const res = await fetch(`${BASE_URL}/api/profiles/`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        cache: 'no-store',
+      });
 
-        if (!res.ok) throw new Error("Failed to fetch profile");
+      if (!res.ok) throw new Error("Failed to fetch profile");
 
-        const userData = await res.json();
-        setFormData(userData.data);
+      const userData = await res.json();
+      console.log("✅ Profile data fetched:", userData.data);
+      
+      setFormData(userData.data);
 
-        const profilePhoto =
-          userData.data.profile_picture &&
-          userData.data.profile_picture.startsWith("http")
-            ? userData.data.profile_picture
-            : userData.data.profile_picture
-            ? `${BASE_URL}${userData.data.profile_picture}`
-            : "/profile.png";
+      const profilePhoto =
+        userData.data.profile_picture &&
+        userData.data.profile_picture.startsWith("http")
+          ? userData.data.profile_picture
+          : userData.data.profile_picture
+          ? `${BASE_URL}${userData.data.profile_picture}`
+          : "/profile.png";
 
-        setPhoto(profilePhoto);
+      const photoWithTimestamp = `${profilePhoto}?t=${Date.now()}`;
+      setPhoto(photoWithTimestamp);
 
-        setUser({
-          ...userData.data,
-          photo: profilePhoto,
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
+      setUser({
+        ...userData.data,
+        profile_picture: profilePhoto,
+      });
 
-    fetchUserProfileData();
+    } catch (error) {
+      console.error("❌ Error fetching profile:", error);
+    }
   }, [setUser]);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  useEffect(() => {
+    if (user) {
+      console.log("👤 User context changed:", user);
+      
+      setFormData(prev => ({
+        ...prev,
+        first_name: user.first_name || prev.first_name,
+        last_name: user.last_name || prev.last_name,
+        address_line1: user.address_line1 || prev.address_line1,
+        address_line2: user.address_line2 || prev.address_line2,
+        city: user.city || prev.city,
+        country: user.country || prev.country,
+        employer: user.employer || prev.employer,
+        employment_status: user.employment_status || prev.employment_status,
+        job_details: user.job_details || prev.job_details,
+        postcode: user.postcode || prev.postcode,
+      }));
+
+      if (user.profile_picture) {
+        const fullUrl = user.profile_picture.startsWith("http")
+          ? user.profile_picture
+          : `${BASE_URL}${user.profile_picture}`;
+        const photoWithTimestamp = `${fullUrl}?t=${Date.now()}`;
+        setPhoto(photoWithTimestamp);
+        console.log("📸 Photo updated:", photoWithTimestamp);
+      }
+    }
+  }, [user?.first_name, user?.last_name, user?.profile_picture]);
 
   return (
     <div className="flex justify-center items-center lg:mt-16 p-6">
@@ -79,11 +115,11 @@ const UserProfile = () => {
         <Card className="shadow-xl rounded-2xl bg-white dark:bg-gray-900 lg:p-24">
           <CardContent>
             <div className="flex flex-col md:flex-row items-center gap-8">
-              {/* Profile Picture */}
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <Image
-                    src={photo || "/profile.png"}
+                    key={photo}
+                    src={photo}
                     width={144}
                     height={144}
                     alt="Profile Picture"
@@ -95,7 +131,6 @@ const UserProfile = () => {
                 </h2>
               </div>
 
-              {/* Profile Info */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   { icon: MapPin, value: "address_line1", label: "Address Line 1" },
@@ -114,7 +149,6 @@ const UserProfile = () => {
                     className="flex items-center gap-2 border-b pb-2 border-gray-300 dark:border-gray-700"
                   >
                     <field.icon className="text-blue-500 dark:text-blue-400" size={18} />
-
                     <input
                       type="text"
                       value={formData[field.value] || ""}
@@ -126,42 +160,11 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* Update Button */}
             <div className="flex justify-end mt-8">
               <UserUpdate
                 currentFirstName={formData.first_name}
                 currentLastName={formData.last_name}
                 currentPhoto={photo}
-                onProfileUpdate={async () => {
-                  try {
-                    const token = localStorage.getItem("access_token");
-                    const res = await fetch(`${BASE_URL}/api/profiles/`, {
-                      headers: { Authorization: `Bearer ${token}` },
-                    });
-                    if (!res.ok) throw new Error("Failed to reload profile");
-
-                    const updatedData = await res.json();
-                    setFormData(updatedData.data);
-
-                    const updatedPhoto =
-                      updatedData.data.profile_picture &&
-                      updatedData.data.profile_picture.startsWith("http")
-                        ? updatedData.data.profile_picture
-                        : updatedData.data.profile_picture
-                        ? `${BASE_URL}${updatedData.data.profile_picture}`
-                        : "/profile.png";
-
-                    setPhoto(updatedPhoto);
-
-                    setUser({
-                      first_name: updatedData.data.first_name,
-                      last_name: updatedData.data.last_name,
-                      photo: updatedPhoto,
-                    });
-                  } catch (error) {
-                    console.error("Profile refresh failed:", error);
-                  }
-                }}
               />
             </div>
           </CardContent>

@@ -1,5 +1,4 @@
-import Register5 from '@/components/authentication/Register5'
-import React from 'react'
+import Register5 from '../../../../../../../../components/authentication/Register5'
 
 const Register = () => {
   return (

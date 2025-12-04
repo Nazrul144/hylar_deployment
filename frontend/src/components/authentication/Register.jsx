@@ -22,7 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
+import { SignupContext } from "../../providers/SignupProvider";
 
 const formSchema = z.object({
   first_name: z

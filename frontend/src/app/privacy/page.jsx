@@ -1,5 +1,4 @@
-import Privacy from '@/components/authentication/Privacy'
-import React from 'react'
+import Privacy from '../../components/authentication/Privacy'
 
 const PrivacyPage = () => {
   return (

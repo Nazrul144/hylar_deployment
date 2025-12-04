@@ -21,6 +21,8 @@ const Fashion = () => {
   const { categories } = useContext(CategoriesContext);
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
 
+  console.log(categories)
+
   const [fashionOffers, setFashionOffers] = useState([]);
   const [totalFashionOffers, setTotalFashionOffers] = useState(0);
   const [fashionCategoryId, setFashionCategoryId] = useState(null);

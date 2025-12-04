@@ -1,5 +1,4 @@
-import Register6 from '@/components/authentication/Register6'
-import React from 'react'
+import Register6 from '../../../../../../../../../components/authentication/Register6'
 
 const Register6Page = () => {
   return (

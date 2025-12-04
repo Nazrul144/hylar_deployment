@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
+import { SignupContext } from "../../providers/SignupProvider";
 
 // Zod schema: at least one must be true
 const formSchema = z

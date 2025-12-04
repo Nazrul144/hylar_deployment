@@ -15,11 +15,12 @@ import z from "zod";
 import Select from "react-select";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
-import { SignupContext } from "@/providers/SignupProvider";
+import { SignupContext } from "../../providers/SignupProvider";
 import countryList from "react-select-country-list";
-import { BASE_URL } from "@/config/config";
+import { BASE_URL } from "../../config/config";
 import toast from "react-hot-toast";
-import { UserContext } from "@/providers/UserProvider";
+import { UserContext } from "../../providers/UserProvider";
+
 
 const formSchema = z.object({
   address_line1: z

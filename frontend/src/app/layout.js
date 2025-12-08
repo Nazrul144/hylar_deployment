@@ -20,15 +20,18 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Load Montserrat font with desired weights
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '700'], // You can specify the weights you need
 });
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '700'], // You can specify the weights you need
 });
+
+
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -43,39 +46,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var user = localStorage.getItem('user');
-                  var accessToken = localStorage.getItem('access_token');
-                  var userAuthenticated = (user && user !== 'null' && user !== 'undefined') || (accessToken && accessToken !== 'null');
-                  
-                  if (!userAuthenticated) {
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.style.colorScheme = 'light';
-                    localStorage.setItem('theme', 'light');
-                  } else {
-                    var theme = localStorage.getItem('theme') || 'light';
-                    if (theme === 'dark') {
-                      document.documentElement.classList.add('dark');
-                      document.documentElement.style.colorScheme = 'dark';
-                    } else {
-                      document.documentElement.classList.remove('dark');
-                      document.documentElement.style.colorScheme = 'light';
-                    }
-                  }
-                } catch (e) {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.style.colorScheme = 'light';
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >

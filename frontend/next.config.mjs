@@ -14,13 +14,13 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '13.61.254.207',
+        hostname: 'maximumsavings.co.uk',
         port: '',
         pathname: '/media/**',
       },
     ],
 
-    domains: ['13.61.254.207'],
+    domains: ['maximumsavings.co.uk'],
   },
 };
 

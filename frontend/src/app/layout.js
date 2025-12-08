@@ -20,18 +20,15 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Load Montserrat font with desired weights
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '500', '700'], // You can specify the weights you need
+  weight: ['400', '500', '700'],
 });
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '700'], // You can specify the weights you need
+  weight: ['400', '500', '700'],
 });
-
-
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -46,6 +43,46 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Check if user is logged in - adjust this based on your auth logic
+                  var user = localStorage.getItem('user');
+                  var token = localStorage.getItem('token');
+                  var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                  
+                  // Use whichever method matches your authentication
+                  var userAuthenticated = isLoggedIn || (user && user !== 'null' && user !== 'undefined') || (token && token !== 'null');
+                  
+                  if (!userAuthenticated) {
+                    // Force light theme for non-logged-in users
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
+                    localStorage.setItem('theme', 'light');
+                  } else {
+                    // For logged-in users, apply their saved theme preference
+                    var theme = localStorage.getItem('theme');
+                    if (theme === 'dark') {
+                      document.documentElement.classList.add('dark');
+                      document.documentElement.style.colorScheme = 'dark';
+                    } else {
+                      document.documentElement.classList.remove('dark');
+                      document.documentElement.style.colorScheme = 'light';
+                    }
+                  }
+                } catch (e) {
+                  // Fallback to light theme if any error
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.style.colorScheme = 'light';
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
       >

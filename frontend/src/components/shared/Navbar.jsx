@@ -33,10 +33,11 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "../ui/tooltip";
-import { ModeToggle } from "../themeProvider/ModeToggle";
+
 import { UserContext } from "../../providers/UserProvider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
+import ModeToggle from "../themeProvider/ModeToggle";
 
 const navItems = [
   { title: "Home", path: "/" },

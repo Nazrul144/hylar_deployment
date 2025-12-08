@@ -9,21 +9,15 @@ export function ThemeProvider({ children, ...props }) {
   useEffect(() => {
     setMounted(true);
     
-    // Check if user is logged in - adjust this based on your auth logic
     const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    // Use whichever method matches your authentication
-    const userAuthenticated = isLoggedIn || (user && user !== 'null' && user !== 'undefined') || (token && token !== 'null');
+    const accessToken = localStorage.getItem('access_token');
+    const userAuthenticated = (user && user !== 'null' && user !== 'undefined') || (accessToken && accessToken !== 'null');
     
     if (!userAuthenticated) {
-      // Force light theme for non-logged-in users
       localStorage.setItem('theme', 'light');
     }
   }, []);
 
-  // Prevent flash by not rendering until mounted
   if (!mounted) {
     return <>{children}</>;
   }

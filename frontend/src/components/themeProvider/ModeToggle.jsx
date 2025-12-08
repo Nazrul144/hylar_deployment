@@ -4,7 +4,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-export function ThemeToggle() {
+export function ModeToggle() {
   const { theme, setTheme } = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -12,23 +12,17 @@ export function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     
-    // Check if user is logged in - adjust this based on your auth logic
     const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    const isLoggedInStorage = localStorage.getItem('isLoggedIn') === 'true';
-    
-    // Use whichever method matches your authentication
-    const userAuthenticated = isLoggedInStorage || (user && user !== 'null' && user !== 'undefined') || (token && token !== 'null');
+    const accessToken = localStorage.getItem('access_token');
+    const userAuthenticated = (user && user !== 'null' && user !== 'undefined') || (accessToken && accessToken !== 'null');
     
     setIsLoggedIn(userAuthenticated);
   }, []);
 
-  // Don't render until mounted (prevents hydration mismatch)
   if (!mounted) {
     return null;
   }
 
-  // Don't render toggle if not logged in
   if (!isLoggedIn) {
     return null;
   }
@@ -40,10 +34,12 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
     >
       {theme === 'dark' ? (
-        <Sun className="h-5 w-5" />
+        <Sun className="h-5 w-5 text-gray-900 dark:text-gray-100" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-5 w-5 text-gray-900 dark:text-gray-100" />
       )}
     </button>
   );
 }
+
+export default ModeToggle;

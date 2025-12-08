@@ -49,22 +49,16 @@ export default function RootLayout({ children }) {
             __html: `
               (function() {
                 try {
-                  // Check if user is logged in - adjust this based on your auth logic
                   var user = localStorage.getItem('user');
-                  var token = localStorage.getItem('token');
-                  var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                  
-                  // Use whichever method matches your authentication
-                  var userAuthenticated = isLoggedIn || (user && user !== 'null' && user !== 'undefined') || (token && token !== 'null');
+                  var accessToken = localStorage.getItem('access_token');
+                  var userAuthenticated = (user && user !== 'null' && user !== 'undefined') || (accessToken && accessToken !== 'null');
                   
                   if (!userAuthenticated) {
-                    // Force light theme for non-logged-in users
                     document.documentElement.classList.remove('dark');
                     document.documentElement.style.colorScheme = 'light';
                     localStorage.setItem('theme', 'light');
                   } else {
-                    // For logged-in users, apply their saved theme preference
-                    var theme = localStorage.getItem('theme');
+                    var theme = localStorage.getItem('theme') || 'light';
                     if (theme === 'dark') {
                       document.documentElement.classList.add('dark');
                       document.documentElement.style.colorScheme = 'dark';
@@ -74,7 +68,6 @@ export default function RootLayout({ children }) {
                     }
                   }
                 } catch (e) {
-                  // Fallback to light theme if any error
                   document.documentElement.classList.remove('dark');
                   document.documentElement.style.colorScheme = 'light';
                 }

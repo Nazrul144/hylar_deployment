@@ -144,14 +144,11 @@ const Footer = () => {
           <h2 className="text-xl font-bold mb-4">Account</h2>
           <h3 className="text-sm font-bold mb-2">My Account</h3>
           <Link href={"/login"} className="text-sm mb-2 block">
-            Login /
+            Login 
           </Link>
           <Link href={"/register"} className="text-sm mb-2 block">
             Register
           </Link>
-          <p className="text-sm mb-2">Cart</p>
-          <p className="text-sm mb-2">Wishlist</p>
-          <p className="text-sm">Shop</p>
         </motion.div>
 
         {/* Column-4 */}
@@ -163,8 +160,8 @@ const Footer = () => {
           className="mt-10"
         >
           <h2 className="text-xl font-bold mb-4">Quick Link</h2>
-          <h3 className="text-sm font-bold mb-2">Privacy Policy</h3>
-          <p className="text-sm mb-2">Terms Of Use</p>
+          <Link href={"/privacy"} className="text-sm font-bold mb-2">Privacy Policy</Link>
+          <Link href={"/term_condition"} className="text-sm mb-2">Terms Of Use</Link>
           <Link href={"/faqs"} className="text-sm mb-2 block">
             FAQ
           </Link>
@@ -189,7 +186,7 @@ const Footer = () => {
         </motion.div>
       </div>
 
-      <hr className="border-white border-[0.1px] mt-16" />
+      <hr className="border-gray-300 mt-16" />
       <h3 className="text-[#B5B5B5] text-center text-sm py-8">
         copyright @ maximumSavings
       </h3>

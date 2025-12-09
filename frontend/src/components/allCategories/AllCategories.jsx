@@ -54,6 +54,11 @@ const AllCategories = () => {
     }
   }, [id]);
 
+  // Calculate total products count
+  const totalProducts = categoryData?.subcategories?.reduce((total, sub) => {
+    return total + (sub.offers?.length || 0);
+  }, 0) || 0;
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -81,24 +86,84 @@ const AllCategories = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-white dark:bg-gray-900 mt-12 lg:mt-0">
       {/* Banner Section */}
       {categoryData.banner_image && categoryData.banner_image !== "undefined" ? (
-        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] pt-6 flex flex-col items-center justify-center">
+        <div className="relative w-full h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] pt-4 sm:pt-6 bg-white dark:bg-zinc-950">
+  
+  {/* Geometric Grid Background */}
+  <div className="absolute inset-0 opacity-10 dark:opacity-5">
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+  </div>
+  
+  {/* Main Layout */}
+  <div className="relative w-full h-full px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 py-4 sm:py-6 md:py-8 flex items-center">
+    
+    <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 items-center">
+      
+      {/* Left: Image (3 columns) */}
+      <div className="lg:col-span-3 relative h-[200px] xs:h-[240px] sm:h-[280px] md:h-[350px] lg:h-[420px] xl:h-[480px]">
+        
+        {/* Diamond Pattern Background */}
+        <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 md:-top-4 md:-left-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
+          <div className="absolute inset-0 bg-blue-500 rotate-45 opacity-20"></div>
+          <div className="absolute inset-1 sm:inset-2 bg-blue-600 rotate-45 opacity-30"></div>
+          <div className="absolute inset-2 sm:inset-3 md:inset-4 bg-blue-700 rotate-45 opacity-40"></div>
+        </div>
+        
+        {/* Main Image */}
+        <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
           <Image
             src={`${BASE_URL}${categoryData.banner_image}`}
             alt={`${categoryData.category_name} Banner`}
             fill
             className="object-cover"
+            quality={100}
             priority
           />
-          <div className="absolute w-full h-full z-10 dark:bg-black/60" />
-          <div className="absolute z-20 text-center px-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold uppercase bg-linear-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
-              {categoryData.category_name}
-            </h1>
+        </div>
+        
+        {/* Bottom Diamond Accent */}
+        <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 md:-bottom-4 md:-right-4 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-purple-500 rotate-45 opacity-80 shadow-lg sm:shadow-xl"></div>
+      </div>
+      
+      {/* Right: Text Content (2 columns) */}
+      <div className="lg:col-span-2 space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-8">
+        
+        {/* Diamond Icon */}
+        <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-purple-500 rotate-45 shadow-md sm:shadow-lg">
+          <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-white dark:bg-zinc-950 -rotate-45"></div>
+        </div>
+        
+        {/* Title */}
+        <div className="space-y-2 sm:space-y-3 md:space-y-4">
+          <div className="h-0.5 sm:h-1 w-12 sm:w-14 md:w-16 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-zinc-900 dark:text-white leading-tight">
+            {categoryData.category_name}
+          </h1>
+        </div>
+        
+        {/* Description */}
+        <p className="text-xs sm:text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Explore our curated collection of premium products designed for excellence.
+        </p>
+        
+        {/* Stats */}
+        <div className="flex gap-4 sm:gap-5 md:gap-6">
+          <div>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">{totalProducts}+</p>
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">Products</p>
+          </div>
+          <div className="w-px h-10 sm:h-12 bg-zinc-300 dark:bg-zinc-700"></div>
+          <div>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">50%</p>
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">Savings</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
       ) : (
         <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] pt-6 flex flex-col items-center justify-center bg-linear-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-800">
           <div className="absolute z-20 text-center px-4">
@@ -216,22 +281,22 @@ const OfferCard = ({ item, user, router, index }) => {
 
       {/* Content Container - Flex Grow */}
       <div className="flex flex-col grow">
-        {/* Brand Name - Fixed Height with Line Clamp */}
+      
         <h2 className="text-base sm:text-lg font-semibold line-clamp-2 text-gray-900 dark:text-white min-h-12">
           {item.brand_name}
         </h2>
 
-        {/* Discount Badge */}
+     
         {item.discount_percent && parseFloat(item.discount_percent) > 0 && (
           <p className="text-red-600 dark:text-red-400 font-bold text-lg sm:text-xl mt-2">
             {item.discount_percent}% OFF
           </p>
         )}
 
-        {/* Spacer to push buttons to bottom */}
+     
         <div className="grow"></div>
 
-        {/* Action Buttons - Fixed at Bottom */}
+  
         <div className="flex items-center gap-2 sm:gap-3 mt-4">
           <Button className="border-2 border-gray-300 dark:border-gray-600 rounded-md text-sm sm:text-base flex-1 bg-white dark:bg-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" variant="none">
             <Link href={`/redeem_details/${item.id}`} className="w-full">

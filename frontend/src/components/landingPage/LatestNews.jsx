@@ -53,7 +53,7 @@ const LatestNews = () => {
           >
             <Link
               href={`newsDetails/${news.slug}`}
-              className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-black h-full flex flex-col"
+              className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-gray-900 h-full flex flex-col"
             >
               <div className="relative w-full h-56 overflow-hidden rounded-md">
                 <Image
@@ -64,14 +64,14 @@ const LatestNews = () => {
                   className="object-cover w-full h-full"
                 />
             
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent"></div>
               </div>
 
-              <div className="mt-3">
+              <div className="mt-3 flex-1">
                 <div>
-                  <h3 className="text-lg font-bold inter-text">{news.title}</h3>
+                  <h3 className="text-lg font-bold inter-text dark:text-gray-100">{news.title}</h3>
                   <div
-                    className="text-sm text-gray-600 dark:text-gray-200"
+                    className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-3 [&_*]:!text-gray-600 dark:[&_*]:!text-gray-300 [&_*]:!bg-transparent"
                     dangerouslySetInnerHTML={{
                       __html:
                         news.content

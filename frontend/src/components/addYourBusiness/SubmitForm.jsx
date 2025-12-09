@@ -82,24 +82,6 @@ const SubmitForm = () => {
     },
   });
 
-  // const handleFormSubmit = async(data) => {
-
-  //     try {
-  //       const res = await fetch(`${BASE_URL}/api/accounts/brand-account-request/`,{
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json"
-  //         },
-  //         body: JSON.stringify(data)
-  //       })
-  //       const result = await res.json()
-  //       console.log(result)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   form.reset();
-  // };
-
   const handleFormSubmit = async (data) => {
     const formData = new FormData();
 
@@ -263,7 +245,19 @@ const SubmitForm = () => {
                   <FormItem>
                     <FormLabel>contact_phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="+44 2012345678" {...field} />
+                      <Input
+                        {...field}
+                        placeholder="+44 XXX XXX XXX"
+                        className="rounded-md"
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          // If user types without +, add it automatically
+                          if (value && !value.startsWith("+")) {
+                            value = "+" + value;
+                          }
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

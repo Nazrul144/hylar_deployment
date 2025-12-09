@@ -100,9 +100,15 @@ const FAQ = () => {
     </summary>
 
     <p className="px-4 pt-4 text-gray-900">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-      recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-      consequuntur distinctio corporis earum similique!
+      We regularly update our product library to ensure you have access to
+            the latest deals and offerings. New products, discounts, and
+            exclusive offers are added on a continuous basis throughout the
+            week. Our team works diligently to keep the MaxSavings library fresh
+            and up-to-date, so you'll always discover new ways to save.
+            Additionally, we refresh seasonal promotions and featured deals to
+            align with current trends and shopping events. We recommend checking
+            back frequently or subscribing to our newsletter to stay informed
+            about the newest additions to our collection.
     </p>
   </details>
 
@@ -144,9 +150,14 @@ const FAQ = () => {
     </summary>
 
     <p className="px-4 pt-4 text-gray-900">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-      recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-      consequuntur distinctio corporis earum similique!
+     Yes, we offer a free trial period so you can experience the benefits
+            of MaxSavings before committing to a subscription. During your
+            trial, you'll have access to our full range of features, including
+            exclusive deals, special discounts, and premium product offerings.
+            Simply sign up on our website to start your free trial—no credit
+            card required upfront. Once your trial period ends, you can choose
+            to continue with one of our subscription plans to keep enjoying all
+            the perks and savings that MaxSavings has to offer.
     </p>
   </details>
   <details className="group [&_summary::-webkit-details-marker]:hidden">
@@ -187,9 +198,13 @@ const FAQ = () => {
     </summary>
 
     <p className="px-4 pt-4 text-gray-900">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-      recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-      consequuntur distinctio corporis earum similique!
+      Yes, we offer flexible monthly subscription plans designed to fit
+            your needs. With our monthly plan, you can enjoy full access to
+            exclusive deals, premium discounts, and special offers without any
+            long-term commitment. You can easily subscribe, manage, or cancel
+            your plan anytime through your account settings. Choose the monthly
+            option for maximum flexibility while still getting the best savings
+            on MaxSavings.
     </p>
   </details>
 

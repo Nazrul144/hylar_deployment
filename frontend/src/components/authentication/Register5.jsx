@@ -81,7 +81,7 @@ const Register5 = () => {
                       <FormControl>
                         <select
                           {...field}
-                          className="border-1 border-gray-200 rounded-sm p-2"
+                          className="border-1 border-gray-200 rounded-sm p-2 dark:bg-gray-900 dark:text-gray-300"
                         >
                           <option value="employed">Employed</option>
                           <option value="retired">Retired</option>
@@ -107,7 +107,7 @@ const Register5 = () => {
                       <FormControl>
                         <select
                           {...field}
-                          className="border-1 border-gray-200 rounded-sm p-2"
+                          className="border-1 border-gray-200 rounded-sm p-2 dark:bg-gray-900 dark:text-gray-300"
                         >
                           <option value="ambulance_service">
                             Ambulance Service
@@ -152,7 +152,7 @@ const Register5 = () => {
                       <FormControl>
                         <select
                           {...field}
-                          className="border-1 border-gray-200 rounded-sm p-2"
+                          className="border-1 border-gray-200 rounded-sm p-2 dark:bg-gray-900 dark:text-gray-300"
                         >
                           <option value="nhs">NHS</option>
                           <option value="armed_force">Armed Force</option>
@@ -181,7 +181,7 @@ const Register5 = () => {
               </div>
 
               <Button
-                className="w-full mt-4 bg-blue-900 text-white cursor-pointer"
+                className="w-full mt-4 bg-blue-900 text-white cursor-pointer dark:hover:text-black"
                 type="submit"
               >
                 Next

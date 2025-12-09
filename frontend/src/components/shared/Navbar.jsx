@@ -329,7 +329,7 @@ export default function Navbar({ montserrat }) {
                         </TooltipTrigger>
                         <TooltipContent
                           side="bottom"
-                          className="dark:text-gray-100"
+                          className="dark:text-gray-300 dark:bg-gray-900"
                         >
                           <p>
                             {user.first_name} {user.last_name}
@@ -341,7 +341,7 @@ export default function Navbar({ montserrat }) {
                 </div>
                 <ul
                   tabIndex={0}
-                  className="menu menu-sm dropdown-content bg-base-100 dark:bg-gray-800 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                  className="menu menu-sm dropdown-content bg-base-100 dark:text-gray-300 dark:bg-gray-800 rounded-box z-1 mt-3 w-52 p-2 shadow"
                 >
                   <li>
                     <Button
@@ -368,11 +368,12 @@ export default function Navbar({ montserrat }) {
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              <ModeToggle />
               <Button
                 asChild
                 variant="ghost"
                 size="sm"
-                className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg dark:text-gray-100"
+                className="common-text border-1 border-[#00308F] px-6 py-5 font-semibold text-lg dark:text-white dark:bg-gray-300"
               >
                 <Link href="/login">Log in</Link>
               </Button>

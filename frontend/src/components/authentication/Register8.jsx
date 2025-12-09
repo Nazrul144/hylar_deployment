@@ -70,7 +70,7 @@ const handlePayment = async () => {
 
   return (
     <div>
-      <div className="lg:w-[803px] lg:h-[600px] mx-auto mt-14 lg:shadow-2xl relative">
+      <div className="lg:w-[803px] lg:h-[600px] mx-auto mt-14 lg:shadow-2xl relative ">
         <div className="lg:w-[820px] h-[50px]">
           <Image
             src={"/register2.png"}
@@ -91,11 +91,11 @@ const handlePayment = async () => {
         <div className="lg:w-2xl mx-auto p-4">
           <div>
             <div className="flex">
-              <div className="bg-[#F0F0F0] rounded-lg">
+              <div className="bg-[#F0F0F0] rounded-lg dark:bg-gray-900 dark:text-gray-300">
                 <h1 className="common-text font-bold text-lg p-6">
                   Make a payment
                 </h1>
-                <h4 className="ml-6 pb-8">
+                <h4 className="ml-6 pb-8 ">
                   Enter your delivery address and unlock two years of exclusive
                   access <br /> for just $4.99.
                 </h4>

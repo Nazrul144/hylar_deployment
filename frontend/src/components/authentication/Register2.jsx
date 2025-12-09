@@ -48,7 +48,7 @@ const Register2 = () => {
 
   return (
     <div>
-      <div className="lg:w-[803px] mx-auto mt-14 lg:shadow-2xl p-8 bg-white relative rounded-xl">
+      <div className="lg:w-[803px] mx-auto mt-14 lg:shadow-2xl p-8 bg-white dark:bg-gray-900 relative rounded-xl">
         <div className="lg:w-full h-[150px] mb-6">
           <Image
             src={"/register2.png"}
@@ -61,10 +61,10 @@ const Register2 = () => {
           />
         </div>
 
-        <h1 className="font-bold text-4xl text-center mb-2 montserrat-text">
+        <h1 className="font-bold text-4xl text-center mb-2 montserrat-text dark:text-gray-300">
           Marketing Preferences
         </h1>
-        <p className="text-center text-lg text-gray-700 mb-4">
+        <p className="text-center text-lg text-gray-700 dark:text-gray-300 mb-4">
           Can we contact you with promotions and updates to help you get the
           most out of your Blue Light Card?
         </p>
@@ -96,7 +96,7 @@ const Register2 = () => {
                           className="w-5 h-5 accent-blue-600"
                         />
                       </FormControl>
-                      <FormLabel className="ml-2">{opt.label}</FormLabel>
+                      <FormLabel className="ml-2 dark:text-gray-300">{opt.label}</FormLabel>
                     </FormItem>
                   )}
                 />

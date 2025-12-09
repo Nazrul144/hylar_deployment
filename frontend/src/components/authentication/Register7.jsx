@@ -167,7 +167,7 @@ const Register7 = () => {
                 return (
                   <FormItem>
                     <FormControl>
-                      <Select
+                      <Select className="dark:bg-gray-900 dark:text-gray-800"
                         options={countries}
                         menuPlacement="bottom"
                         placeholder="Select country"

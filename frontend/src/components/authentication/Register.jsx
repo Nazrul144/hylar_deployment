@@ -150,7 +150,7 @@ const Register = () => {
                             </Label>
                             <Input
                               {...field}
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 "
+                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
                             />
                           </div>
                           <FormMessage />
@@ -165,12 +165,12 @@ const Register = () => {
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div className="relative">
-                            <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                            <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600 ">
                               Last Name
                             </Label>
                             <Input
                               {...field}
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
                             />
                           </div>
                           <FormMessage />
@@ -206,13 +206,13 @@ const Register = () => {
                     <FormItem className="w-full">
                       <FormLabel>Date of Birth</FormLabel>
                       <FormControl>
-                        <div className="flex flex-col gap-3 text-black">
+                        <div className="flex flex-col gap-3">
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
-                                variant="outline"
+                                variant="ghost"
                                 id="date_of_birth"
-                                className="w-full justify-between font-normal"
+                                className="w-full justify-between font-normal "
                               >
                                 {field.value
                                   ? new Date(field.value).toLocaleDateString()
@@ -259,6 +259,14 @@ const Register = () => {
                           {...field}
                           placeholder="+44 XXX XXX XXX"
                           className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            // If user types without +, add it automatically
+                            if (value && !value.startsWith("+")) {
+                              value = "+" + value;
+                            }
+                            field.onChange(value);
+                          }}
                         />
                       </div>
                       <FormMessage />

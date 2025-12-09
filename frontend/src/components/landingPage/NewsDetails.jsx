@@ -72,12 +72,8 @@ const NewsDetails = ({ slug }) => {
         {/* Meta info */}
         <div className="flex items-center gap-6 text-sm text-gray-500 mb-6">
           <p className="flex items-center gap-1">
-            <Clock className="w-4 h-4" /> Created:
+            <Clock className="w-4 h-4" />
             {new Date(news?.data?.created_at).toLocaleDateString()}
-          </p>
-          <p className="flex items-center gap-1">
-            <Clock className="w-4 h-4" /> Updated:
-            {new Date(news?.data?.updated_at).toLocaleDateString()}
           </p>
         </div>
 

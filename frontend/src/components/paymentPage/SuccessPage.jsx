@@ -17,7 +17,7 @@ const SuccessPage = () => {
     // Redirect after 5 seconds
     const timer = setTimeout(() => {
       router.push("/");
-    }, 5000);
+    }, 6000);
 
     return () => {
       clearInterval(interval);

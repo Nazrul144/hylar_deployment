@@ -180,7 +180,7 @@ const Login = () => {
                     href={"/forgotpass"}
                     className="text-blue-500 mt-2 italic lg:ml-50 underline"
                   >
-                    Forgot Pawwrod
+                    Forgot Password
                   </Link>
                 </div>
 

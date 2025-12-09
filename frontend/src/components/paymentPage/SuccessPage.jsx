@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 const SuccessPage = () => {
   const router = useRouter();
-  const [counter, setCounter] = useState(5);
+  const [counter, setCounter] = useState(6);
 
   useEffect(() => {
     // Countdown interval
@@ -26,7 +26,7 @@ const SuccessPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-200 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-green-200 p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}

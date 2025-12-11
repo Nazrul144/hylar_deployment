@@ -1,7 +1,6 @@
 // --- FULL NAVBAR CODE WITH FIXES ---
 
 "use client";
-"use client";
 import { cn } from "../../lib/utils";
 import {
   NavigationMenu,
@@ -101,7 +100,7 @@ export default function Navbar({ montserrat }) {
       const result = await res.json();
 
       if (res.ok || result.status_code === 200) {
-        toast.success("You’ve been logged out successfully!");
+        toast.success("You've been logged out successfully!");
       } else {
         toast.error(result?.detail || "Logout failed from server");
       }
@@ -182,16 +181,17 @@ export default function Navbar({ montserrat }) {
 
                         <DropdownMenuContent className="w-56">
                           {loading ? (
-                            <DropdownMenuItem disabled>
+                            <DropdownMenuItem disabled >
                               Loading...
                             </DropdownMenuItem>
                           ) : (
                             categories.map((feature) => (
                               <DropdownMenuItem
                                 key={feature.id}
-                                className="dark:text-gray-100 whitespace-nowrap"
+                                className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
+                                asChild
                               >
-                                <Link href={`/category/${feature.id}`}>
+                                <Link href={`/category/${feature.id}`} className="w-full">
                                   {feature.name}
                                 </Link>
                               </DropdownMenuItem>
@@ -263,9 +263,10 @@ export default function Navbar({ montserrat }) {
                             <DropdownMenuItem
                               key={category.id}
                               onClick={handleCloseClick}
-                              className="dark:text-gray-100 whitespace-nowrap"
+                              className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
+                              asChild
                             >
-                              <Link href={`/category/${category.id}`}>
+                              <Link href={`/category/${category.id}`} className="w-full">
                                 {category.category_name}
                               </Link>
                             </DropdownMenuItem>

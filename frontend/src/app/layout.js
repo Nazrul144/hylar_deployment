@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
                     <Navbar montserrat={montserrat.className}/>
                     <Toaster position="top-center" reverseOrder={false} />
                     <PasswordProvider>
-                      <main className="w-full overflow-x-hidden">
+                      <main >
                         {children}
                       </main>
                     </PasswordProvider>

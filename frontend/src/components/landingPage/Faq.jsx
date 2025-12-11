@@ -58,10 +58,11 @@ const Faq = () => {
           </summary>
 
           <p className="px-4 pt-4 text-gray-900 dark:text-gray-300">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic
-            veritatis molestias culpa in, recusandae laboriosam neque aliquid
-            libero nesciunt voluptate dicta quo officiis explicabo consequuntur
-            distinctio corporis earum similique!
+            MaximumSavings is a comprehensive financial platform designed to
+            help you track expenses, manage budgets, and maximize your savings
+            potential. Our intuitive tools provide real-time insights into your
+            spending habits and offer personalized recommendations to help you
+            achieve your financial goals faster.
           </p>
         </details>
 
@@ -496,7 +497,10 @@ const Faq = () => {
       </div>
       <h1 className="text-center text-sm text-[#747474] mt-6 mb-6">
         Still have more questions? Find answers in our help center.
-        <Link className="underline font-bold text-[#151515] dark:text-gray-300" href={"/contact"}>
+        <Link
+          className="underline font-bold text-[#151515] dark:text-gray-300"
+          href={"/contact"}
+        >
           help center
         </Link>
       </h1>

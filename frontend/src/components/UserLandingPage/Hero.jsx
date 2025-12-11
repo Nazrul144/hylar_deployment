@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const Hero = () => {
   const router = useRouter()
   const handeNavigate = ()=>{
-    router.push('/business')
+    router.push('/category/all-offers')
     
   }
   

@@ -16,53 +16,98 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { BASE_URL } from "../../config/config";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  brand_name: z.string().min(2, { message: "Brand Name is required" }).max(150),
+  brand_name: z
+    .string()
+    .min(2, { message: "Brand name must be at least 2 characters" })
+    .max(100, { message: "Brand name must not exceed 100 characters" })
+    .regex(/^[A-Za-z\s&'-]+$/, {
+      message: "Brand name can only contain letters, spaces, &, apostrophes, and hyphens",
+    }),
 
   brand_sector: z
     .string()
-    .min(2, { message: "Brand Sector is required" })
-    .max(150),
+    .min(2, { message: "Brand sector must be at least 2 characters" })
+    .max(100, { message: "Brand sector must not exceed 100 characters" })
+    .regex(/^[A-Za-z\s&,-]+$/, {
+      message: "Brand sector can only contain letters, spaces, and basic punctuation",
+    }),
 
   website_link: z
     .string()
-    .min(2, { message: "Website link is required" })
-    .max(150),
+    .min(1, { message: "Website link is required" })
+    .url({ message: "Please enter a valid URL (e.g., https://example.com)" })
+    .regex(/^https?:\/\/.+/, {
+      message: "URL must start with http:// or https://",
+    }),
 
   owner_name: z
     .string()
-    .min(2, { message: "Contact Person Name is required" })
-    .max(150),
+    .min(2, { message: "Owner name must be at least 2 characters" })
+    .max(100, { message: "Owner name must not exceed 100 characters" })
+    .regex(/^[A-Za-z\s'-]+$/, {
+      message: "Owner name can only contain letters, spaces, apostrophes, and hyphens",
+    }),
 
   contact_email: z
     .string()
-    .min(1, { message: "contact_email is required" })
-    .email({ message: "Invalid contact_email address" }),
+    .min(1, { message: "Email is required" })
+    .email({ message: "Please enter a valid email address" })
+    .toLowerCase(),
 
   contact_phone: z
     .string()
-    .trim()
+    .min(1, { message: "Phone number is required" })
     .regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
-      message: "Enter a valid UK contact_phone number (e.g., +447911123456 )",
+      message: "Enter a valid UK phone number (e.g., +447911123456 or 07911123456)",
     }),
 
-  document: z.any().refine((files) => files && files.length > 0, {
-    message: "File is required",
-  }),
+  document: z
+    .any()
+    .refine((files) => files && files.length > 0, {
+      message: "Document is required",
+    })
+    .refine((files) => files?.[0]?.size <= 5000000, {
+      message: "Document must be less than 5MB",
+    })
+    .refine(
+      (files) =>
+        ["image/jpeg", "image/jpg", "image/png", "application/pdf"].includes(
+          files?.[0]?.type
+        ),
+      {
+        message: "Only JPG, PNG, or PDF files are allowed",
+      }
+    ),
 
-  brand_logo: z.any().refine((files) => files && files.length > 0, {
-    message: "Logo is required",
-  }),
+  brand_logo: z
+    .any()
+    .refine((files) => files && files.length > 0, {
+      message: "Brand logo is required",
+    })
+    .refine((files) => files?.[0]?.size <= 2000000, {
+      message: "Logo must be less than 2MB",
+    })
+    .refine(
+      (files) => ["image/jpeg", "image/jpg", "image/png"].includes(files?.[0]?.type),
+      {
+        message: "Only JPG or PNG images are allowed for logo",
+      }
+    ),
 
   address_line1: z
     .string()
-    .min(3, { message: "Address Line 1 is required" })
-    .max(200),
+    .min(5, { message: "Address must be at least 5 characters" })
+    .max(200, { message: "Address must not exceed 200 characters" }),
+
   address_line2: z
     .string()
-    .min(3, { message: "Address Line 2 is required" })
-    .max(200),
+    .min(3, { message: "Address Line 2 must be at least 3 characters" })
+    .max(200, { message: "Address must not exceed 200 characters" })
+    .optional()
+    .or(z.literal("")),
 });
 
 const SubmitForm = () => {
@@ -85,15 +130,16 @@ const SubmitForm = () => {
   const handleFormSubmit = async (data) => {
     const formData = new FormData();
 
-    formData.append("brand_name", data.brand_name);
-    formData.append("brand_sector", data.brand_sector);
-    formData.append("website_link", data.website_link);
-    formData.append("owner_name", data.owner_name);
-    formData.append("contact_email", data.contact_email);
-    formData.append("contact_phone", data.contact_phone);
-
-    formData.append("address_line1", data.address_line1);
-    formData.append("address_line2", data.address_line2);
+    formData.append("brand_name", data.brand_name.trim());
+    formData.append("brand_sector", data.brand_sector.trim());
+    formData.append("website_link", data.website_link.trim());
+    formData.append("owner_name", data.owner_name.trim());
+    formData.append("contact_email", data.contact_email.trim().toLowerCase());
+    formData.append("contact_phone", data.contact_phone.trim());
+    formData.append("address_line1", data.address_line1.trim());
+    if (data.address_line2) {
+      formData.append("address_line2", data.address_line2.trim());
+    }
 
     // Files
     formData.append("document", data.document[0]);
@@ -112,146 +158,174 @@ const SubmitForm = () => {
       if (result.status_code === 201) {
         Swal.fire({
           title: "Submitted!",
-          text: "Your form submitted successfully!",
+          text: "Your application has been submitted successfully!",
           icon: "success",
+          confirmButtonColor: "#1e40af",
         });
         form.reset();
+      } else {
+        toast.error(result?.message || "Submission failed. Please try again.");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Submission error:", error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
   return (
-    <div>
-      <div className="w-full relative ">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      {/* Header Image */}
+      <div className="w-full relative">
         <Image
           src="/addBusiness/header.png"
           alt="header"
           width={1920}
           height={300}
-          className="object-cover w-full"
+          className="object-cover w-full h-[200px] md:h-[300px]"
           priority
         />
 
-        <div className="absolute inset-0 top-4 lg:top-28">
-          <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-bold text-center drop-shadow-lg inter-text">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
+          <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold text-center drop-shadow-lg inter-text">
             Welcome To Exclusive Discounts & Savings
           </h1>
-          <h3 className="text-center text-sm lg:text-xl lg:mt-2 montserrat-text text-white">
+          <h3 className="text-center text-sm md:text-lg lg:text-xl mt-2 montserrat-text text-white drop-shadow-md">
             Get access to curated deals across various categories
           </h3>
         </div>
       </div>
 
       {/* Submit Form */}
-      <div className="w-full md:h-96 lg:w-[886px] lg:h-[auto] mx-auto lg:shadow-2xl rounded-sm px-2 lg:px-8">
-        <h1 className="text-center font-bold text-inter text-4xl pt-16 pb-12 common-text">
-          Submit A Request
-        </h1>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-            {/* Brand Name */}
-            <div className="mb-4">
+      <div className="w-full max-w-[886px] mx-auto px-4 md:px-6 lg:px-8 py-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl dark:shadow-gray-900/50 p-6 md:p-8 lg:p-10 transition-colors duration-200">
+          <h1 className="text-center font-bold text-3xl md:text-4xl pt-4 pb-8 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+            Submit A Request
+          </h1>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+              {/* Brand Name */}
               <FormField
                 control={form.control}
                 name="brand_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Brand Name</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Brand Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Your Brand Name" {...field} />
+                      <Input
+                        placeholder="e.g., Maximum Savings"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Brand Sector */}
-            <div className="mb-4">
+              {/* Brand Sector */}
               <FormField
                 control={form.control}
                 name="brand_sector"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Brand Sector</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Brand Sector <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Brand Sector" {...field} />
+                      <Input
+                        placeholder="e.g., Finance, Retail, Technology"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Website Link */}
-            <div className="mb-4">
+              {/* Website Link */}
               <FormField
                 control={form.control}
                 name="website_link"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Website Link</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Website Link <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Website Link" {...field} />
+                      <Input
+                        placeholder="https://www.example.com"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Owner Name */}
-            <div className="mb-4">
+              {/* Owner Name */}
               <FormField
                 control={form.control}
                 name="owner_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Owner Name</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Contact Person Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Full Name" {...field} />
+                      <Input
+                        placeholder="John Smith"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* contact_email */}
-            <div className="mb-4">
+              {/* Contact Email */}
               <FormField
                 control={form.control}
                 name="contact_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact contact_email</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Contact Email <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="example@gmail.com" {...field} />
+                      <Input
+                        placeholder="contact@example.com"
+                        type="email"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* contact_phone */}
-            <div className="mb-4">
+              {/* Contact Phone */}
               <FormField
                 control={form.control}
                 name="contact_phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>contact_phone</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Phone Number <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="+44 XXX XXX XXX"
-                        className="rounded-md"
+                        placeholder="+447911123456"
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
                         onChange={(e) => {
                           let value = e.target.value;
-                          // If user types without +, add it automatically
                           if (value && !value.startsWith("+")) {
                             value = "+" + value;
                           }
@@ -259,34 +333,34 @@ const SubmitForm = () => {
                         }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Document */}
-            <div className="mb-4">
+              {/* Document Upload */}
               <FormField
                 control={form.control}
                 name="document"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sky-500 italic">
-                      Upload Document
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Upload Document <span className="text-red-500">*</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                        (PDF, JPG, PNG - Max 5MB)
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="file"
-                        accept="image/*"
+                        accept="image/*,.pdf"
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-900 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800 transition-colors duration-200"
                         onChange={(e) => {
-                          const file = e.target.files[0];
-                          const frontFile = form.getValues("document");
+                          const file = e.target.files?.[0];
+                          const logoFile = form.getValues("brand_logo");
 
-                          if (frontFile && file?.name === frontFile[0]?.name) {
-                            toast.error(
-                              "You have already uploaded this file as front side."
-                            );
+                          if (logoFile && file && file.name === logoFile[0]?.name) {
+                            toast.error("This file is already uploaded as brand logo.");
                             e.target.value = "";
                             return;
                           }
@@ -295,34 +369,34 @@ const SubmitForm = () => {
                         }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Brand Logo */}
-            <div className="mb-4">
+              {/* Brand Logo Upload */}
               <FormField
                 control={form.control}
                 name="brand_logo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sky-500 italic">
-                      Upload Brand Logo
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Upload Brand Logo <span className="text-red-500">*</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                        (JPG, PNG - Max 2MB)
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/jpg,image/png"
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-900 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800 transition-colors duration-200"
                         onChange={(e) => {
-                          const file = e.target.files[0];
-                          const frontFile = form.getValues("brand_logo");
+                          const file = e.target.files?.[0];
+                          const documentFile = form.getValues("document");
 
-                          if (frontFile && file?.name === frontFile[0]?.name) {
-                            toast.error(
-                              "You have already uploaded this file as front side."
-                            );
+                          if (documentFile && file && file.name === documentFile[0]?.name) {
+                            toast.error("This file is already uploaded as document.");
                             e.target.value = "";
                             return;
                           }
@@ -331,54 +405,62 @@ const SubmitForm = () => {
                         }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Address Line 1 */}
-            <div className="mb-4">
+              {/* Address Line 1 */}
               <FormField
                 control={form.control}
                 name="address_line1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address Line 1</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Address Line 1 <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Address Line 1" {...field} />
+                      <Input
+                        placeholder="Street address, P.O. box"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Address Line 2 */}
-            <div className="mb-4">
+              {/* Address Line 2 */}
               <FormField
                 control={form.control}
                 name="address_line2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address Line 2</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Address Line 2 <span className="text-gray-500 text-sm">(Optional)</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Address Line 2" {...field} />
+                      <Input
+                        placeholder="Apartment, suite, unit, building, floor"
+                        {...field}
+                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 dark:text-red-400" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            <Button
-              className="w-full mt-6 bg-blue-800 text-white text-lg cursor-pointer mb-12"
-              type="submit"
-            >
-              Submit Your Application
-            </Button>
-          </form>
-        </Form>
+              <Button
+                className="w-full mt-8 bg-blue-800 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-lg py-6 cursor-pointer transition-colors duration-200"
+                type="submit"
+              >
+                Submit Your Application
+              </Button>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );

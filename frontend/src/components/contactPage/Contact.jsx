@@ -23,7 +23,10 @@ const formSchema = z.object({
   username: z
     .string()
     .min(2, { message: "Name must be at least 2 characters long." })
-    .max(50, { message: "Name cannot exceed 50 characters." }),
+    .max(50, { message: "Name cannot exceed 50 characters." })
+    .regex(/^[a-zA-Z\s]+$/, { 
+      message: "Name can only contain letters and spaces." 
+    }),
 
   email: z
     .string()
@@ -41,7 +44,7 @@ const formSchema = z.object({
 
   agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
     message:
-      "You must agree to the agreed_to_terms_and_conditions & Conditions",
+      "You must agree to the terms and conditions",
   }),
 });
 
@@ -57,37 +60,32 @@ const Contact = () => {
     },
   });
 
+  const sendEmail = async (data) => {
+    emailjs.init(`${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}`); // public key
 
+    try {
+      await emailjs.send(
+        `${process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID}`,
+        `${process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID}`,
+        {
+          first_name: data.username,
+          from_email: data.email,
+          subject: data.subject,
+          phone: data.phone,
+        }
+      );
 
-const sendEmail = async (data) => {
-  emailjs.init(`${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}`); // public key
+      Swal.fire({
+        title: "Message Sent Successfully!",
+        icon: "success",
+      });
 
-  try {
-    await emailjs.send(
-      `${process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID}`,
-      `${process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID}`,
-      {
-        first_name: data.username,
-        from_email: data.email,
-        subject: data.subject,
-        phone: data.phone,
-      }
-    );
+      form.reset(); 
 
-    Swal.fire({
-      title: "Message Sent Successfully!",
-      icon: "success",
-    });
-
-    form.reset(); 
-
-  } catch (error) {
-    console.log("ERROR:", error);
-  }
-};
-
-
-
+    } catch (error) {
+      console.log("ERROR:", error);
+    }
+  };
 
   return (
     <div className="py-16 px-4 md:px-12 border-1 rounded-sm">
@@ -98,7 +96,7 @@ const sendEmail = async (data) => {
         </h2>
 
         <p className="text-gray-600 mt-2 dark:text-white">
-          Have a question or want to work with us? Fill out <br /> the form and we’ll
+          Have a question or want to work with us? Fill out <br /> the form and we'll
           get back to you.
         </p>
       </div>
@@ -125,13 +123,13 @@ const sendEmail = async (data) => {
 
           {/* Social Icons */}
           <div className="flex gap-6 mt-8 text-2xl text-gray-700 dark:text-white">
-            <a href="#">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
               <FaInstagram />
             </a>
-            <a href="#">
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
               <FaFacebookF />
             </a>
-            <a href="#">
+            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">
               <FaLinkedinIn />
             </a>
           </div>
@@ -148,9 +146,13 @@ const sendEmail = async (data) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Your Name" {...field} />
+                        <Input 
+                          placeholder="Your Name" 
+                          {...field}
+                          className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -160,9 +162,13 @@ const sendEmail = async (data) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Your Email" {...field} />
+                        <Input 
+                          placeholder="Your Email" 
+                          {...field}
+                          className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -172,9 +178,13 @@ const sendEmail = async (data) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Subject" {...field} />
+                        <Input 
+                          placeholder="Subject" 
+                          {...field}
+                          className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -184,9 +194,13 @@ const sendEmail = async (data) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="+44 XXXXXXXXXX" {...field} />
+                        <Input 
+                          placeholder="+44 XXXXXXXXXX" 
+                          {...field}
+                          className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -197,22 +211,23 @@ const sendEmail = async (data) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex items-center gap-3 mt-4">
+                      <div className="flex items-start gap-3 mt-4">
                         <Checkbox
                           id="agreed_to_terms_and_conditions"
                           onCheckedChange={field.onChange}
                           checked={field.value}
+                          className="mt-1"
                         />
                         <Label
                           htmlFor="agreed_to_terms_and_conditions"
-                          className="text-gray-600 font-medium"
+                          className="text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
                         >
                           I agree to the terms and conditions and allow this
                           website to store my submitted information
                         </Label>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="dark:text-red-400" />
                   </FormItem>
                 )}
               />

@@ -300,7 +300,7 @@ const Register3 = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-start gap-3 mt-4">
+                        <div className="flex items-start gap-3">
                           <Checkbox
                             id="agreed_to_policy"
                             onCheckedChange={field.onChange}

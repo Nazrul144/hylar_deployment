@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect, useContext } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -22,6 +25,15 @@ const Register4 = () => {
   const { signupData } = useContext(SignupContext);
 
   const userEmail = signupData?.email || "";
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (custom) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: custom * 0.1 },
+    }),
+  };
 
   // Countdown effect for resend button
   useEffect(() => {
@@ -66,8 +78,6 @@ const Register4 = () => {
         // optional: store tokens if returned
         localStorage.setItem("access_token", data.data?.access_token || "");
         localStorage.setItem("refresh_token", data.data?.refresh_token || "");
-
-      
 
         router.push("/register/register2/register3/register4/register5");
       } else {
@@ -115,85 +125,189 @@ const Register4 = () => {
   };
 
   return (
-    <div>
-      <div className="lg:w-[803px] lg:h-auto mx-auto mt-14 lg:shadow-2xl relative pb-10">
-        <div className="lg:w-[820px] h-[50px]">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      {/* Breadcrumb Navigation */}
+      <motion.div
+        className="max-w-[803px] mx-auto mb-6"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={0}
+      >
+        <nav className="flex items-center space-x-2 text-sm">
+          <Link
+            href="/"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <Link
+            href="/register"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Register
+          </Link>
+          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <span className="text-gray-700 dark:text-gray-300 font-medium">
+            Email Verification
+          </span>
+        </nav>
+
+        {/* Step Indicator */}
+        <div className="mt-4 flex items-center justify-center space-x-2 overflow-x-auto pb-2">
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
+              ✓
+            </div>
+            <span className="ml-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              Personal Info
+            </span>
+          </div>
+          <div className="w-8 sm:w-12 h-0.5 bg-green-600 mx-1 sm:mx-2 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
+              ✓
+            </div>
+            <span className="ml-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              Marketing
+            </span>
+          </div>
+          <div className="w-8 sm:w-12 h-0.5 bg-green-600 mx-1 sm:mx-2 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
+              ✓
+            </div>
+            <span className="ml-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              Account
+            </span>
+          </div>
+          <div className="w-8 sm:w-12 h-0.5 bg-blue-600 mx-1 sm:mx-2 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm">
+              4
+            </div>
+            <span className="ml-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              Verify Email
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Main Form Card */}
+      <motion.div
+        className="w-full max-w-[803px] mx-auto mt-6 lg:shadow-2xl bg-white dark:bg-gray-800 relative pb-10 rounded-xl overflow-hidden"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={1}
+      >
+        <div className="w-full h-[50px]">
           <Image
             src={"/register2.png"}
             width={802}
             height={50}
             alt="header_Image"
-            className="object-cover"
+            className="w-full h-full object-cover"
             priority
           />
         </div>
 
-        <h1 className="font-bold text-4xl mt-10 montserrat-text text-center mb-6">
-          We need to verify your email
-        </h1>
-        <h3 className="text-center text-lg mt-2 montserrat-text mb-6">
-          Check your inbox at <span className="font-bold">{userEmail}</span> and
-          click the link in
-          <br /> the email to verify your account.
-        </h3>
-
-        <div className="flex flex-col justify-center items-center gap-4">
-          <InputOTP
-            maxLength={6}
-            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-            value={otp}
-            onChange={(value) => setOtp(value)}
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-
-          <Button onClick={handleOtpVerify} disabled={isVerifying}>
-            {isVerifying && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin cursor-pointer" />
-            )}
-            Verify
-          </Button>
-        </div>
-
-        {showAlert && (
-          <Alert
-            className={`w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500 transition-opacity duration-500 ${
-              showAlert ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <AlertTitle>Verification Sent!</AlertTitle>
-            <AlertDescription>
-              A verification link or OTP has been sent to your email. Please
-              check your inbox.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <div className="mt-8 text-center">
-          <h1 className="text-lg">Not receive a code?</h1>
-          <h3 className="text-lg mt-1 mb-4">
-            Use the button to resend or check your junk folder.
+        <div className="px-4 sm:px-6 md:px-8">
+          <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl mt-6 sm:mt-8 md:mt-10 montserrat-text text-center mb-4 sm:mb-6 text-gray-900 dark:text-gray-100">
+            We need to verify your email
+          </h1>
+          <h3 className="text-center text-sm sm:text-base md:text-lg mt-2 montserrat-text mb-6 text-gray-700 dark:text-gray-300 px-2">
+            Check your inbox at <span className="font-bold text-blue-600 dark:text-blue-400">{userEmail}</span> and
+            click the link in
+            <br className="hidden sm:block" /> the email to verify your account.
           </h3>
-          <Button
-            className="cursor-pointer"
-            variant="outline"
-            onClick={handleResend}
-            disabled={isResending || resendCooldown > 0} // disable during cooldown
-          >
-            {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
-          </Button>
-        </div>
-      </div>
 
-      <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto" />
+          <div className="flex flex-col justify-center items-center gap-4">
+            <InputOTP
+              maxLength={6}
+              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+              value={otp}
+              onChange={(value) => setOtp(value)}
+              className="dark:text-gray-100"
+            >
+              <InputOTPGroup className="gap-2">
+                <InputOTPSlot 
+                  index={0} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+                <InputOTPSlot 
+                  index={1} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+                <InputOTPSlot 
+                  index={2} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+                <InputOTPSlot 
+                  index={3} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+                <InputOTPSlot 
+                  index={4} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+                <InputOTPSlot 
+                  index={5} 
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+              </InputOTPGroup>
+            </InputOTP>
+
+            <Button 
+              onClick={handleOtpVerify} 
+              disabled={isVerifying}
+              className="bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white px-6 sm:px-8"
+            >
+              {isVerifying && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin cursor-pointer" />
+              )}
+              Verify
+            </Button>
+          </div>
+
+          {showAlert && (
+            <Alert
+              className={`w-[90%] lg:w-[600px] mx-auto mt-6 border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-900/20 transition-opacity duration-500 ${
+                showAlert ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <AlertTitle className="text-green-800 dark:text-green-400">
+                Verification Sent!
+              </AlertTitle>
+              <AlertDescription className="text-green-700 dark:text-green-300">
+                A verification link or OTP has been sent to your email. Please
+                check your inbox.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div className="mt-8 text-center">
+            <h1 className="text-base sm:text-lg text-gray-900 dark:text-gray-100">
+              Not receive a code?
+            </h1>
+            <h3 className="text-sm sm:text-base md:text-lg mt-1 mb-4 text-gray-700 dark:text-gray-300 px-2">
+              Use the button to resend or check your junk folder.
+            </h3>
+            <Button
+              className="cursor-pointer dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+              variant="outline"
+              onClick={handleResend}
+              disabled={isResending || resendCooldown > 0}
+            >
+              {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      <hr className="border-blue-800 dark:border-blue-600 border-[3px] w-full max-w-[802px] mx-auto mt-6" />
     </div>
   );
 };

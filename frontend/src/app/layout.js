@@ -31,8 +31,6 @@ const inter = Inter({
   weight: ['400', '500', '700'], // You can specify the weights you need
 });
 
-
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -45,28 +43,32 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${inter.variable} antialiased overflow-x-hidden max-w-full`}
       >
+        <div className="w-full overflow-x-hidden">
           <ThemeProvider>
-              <UserProvider>
-                 <SignupProvider>
-              <CategoriesProvider>
-            <BookmarkProvider>
-             <NavHeader />
-            <Navbar montserrat={montserrat.className}/>
-            <Toaster position="top-center" reverseOrder={false} />
-            <PasswordProvider>
-              {children}
-            </PasswordProvider>
-            {/* <SubscribePopup/> */}
-            <Footer/>
-           </BookmarkProvider>
-           </CategoriesProvider>
-            </SignupProvider>
-              </UserProvider>
+            <UserProvider>
+              <SignupProvider>
+                <CategoriesProvider>
+                  <BookmarkProvider>
+                    <NavHeader />
+                    <Navbar montserrat={montserrat.className}/>
+                    <Toaster position="top-center" reverseOrder={false} />
+                    <PasswordProvider>
+                      <main className="w-full overflow-x-hidden">
+                        {children}
+                      </main>
+                    </PasswordProvider>
+                    {/* <SubscribePopup/> */}
+                    <Footer/>
+                  </BookmarkProvider>
+                </CategoriesProvider>
+              </SignupProvider>
+            </UserProvider>
           </ThemeProvider>
+        </div>
       </body>
     </html>
   );

@@ -12,42 +12,41 @@ const faqsData = [
     question: "How do I start saving with Maximum Savings?",
     answer:
       "Simply sign up for a free account, browse our categories of deals, and click through our links before making purchases. You'll automatically earn cashback and access exclusive discounts from thousands of partner retailers.",
-    category: "Getting Started",
+    
   },
   {
     id: 2,
     question: "When will I receive my cashback?",
     answer:
       "Cashback is typically credited to your account within 24-48 hours after your purchase is confirmed by the retailer. You can withdraw your earnings once you reach the $25 minimum threshold via PayPal, direct deposit, or gift cards.",
-    category: "Cashback",
+   
   },
   {
     id: 3,
     question: "Can I use Maximum Savings with other coupons?",
     answer:
       "Yes! Maximum Savings works alongside most manufacturer coupons and store promotions. Simply apply your coupons at checkout as usual, and you'll still earn cashback through our platform. Some exclusions may apply for certain retailers.",
-    category: "Coupons & Deals",
   },
   {
     id: 4,
     question: "Is there a mobile app available?",
     answer:
       "Yes, Maximum Savings is available on both iOS and Android. The mobile app includes all desktop features plus location-based deals, barcode scanning for in-store offers, and push notifications for flash sales.",
-    category: "Mobile App",
+    
   },
   {
     id: 5,
     question: "How do I cancel my Premium membership?",
     answer:
       "You can cancel your Premium membership anytime from your account settings. Go to Settings > Membership > Cancel Subscription. You'll retain Premium benefits until the end of your current billing period, and there are no cancellation fees.",
-    category: "Account Management",
+   
   },
   {
     id: 6,
     question: "What if a store doesn't track my purchase?",
     answer:
       "If your cashback doesn't appear within 48 hours, submit a missing cashback claim through your account dashboard. Provide your order confirmation email, and our team will investigate. Most claims are resolved within 5-7 business days.",
-    category: "Support",
+   
   },
 ];
 
@@ -61,7 +60,6 @@ const PopularFaqs = () => {
   const filteredFaqs = useFilteredData(faqsData, [
     "question",
     "answer",
-    "category",
   ]);
 
   const toggleFaq = (index) => {

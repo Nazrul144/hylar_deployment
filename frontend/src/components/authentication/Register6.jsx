@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 import React, { useContext } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -32,6 +35,15 @@ const Register6 = () => {
   const router = useRouter();
   const { userProfile, setUserProfile } = useContext(SignupContext);
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (custom) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: custom * 0.1 },
+    }),
+  };
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,142 +64,249 @@ const Register6 = () => {
   };
 
   return (
-    <div>
-      <div className="lg:w-[803px] lg:h-[516px] mx-auto mt-14 lg:shadow-2xl relative">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      {/* Breadcrumb Navigation */}
+      <motion.div
+        className="max-w-[803px] mx-auto mb-6"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={0}
+      >
+        <nav className="flex items-center space-x-2 text-sm">
+          <Link
+            href="/"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <Link
+            href="/register"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Register
+          </Link>
+          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <span className="text-gray-700 dark:text-gray-300 font-medium">
+            ID Verification
+          </span>
+        </nav>
+
+        {/* Step Indicator */}
+        <div className="mt-4 flex items-center justify-center space-x-1 sm:space-x-2 overflow-x-auto pb-2">
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              ✓
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">
+              Personal
+            </span>
+          </div>
+          <div className="w-4 sm:w-6 h-0.5 bg-green-600 mx-0.5 sm:mx-1 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              ✓
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">
+              Marketing
+            </span>
+          </div>
+          <div className="w-4 sm:w-6 h-0.5 bg-green-600 mx-0.5 sm:mx-1 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              ✓
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">
+              Account
+            </span>
+          </div>
+          <div className="w-4 sm:w-6 h-0.5 bg-green-600 mx-0.5 sm:mx-1 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              ✓
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">
+              Verify
+            </span>
+          </div>
+          <div className="w-4 sm:w-6 h-0.5 bg-green-600 mx-0.5 sm:mx-1 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              ✓
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">
+              Work
+            </span>
+          </div>
+          <div className="w-4 sm:w-6 h-0.5 bg-blue-600 mx-0.5 sm:mx-1 flex-shrink-0"></div>
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-xs sm:text-sm">
+              6
+            </div>
+            <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              ID Verify
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Main Form Card */}
+      <motion.div
+        className="w-full max-w-[803px] mx-auto mt-6 lg:shadow-2xl bg-white dark:bg-gray-800 relative rounded-xl overflow-hidden pb-8"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={1}
+      >
         {/* Header */}
-        <div className="lg:w-[820px] h-[50px]">
+        <div className="w-full h-[50px]">
           <Image
             src={"/register2.png"}
             width={802}
             height={50}
-            objectFit="cover"
-            priority
             alt="header_Image"
-          />
-        </div>
-
-        <h1 className="font-bold common-text text-4xl mt-12 montserrat-text text-center">
-          Upload ID For Verification
-        </h1>
-        <h3 className="text-center text-lg mt-2 montserrat-text">
-          Please complete the following to start saving
-        </h3>
-
-        {/* Example NID Images */}
-        <div className="mt-6 flex justify-between lg:px-20 text-lg montserrat-text">
-          <Image
-            src={"/NID.png"}
-            width={200}
-            height={200}
-            alt="NID Front"
-            objectFit="cover"
-            priority
-          />
-          <Image
-            src={"/NID.png"}
-            width={200}
-            height={200}
-            alt="NID Back"
-            objectFit="cover"
+            className="w-full h-full object-cover"
             priority
           />
         </div>
 
-        {/* Upload Form */}
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleFormSubmit)}
-            className="space-y-4 px-8"
-          >
-            <div className="flex justify-between mt-4">
-              {/* Front Side Upload */}
-              <div>
-                <FormField
-                  control={form.control}
-                  name="id_card_front"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-red-700 italic">
-                        Upload Front Side of Your ID
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            const backFile = form.getValues("id_card_back");
+        <div className="px-4 sm:px-6 md:px-8">
+          <h1 className="font-bold common-text text-2xl sm:text-3xl md:text-4xl mt-6 sm:mt-8 md:mt-12 montserrat-text text-center text-gray-900 dark:text-gray-100">
+            Upload ID For Verification
+          </h1>
+          <h3 className="text-center text-sm sm:text-base md:text-lg mt-2 montserrat-text text-gray-700 dark:text-gray-300">
+            Please complete the following to start saving
+          </h3>
 
-                            if (backFile && file?.name === backFile[0]?.name) {
-                              toast.error(
-                                "You have already uploaded this file as back side."
-                              );
-                              e.target.value = "";
-                              return;
-                            }
+          {/* Example NID Images */}
+          <div className="mt-6 flex flex-col sm:flex-row justify-center sm:justify-between gap-4 sm:gap-6 items-center lg:px-8 xl:px-20">
+            <div className="flex flex-col items-center">
+              <Image
+                src={"/NID.png"}
+                width={200}
+                height={200}
+                alt="NID Front"
+                className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-lg shadow-md"
+                priority
+              />
+              <p className="text-xs sm:text-sm mt-2 text-gray-600 dark:text-gray-400 font-medium">
+                Front Side
+              </p>
+            </div>
+            <div className="flex flex-col items-center">
+              <Image
+                src={"/NID.png"}
+                width={200}
+                height={200}
+                alt="NID Back"
+                className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-lg shadow-md"
+                priority
+              />
+              <p className="text-xs sm:text-sm mt-2 text-gray-600 dark:text-gray-400 font-medium">
+                Back Side
+              </p>
+            </div>
+          </div>
 
-                            field.onChange(e.target.files);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          {/* Upload Form */}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleFormSubmit)}
+              className="space-y-6 mt-6"
+            >
+              <div className="flex flex-col sm:flex-row justify-between gap-6">
+                {/* Front Side Upload */}
+                <div className="w-full sm:w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="id_card_front"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-red-700 dark:text-red-400 italic font-medium">
+                          Upload Front Side of Your ID
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className="cursor-pointer dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              const backFile = form.getValues("id_card_back");
+
+                              if (backFile && file?.name === backFile[0]?.name) {
+                                toast.error(
+                                  "You have already uploaded this file as back side."
+                                );
+                                e.target.value = "";
+                                return;
+                              }
+
+                              field.onChange(e.target.files);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage className="dark:text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Back Side Upload */}
+                <div className="w-full sm:w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="id_card_back"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-red-700 dark:text-red-400 italic font-medium">
+                          Upload Back Side of Your ID
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className="cursor-pointer dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              const frontFile = form.getValues("id_card_front");
+
+                              if (frontFile && file?.name === frontFile[0]?.name) {
+                                toast.error(
+                                  "You have already uploaded this file as front side."
+                                );
+                                e.target.value = "";
+                                return;
+                              }
+
+                              field.onChange(e.target.files);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage className="dark:text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
-              {/* Back Side Upload */}
-              <div>
-                <FormField
-                  control={form.control}
-                  name="id_card_back"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-red-700 italic">
-                        Upload Back Side of Your ID
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            const frontFile = form.getValues("id_card_front");
-
-                            if (frontFile && file?.name === frontFile[0]?.name) {
-                              toast.error(
-                                "You have already uploaded this file as front side."
-                              );
-                              e.target.value = "";
-                              return;
-                            }
-
-                            field.onChange(e.target.files);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Next Button */}
+              <div className="flex justify-center sm:justify-end mt-6">
+                <Button
+                  type="submit"
+                  className="common-bg dark:bg-blue-700 dark:hover:bg-blue-600 py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <span className="text-lg font-semibold">Next</span>
+                  <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
+                </Button>
               </div>
-            </div>
+            </form>
+          </Form>
+        </div>
+      </motion.div>
 
-            {/* Next Button */}
-            <div className="lg:absolute justify-center mt-4 lg:right-20 flex items-center mb-8 lg:mb-0">
-              <Button
-                type="submit"
-                className="common-bg py-2.5 px-5 rounded-lg text-white w-28 h-11 flex items-center justify-center gap-1 cursor-pointer"
-              >
-                <span className="text-lg font-semibold">Next</span>
-                <MdKeyboardDoubleArrowRight className="text-2xl mt-1" />
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-
-      <hr className="border-blue-800 border-[3px] lg:w-[802px] mx-auto " />
+      <hr className="border-blue-800 dark:border-blue-600 border-[3px] w-full max-w-[802px] mx-auto mt-6" />
     </div>
   );
 };

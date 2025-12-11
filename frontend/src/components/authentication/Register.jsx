@@ -19,7 +19,7 @@ import { Label } from "../ui/label";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronRight } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "../../providers/SignupProvider";
@@ -37,10 +37,17 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Email is required" })
     .email({ message: "Invalid email address" }),
-  date_of_birth: z.date().refine((val) => val !== null, {
-    message: "Please select a date_of_birth",
-  }),
-
+  date_of_birth: z.date().refine(
+    (val) => {
+      if (!val) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return val < today;
+    },
+    {
+      message: "Date of birth cannot be in the future",
+    }
+  ),
   phone_no: z
     .string()
     .trim()
@@ -82,11 +89,54 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <div className="lg:flex md:flex mt-12 justify-center mx-auto gap-6 bg-white w-[820px] p-2 shadow-2xl">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      {/* Breadcrumb Navigation */}
+      <motion.div
+        className="max-w-[820px] mx-auto mb-6"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        custom={0}
+      >
+        <nav className="flex items-center space-x-2 text-sm">
+          <Link
+            href="/"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Home
+          </Link>
+          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          <span className="text-gray-700 dark:text-gray-300 font-medium">
+            Register
+          </span>
+        </nav>
+
+        {/* Step Indicator */}
+        <div className="mt-4 flex items-center justify-center space-x-2">
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm">
+              1
+            </div>
+            <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Personal Info
+            </span>
+          </div>
+          <div className="w-12 h-0.5 bg-gray-300 dark:bg-gray-600 mx-2"></div>
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 flex items-center justify-center font-semibold text-sm">
+              2
+            </div>
+            <span className="ml-2 text-sm font-medium text-gray-400 dark:text-gray-500">
+              Additional Details
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="flex flex-col lg:flex-row mt-6 justify-center mx-auto gap-6 bg-white dark:bg-gray-800 w-full max-w-[820px] p-2 shadow-2xl rounded-lg">
         {/*Image div*/}
         <motion.div
-          className="relative h-[600px] w-96"
+          className="relative h-[400px] sm:h-[500px] lg:h-[600px] w-full lg:w-96 rounded-lg overflow-hidden"
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
@@ -101,16 +151,16 @@ const Register = () => {
             priority
           />
 
-          <div className="absolute mt-48 grid place-items-center">
-            <h1 className="z-10 text-3xl font-bold text-white drop-shadow-lg">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
+            <h1 className="z-10 text-2xl sm:text-3xl font-bold text-white drop-shadow-lg text-center">
               Create your account
             </h1>
-            <h3 className="text-white mt-4 text-center">
+            <h3 className="text-white mt-4 text-center text-sm sm:text-base px-2">
               It is a long established fact that a reader will be distracted by
               the readable content of a page when looking at its layout.
             </h3>
           </div>
-          <h4 className="text-white absolute bottom-4 text-sm left-12">
+          <h4 className="text-white absolute bottom-4 text-xs sm:text-sm left-4 sm:left-12">
             Log in to your <span className="font-bold">MaximumSavings</span>{" "}
             account.
           </h4>
@@ -120,60 +170,60 @@ const Register = () => {
 
         {/*Register form div*/}
         <motion.div
-          className="h-[600px] w-96"
+          className="w-full lg:w-96"
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           custom={1}
         >
-          <div className="w-full max-w-md p-8 space-y-3 text-gray-100 h-full">
-            <h1 className="montserrat-text text-center common-text text-5xl font-bold mb-10">
+          <div className="w-full max-w-md p-4 sm:p-8 space-y-3 h-full">
+            <h1 className="montserrat-text text-center common-text text-3xl sm:text-5xl font-bold mb-6 sm:mb-10 text-gray-900 dark:text-white">
               Register
             </h1>
 
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleFormSubmit)}
-                className="space-y-8 text-black"
+                className="space-y-4 sm:space-y-6"
               >
-                <div className="flex gap-4">
-                  <div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="w-full">
                     <FormField
                       control={form.control}
                       name="first_name"
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div className="relative">
-                            <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                            <Label className="absolute -top-2 left-3 bg-white dark:bg-gray-800 px-1 text-sm text-blue-600 dark:text-blue-400">
                               First Name
                             </Label>
                             <Input
                               {...field}
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
+                              className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 text-black dark:text-white dark:bg-gray-700"
                             />
                           </div>
-                          <FormMessage />
+                          <FormMessage className="dark:text-red-400" />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <div>
+                  <div className="w-full">
                     <FormField
                       control={form.control}
                       name="last_name"
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <div className="relative">
-                            <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600 ">
+                            <Label className="absolute -top-2 left-3 bg-white dark:bg-gray-800 px-1 text-sm text-blue-600 dark:text-blue-400">
                               Last Name
                             </Label>
                             <Input
                               {...field}
-                              className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
+                              className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 text-black dark:text-white dark:bg-gray-700"
                             />
                           </div>
-                          <FormMessage />
+                          <FormMessage className="dark:text-red-400" />
                         </FormItem>
                       )}
                     />
@@ -186,15 +236,15 @@ const Register = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <div className="relative">
-                        <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                        <Label className="absolute -top-2 left-3 bg-white dark:bg-gray-800 px-1 text-sm text-blue-600 dark:text-blue-400">
                           Email
                         </Label>
                         <Input
                           {...field}
-                          className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0 text-black"
+                          className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 text-black dark:text-white dark:bg-gray-700"
                         />
                       </div>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -204,7 +254,9 @@ const Register = () => {
                   name="date_of_birth"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Date of Birth</FormLabel>
+                      <FormLabel className="text-gray-700 dark:text-gray-300">
+                        Date of Birth
+                      </FormLabel>
                       <FormControl>
                         <div className="flex flex-col gap-3">
                           <Popover open={open} onOpenChange={setOpen}>
@@ -212,17 +264,17 @@ const Register = () => {
                               <Button
                                 variant="ghost"
                                 id="date_of_birth"
-                                className="w-full justify-between font-normal "
+                                className="w-full justify-between font-normal border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
                               >
                                 {field.value
                                   ? new Date(field.value).toLocaleDateString()
                                   : "Select date of birth"}
 
-                                <ChevronDownIcon />
+                                <ChevronDownIcon className="text-gray-500 dark:text-gray-400" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent
-                              className="w-auto overflow-hidden p-0"
+                              className="w-auto overflow-hidden p-0 bg-white dark:bg-gray-800"
                               align="start"
                             >
                               <Calendar
@@ -234,14 +286,15 @@ const Register = () => {
                                 }}
                                 captionLayout="dropdown"
                                 fromYear={1950}
-                                toYear={2025}
-                                setOpen
+                                toYear={new Date().getFullYear()}
+                                disabled={(date) => date > new Date()}
+                                className="dark:text-white"
                               />
                             </PopoverContent>
                           </Popover>
                         </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -252,13 +305,13 @@ const Register = () => {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <div className="relative">
-                        <Label className="absolute -top-2 left-3 bg-white px-1 text-sm text-blue-600">
+                        <Label className="absolute -top-2 left-3 bg-white dark:bg-gray-800 px-1 text-sm text-blue-600 dark:text-blue-400">
                           Mobile Number
                         </Label>
                         <Input
                           {...field}
                           placeholder="+44 XXX XXX XXX"
-                          className="rounded-md border border-blue-400 focus:border-blue-500 focus:ring-0"
+                          className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 text-black dark:text-white dark:bg-gray-700"
                           onChange={(e) => {
                             let value = e.target.value;
                             // If user types without +, add it automatically
@@ -269,13 +322,13 @@ const Register = () => {
                           }}
                         />
                       </div>
-                      <FormMessage />
+                      <FormMessage className="dark:text-red-400" />
                     </FormItem>
                   )}
                 />
 
                 <Button
-                  className="w-full bg-blue-900 text-white cursor-pointer"
+                  className="w-full bg-blue-900 dark:bg-blue-700 text-white hover:bg-blue-800 dark:hover:bg-blue-600 cursor-pointer"
                   type="submit"
                 >
                   Continue
@@ -284,7 +337,7 @@ const Register = () => {
             </Form>
 
             <motion.p
-              className="text-xs text-center sm:px-6 text-gray-800"
+              className="text-xs text-center sm:px-6 text-gray-800 dark:text-gray-300"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
@@ -294,7 +347,7 @@ const Register = () => {
               Already have an account?
               <Link
                 href={"/login"}
-                className="underline font-bold common-text montserrat-text"
+                className="underline font-bold common-text montserrat-text text-blue-600 dark:text-blue-400"
               >
                 {" "}
                 Log in

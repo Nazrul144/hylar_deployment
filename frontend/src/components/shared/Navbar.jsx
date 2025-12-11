@@ -163,17 +163,17 @@ export default function Navbar({ montserrat }) {
             </PopoverTrigger>
             <PopoverContent align="start" className="w-64 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
-                <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
+                <NavigationMenuList className="flex-col items-start gap-0 md:gap-2 ">
                   {navItems.map((navItem) =>
                     navItem.title === "Discover Savings" ? (
-                      <DropdownMenu
+                      <DropdownMenu 
                         key={navItem.title}
                         open={open}
                         onOpenChange={setOpen}
                       >
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger asChild >
                           <Button
-                            className="text-gray-900 dark:text-gray-100 whitespace-nowrap"
+                            className="text-gray-900 dark:text-gray-100"
                             variant="ghost"
                           >
                             {navItem.title}
@@ -233,7 +233,6 @@ export default function Navbar({ montserrat }) {
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList
                 className="gap-6 flex-nowrap"
-                // COMMENT: FIXED → prevents wrapping on medium screens
               >
                 {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
@@ -245,7 +244,6 @@ export default function Navbar({ montserrat }) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           className="text-gray-900 dark:text-gray-100 whitespace-nowrap"
-                          // COMMENT: FIXED → prevent breaking text
                           variant={"ghost"}
                         >
                           {navItem.title}
@@ -281,10 +279,9 @@ export default function Navbar({ montserrat }) {
                         href={navItem.path}
                         className={cn(
                           pathName === navItem.path
-                            ? "text-blue-800 underline font-bold dark:text-blue-400"
+                            ? "text-blue-800 underline font-bold dark:text-blue-400 "
                             : "text-gray-900 dark:text-gray-100",
                           "whitespace-nowrap"
-                          // COMMENT: FIXED → prevents text wrapping
                         )}
                       >
                         {navItem.title}

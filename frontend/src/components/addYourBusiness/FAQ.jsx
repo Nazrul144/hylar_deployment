@@ -153,7 +153,7 @@ const FAQ = () => {
             Simply sign up on our website to start your free trial—no credit
             card required upfront. Once your trial period ends, you can choose
             to continue with one of our subscription plans to keep enjoying all
-            the perks and savings that MaxSavings has to offer.
+            the perks and savings.
     </p>
   </details>
   <details className="group [&_summary::-webkit-details-marker]:hidden">

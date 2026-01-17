@@ -47,7 +47,7 @@ const SubscribePopup = () => {
     setIsOpen(false);
 
     Swal.fire({
-      title: "Thank you for subscribing!",
+      title: "Thank you for subscribing.",
       icon: "success",
     });
   };

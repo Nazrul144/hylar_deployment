@@ -58,7 +58,7 @@ const FAQ = () => {
     <p className="px-4 pt-4 text-gray-900">
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
       recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-      consequuntur distinctio corporis earum similique!
+      consequuntur distinctio corporis earum so!
     </p>
   </details>
 
@@ -105,11 +105,7 @@ const FAQ = () => {
             exclusive offers are added on a continuous basis throughout the
             week. Our team works diligently to keep the MaxSavings library fresh
             and up-to-date, so you'll always discover new ways to save.
-            Additionally, we refresh seasonal promotions and featured deals to
-            align with current trends and shopping events. We recommend checking
-            back frequently or subscribing to our newsletter to stay informed
-            about the newest additions to our collection.
-    </p>
+            
   </details>
 
   <details className="group [&_summary::-webkit-details-marker]:hidden">

@@ -224,7 +224,7 @@ export default function Navbar({ montserrat }) {
               <Image
                 src={"/logo.png"}
                 alt="logo"
-                width={50}
+                width={50} 
                 height={50}
                 className="lg:mr-24"
               />

@@ -11,13 +11,17 @@ const LatestNews = () => {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
+
+    
     const getLatestNews = async () => {
-      const res = await fetch(`${BASE_URL}/api/news`);
+      const res = await fetch(`${BASE_URL}/api/news/`);
       const data = await res.json();
       setLatestNews(data.data);
     };
     getLatestNews();
   }, []);
+
+  console.log(latestNews)
 
   const visibleAllNews = showAll ? latestNews : latestNews.slice(0, 6);
 
@@ -52,8 +56,8 @@ const LatestNews = () => {
             transition={{ delay: index * 0.2 }}
           >
             <Link
-              href={`newsDetails/${news.slug}`}
-              className="block rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-gray-900 h-full flex flex-col"
+              href={`/newsDetails/${news.slug}`}
+              className="flex rounded-lg p-4 shadow-xs shadow-indigo-100 bg-white dark:bg-gray-900 h-full flex-col"
             >
               <div className="relative w-full h-56 overflow-hidden rounded-md">
                 <Image
@@ -71,10 +75,10 @@ const LatestNews = () => {
                 <div>
                   <h3 className="text-lg font-bold inter-text dark:text-gray-100">{news.title}</h3>
                   <div
-                    className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-3 [&_*]:!text-gray-600 dark:[&_*]:!text-gray-300 [&_*]:!bg-transparent"
+                    className="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-3 **:text-gray-600! dark:**:text-gray-300! **:bg-transparent!"
                     dangerouslySetInnerHTML={{
                       __html:
-                        news.content
+                        news.short_content
                           ?.split(" ")
                           ?.slice(0, 20)
                           ?.join(" ") + " ...",

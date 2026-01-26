@@ -5,9 +5,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'maximumsavings.co.uk',
-        port: '',
+        protocol: 'http',
+        hostname: '10.10.12.95',
+        port: '8000',
         pathname: '/media/**',
       },
     ],

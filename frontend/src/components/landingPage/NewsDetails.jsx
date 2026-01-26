@@ -15,15 +15,17 @@ const NewsDetails = ({ slug }) => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/news/${slug}`);
+        const res = await fetch(`${BASE_URL}/api/news/${slug}/`);
         const data = await res.json();
-        setNews(data);
+        setNews(data.data);
       } catch (err) {
         console.error("Failed to fetch news:", err);
       }
     };
     fetchNews();
   }, [slug]);
+
+  console.log(news)
 
   if (!news) {
     return (
@@ -32,8 +34,7 @@ const NewsDetails = ({ slug }) => {
       </div>
     );
   }
-
-  news;
+ 
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-10">
@@ -56,7 +57,7 @@ const NewsDetails = ({ slug }) => {
         {/* Image */}
         <div className="w-full h-[380px] rounded-lg overflow-hidden">
           <Image
-            src={news?.data?.image}
+            src={news?.image}
             alt={news.title}
             width={900}
             height={600}
@@ -66,21 +67,21 @@ const NewsDetails = ({ slug }) => {
 
         {/* Title */}
         <h1 className="text-2xl md:text-4xl font-bold mt-6 mb-3 inter-text text-gray-900">
-          {news?.data.title}
+          {news?.title}
         </h1>
 
         {/* Meta info */}
         <div className="flex items-center gap-6 text-sm text-gray-500 mb-6">
           <p className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            {new Date(news?.data?.created_at).toLocaleDateString()}
+            {new Date(news?.created_at).toLocaleDateString()}
           </p>
         </div>
 
         {/* Content */}
         <div
           className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: news?.data?.content }}
+          dangerouslySetInnerHTML={{ __html: news?.short_content}}
         ></div>
       </motion.div>
     </div>

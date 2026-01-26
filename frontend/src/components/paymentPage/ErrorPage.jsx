@@ -36,7 +36,7 @@ const ErrorPage = () => {
         <XCircle className="w-20 h-20 mx-auto mb-4 text-red-600" />
         <h1 className="text-3xl font-bold text-red-700 mb-2">Payment Failed</h1>
         <p className="text-gray-600 text-lg mb-6">
-          Something went wrong while processing your payment. Please try again.
+          Something went wrong while processing your payment..!! Please try again.
         </p>
         <p className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all">
           Redirecting in{" "}

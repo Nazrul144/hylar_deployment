@@ -102,7 +102,7 @@ const ProductDetails = ({ id }) => {
 
 
   if (!offer) {
-    return <p className="text-center mt-10 text-xl">No offer details found</p>;
+    return <p className="text-center mt-10 text-xl">No offers details found</p>;
   }
 
   const imageUrl = offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg";

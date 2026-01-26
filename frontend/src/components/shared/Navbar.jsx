@@ -187,11 +187,11 @@ export default function Navbar({ montserrat }) {
                           ) : (
                             categories.map((feature) => (
                               <DropdownMenuItem
-                                key={feature.id}
+                                key={feature.slug}
                                 className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
                                 asChild
                               >
-                                <Link href={`/category/${feature.id}`} className="w-full">
+                                <Link href={`/category/${feature.slug}`} className="w-full">
                                   {feature.name}
                                 </Link>
                               </DropdownMenuItem>
@@ -261,13 +261,13 @@ export default function Navbar({ montserrat }) {
                         ) : (
                           categories.map((category) => (
                             <DropdownMenuItem
-                              key={category.id}
+                              key={category.slug}
                               onClick={handleCloseClick}
                               className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
                               asChild
                             >
-                              <Link href={`/category/${category.id}`} className="w-full">
-                                {category.category_name}
+                              <Link href={`/category/${category.slug}`} className="w-full">
+                                {category.name}
                               </Link>
                             </DropdownMenuItem>
                           ))

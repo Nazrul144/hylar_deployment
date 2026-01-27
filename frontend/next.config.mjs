@@ -11,8 +11,7 @@ const nextConfig = {
         pathname: '/media/**',
       },
     ],
-
-    domains: ['maximumsavings.co.uk'],
+    dangerouslyAllowLocalIP: true
   },
 };
 

@@ -57,7 +57,9 @@ const formSchema = z
 
 const Register3 = () => {
   const router = useRouter();
-  const { signupData, setSignupData } = useContext(SignupContext);
+  const { signupData } = useContext(SignupContext);
+
+  console.log("signupData", signupData)
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);

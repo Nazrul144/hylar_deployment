@@ -83,6 +83,10 @@ const NewsDetails = ({ slug }) => {
           className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: news?.short_content}}
         ></div>
+        <div
+          className="prose prose-gray max-w-none text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: news?.full_content}}
+        ></div>
       </motion.div>
     </div>
   );

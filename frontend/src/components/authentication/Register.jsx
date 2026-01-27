@@ -48,7 +48,7 @@ const formSchema = z.object({
       message: "Date of birth cannot be in the future",
     }
   ),
-  phone_no: z
+  mobile_number: z
     .string()
     .trim()
     .regex(/^(07|\+447|00447)\d{9}$/, {
@@ -78,7 +78,7 @@ const Register = () => {
       last_name: "",
       email: "",
       date_of_birth: null,
-      phone_no: "",
+      mobile_number: "",
     },
   });
 
@@ -301,7 +301,7 @@ const Register = () => {
 
                 <FormField
                   control={form.control}
-                  name="phone_no"
+                  name="mobile_number"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <div className="relative">

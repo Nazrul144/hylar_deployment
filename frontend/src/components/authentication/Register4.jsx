@@ -19,7 +19,7 @@ const Register4 = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(30); 
+  const [resendCooldown, setResendCooldown] = useState(30);
   const [otp, setOtp] = useState("");
   const router = useRouter();
   const { signupData } = useContext(SignupContext);
@@ -54,38 +54,47 @@ const Register4 = () => {
 
     setIsVerifying(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/accounts/mail-verification/`, {
+      // ✅ FIXED: Correct endpoint and payload
+      const res = await fetch(`${BASE_URL}/api/accounts/verify-otp/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: userEmail.trim(),
-          token: otp.trim(),
+          otp_code: otp.trim(),
+          purpose: "register",
         }),
       });
 
       const data = await res.json();
       console.log("Verify Response:", data);
 
-      if (data.status === "success" && data.status_code === 200) {
+      // ✅ FIXED: Check for 'success' field and statusCode
+      if (data.success === true && data.statusCode === 200) {
         Swal.fire({
           title: "Email Verified Successfully",
-          text: 'Click "OK" to close the modal.',
+          text: data.message || "Your account is now active!",
           icon: "success",
           confirmButtonColor: "#16a34a",
           confirmButtonText: "OK",
         });
 
-        // optional: store tokens if returned
-        localStorage.setItem("access_token", data.data?.access_token || "");
-        localStorage.setItem("refresh_token", data.data?.refresh_token || "");
+        // ✅ Store tokens for profile completion (following API naming convention: access/refresh)
+        if (data.data?.tokens?.access) {
+          localStorage.setItem("access", data.data.tokens.access);
+          console.log("✅ Access token stored");
+        }
+        if (data.data?.tokens?.refresh) {
+          localStorage.setItem("refresh", data.data.tokens.refresh);
+          console.log("✅ Refresh token stored");
+        }
 
         router.push("/register/register2/register3/register4/register5");
       } else {
-        toast.error(data.detail || "Invalid OTP");
+        toast.error(data.message || data.errors || "Invalid OTP");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to verify OTP");
+      console.error("OTP Verification Error:", error);
+      toast.error("Failed to verify OTP. Please try again.");
     } finally {
       setIsVerifying(false);
     }
@@ -103,21 +112,23 @@ const Register4 = () => {
       });
       const data = await res.json();
 
-      console.log("Data from register4", data);
+      console.log("Resend Response:", data);
 
-      if (data.status === "success" || data.status_code === 200) {
+      // Check for success
+      if (data.success === true || data.statusCode === 200) {
         setShowAlert(true);
         setResendCooldown(30);
+        toast.success("OTP resent successfully!");
 
-        // ✅ Automatically hide alert after 5 seconds
+        // Auto-hide alert after 5 seconds
         setTimeout(() => {
           setShowAlert(false);
         }, 5000);
       } else {
-        toast.error(data.detail || "Failed to resend OTP");
+        toast.error(data.message || "Failed to resend OTP");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Resend Error:", error);
       toast.error("Failed to resend OTP");
     } finally {
       setIsResending(false);
@@ -219,8 +230,8 @@ const Register4 = () => {
           </h1>
           <h3 className="text-center text-sm sm:text-base md:text-lg mt-2 montserrat-text mb-6 text-gray-700 dark:text-gray-300 px-2">
             Check your inbox at <span className="font-bold text-blue-600 dark:text-blue-400">{userEmail}</span> and
-            click the link in
-            <br className="hidden sm:block" /> the email to verify your account.
+            enter the OTP code
+            <br className="hidden sm:block" /> to verify your account.
           </h3>
 
           <div className="flex flex-col justify-center items-center gap-4">
@@ -232,42 +243,42 @@ const Register4 = () => {
               className="dark:text-gray-100"
             >
               <InputOTPGroup className="gap-2">
-                <InputOTPSlot 
-                  index={0} 
+                <InputOTPSlot
+                  index={0}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
-                <InputOTPSlot 
-                  index={1} 
+                <InputOTPSlot
+                  index={1}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
-                <InputOTPSlot 
-                  index={2} 
+                <InputOTPSlot
+                  index={2}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
-                <InputOTPSlot 
-                  index={3} 
+                <InputOTPSlot
+                  index={3}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
-                <InputOTPSlot 
-                  index={4} 
+                <InputOTPSlot
+                  index={4}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
-                <InputOTPSlot 
-                  index={5} 
+                <InputOTPSlot
+                  index={5}
                   className="w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
               </InputOTPGroup>
             </InputOTP>
 
-            <Button 
-              onClick={handleOtpVerify} 
-              disabled={isVerifying}
-              className="bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white px-6 sm:px-8"
+            <Button
+              onClick={handleOtpVerify}
+              disabled={isVerifying || otp.length !== 6}
+              className="bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white px-6 sm:px-8 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isVerifying && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin cursor-pointer" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Verify
+              {isVerifying ? "Verifying..." : "Verify"}
             </Button>
           </div>
 
@@ -278,18 +289,17 @@ const Register4 = () => {
               }`}
             >
               <AlertTitle className="text-green-800 dark:text-green-400">
-                Verification Sent!
+                OTP Resent Successfully!
               </AlertTitle>
               <AlertDescription className="text-green-700 dark:text-green-300">
-                A verification link or OTP has been sent to your email. Please
-                check your inbox.
+                A new OTP has been sent to your email. Please check your inbox.
               </AlertDescription>
             </Alert>
           )}
 
           <div className="mt-8 text-center">
             <h1 className="text-base sm:text-lg text-gray-900 dark:text-gray-100">
-              Not receive a code?
+              Didn't receive the code?
             </h1>
             <h3 className="text-sm sm:text-base md:text-lg mt-1 mb-4 text-gray-700 dark:text-gray-300 px-2">
               Use the button to resend or check your junk folder.

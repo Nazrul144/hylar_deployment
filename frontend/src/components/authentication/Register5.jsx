@@ -48,10 +48,20 @@ const Register5 = () => {
   });
 
   const handleFormSubmit = (data) => {
+    // ✅ FIXED: Map frontend field names to backend API field names
+    const mappedData = {
+      employer_status: data.employment_status,  // Backend expects "employer_status"
+      employer_type: data.employer,              // Backend expects "employer_type"
+      job_details: data.job_details,             // This stays the same
+    };
+
+    console.log("📤 Saving to userProfile:", mappedData);
+
     setUserProfile((prev) => ({
       ...prev,
-      ...data,
+      ...mappedData,
     }));
+    
     router.push("/register/register2/register3/register4/register5/register6");
   };
 

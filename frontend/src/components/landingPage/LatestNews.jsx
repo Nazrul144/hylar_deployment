@@ -21,7 +21,6 @@ const LatestNews = () => {
     getLatestNews();
   }, []);
 
-  console.log(latestNews)
 
   const visibleAllNews = showAll ? latestNews : latestNews.slice(0, 6);
 

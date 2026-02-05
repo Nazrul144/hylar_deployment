@@ -18,7 +18,6 @@ const EmailSubscription = () => {
   const handleClear = () => setEmail("");
 
   const handleFormSubmit = async () => {
-   
     if (!email.trim()) {
       Swal.fire({
         icon: "warning",
@@ -40,32 +39,29 @@ const EmailSubscription = () => {
     }
 
     try {
-      const response = await fetch(
-        `${BASE_URL}/api/notifications/subscribe-newsletter/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/connect/subscribe/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       const result = await response.json();
-
-      if (response.ok && result.status_code === 201) {
+   
+      if (result.statusCode === 201) {
         Swal.fire({
           icon: "success",
           title: "Subscription Successful!",
-          text: "Thank you for subscribing to our newsletter.",
+          text: result?.message || "Thank you for subscribing! You'll receive our latest updates.",
           confirmButtonColor: "#7BB662",
         });
         setEmail("");
-      } else if (result.status_code === 403) {
+      } else if (result.statusCode === 400) {
         Swal.fire({
           icon: "info",
           title: "Already Subscribed",
-          text: "You are already subscribed with this email.",
+          text: result?.errors?.email?.[0] || "You are already subscribed with this email.",
           confirmButtonColor: "#7BB662",
         });
       } else {

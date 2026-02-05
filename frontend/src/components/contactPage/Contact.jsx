@@ -12,20 +12,21 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
-import emailjs from '@emailjs/browser';
+
+import { BASE_URL } from "../../config/config";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  username: z
+  name: z
     .string()
     .min(2, { message: "Name must be at least 2 characters long." })
     .max(50, { message: "Name cannot exceed 50 characters." })
-    .regex(/^[a-zA-Z\s]+$/, { 
-      message: "Name can only contain letters and spaces." 
+    .regex(/^[a-zA-Z\s]+$/, {
+      message: "Name can only contain letters and spaces.",
     }),
 
   email: z
@@ -38,66 +39,76 @@ const formSchema = z.object({
     .min(3, { message: "Subject should be at least 3 characters." })
     .max(100, { message: "Subject cannot exceed 100 characters." }),
 
-  phone: z.string().regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
-    message: "Please enter a valid UK phone number (e.g., +447911123456)",
-  }),
+  phone_number: z
+    .string()
+    .regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
+      message: "Please enter a valid UK phone number (e.g., +447911123456)",
+    }),
 
-  agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
-    message:
-      "You must agree to the terms and conditions",
-  }),
+  message: z
+    .string()
+    .min(10, { message: "Message should be at least 10 characters." })
+    .max(500, { message: "Message cannot exceed 500 characters." }),
 });
 
 const Contact = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       subject: "",
-      phone: "",
-      agreed_to_terms_and_conditions: false,
+      phone_number: "",
+      message: "",
     },
   });
 
-  const sendEmail = async (data) => {
-    emailjs.init(`${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}`); // public key
-
+  const handleSubmit = async (data) => {
+    //Write the code to submit the form data to the backend API
+    setIsSubmitting(true);
+    setSubmitStatus(null);
     try {
-      await emailjs.send(
-        `${process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID}`,
-        `${process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID}`,
-        {
-          first_name: data.username,
-          from_email: data.email,
-          subject: data.subject,
-          phone: data.phone,
-        }
-      );
-
-      Swal.fire({
-        title: "Message Sent Successfully!",
-        icon: "success",
+      const response = await fetch(`${BASE_URL}/api/connect/contact-us/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
-
-      form.reset(); 
-
+      const result = await response.json();
+      if (response.statusCode === 200 || 201) {
+        Swal.fire({
+          title: "Thank you for contacting us! We will get back to you soon.",
+          icon: "success",
+        });
+        form.reset();
+      } else {
+       toast.error("Fail to sumbmit the form. Please try again.");
+      }
     } catch (error) {
-      console.log("ERROR:", error);
+      setSubmitStatus({
+        type: "error",
+        message: "An error occurred while sending your message.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="py-16 px-4 md:px-12 border-1 rounded-sm">
+    <div className="py-16 px-4 md:px-12 border rounded-sm">
       {/* Page Heading */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-500 via-blue-400 to-green-500 bg-clip-text text-transparent">
+        <h2 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-cyan-500 via-blue-400 to-green-500 bg-clip-text text-transparent">
           Contact Us
         </h2>
 
         <p className="text-gray-600 mt-2 dark:text-white">
-          Have a question or want to work with us? Fill out <br /> the form and we'll
-          get back to you.
+          Have a question or want to work with us? Fill out <br /> the form and
+          we'll get back to you.
         </p>
       </div>
 
@@ -105,7 +116,7 @@ const Contact = () => {
       <div className="lg:flex justify-between gap-12">
         {/* Left Side */}
         <div className="lg:w-1/2 space-y-6">
-          <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent">
+          <h3 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-cyan-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent">
             Get in Touch
           </h3>
 
@@ -123,13 +134,25 @@ const Contact = () => {
 
           {/* Social Icons */}
           <div className="flex gap-6 mt-8 text-2xl text-gray-700 dark:text-white">
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaInstagram />
             </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.facebook.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaFacebookF />
             </a>
-            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.linkedin.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaLinkedinIn />
             </a>
           </div>
@@ -138,18 +161,35 @@ const Contact = () => {
         {/* Right Side (Form) */}
         <div className="lg:w-1/2 mt-12 lg:mt-0 dark:text-white">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(sendEmail)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
+              {/* Status Message */}
+              {submitStatus && (
+                <div
+                  className={`p-4 rounded-lg ${
+                    submitStatus.type === "success"
+                      ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
+                      : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200"
+                  }`}
+                >
+                  {submitStatus.message}
+                </div>
+              )}
+
               <div className="lg:grid grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Your Name" 
+                        <Input
+                          placeholder="Your Name"
                           {...field}
                           className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage className="dark:text-red-400" />
@@ -162,10 +202,11 @@ const Contact = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Your Email" 
+                        <Input
+                          placeholder="Your Email"
                           {...field}
                           className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage className="dark:text-red-400" />
@@ -178,10 +219,11 @@ const Contact = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Subject" 
+                        <Input
+                          placeholder="Subject"
                           {...field}
                           className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage className="dark:text-red-400" />
@@ -190,14 +232,15 @@ const Contact = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="phone_number"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="+44 XXXXXXXXXX" 
+                        <Input
+                          placeholder="+44 7911 123 456"
                           {...field}
                           className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage className="dark:text-red-400" />
@@ -205,27 +248,20 @@ const Contact = () => {
                   )}
                 />
               </div>
+
+              {/* Message Field - Full Width */}
               <FormField
                 control={form.control}
-                name="agreed_to_terms_and_conditions"
+                name="message"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex items-start gap-3 mt-4">
-                        <Checkbox
-                          id="agreed_to_terms_and_conditions"
-                          onCheckedChange={field.onChange}
-                          checked={field.value}
-                          className="mt-1"
-                        />
-                        <Label
-                          htmlFor="agreed_to_terms_and_conditions"
-                          className="text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
-                        >
-                          I agree to the terms and conditions and allow this
-                          website to store my submitted information
-                        </Label>
-                      </div>
+                      <Textarea
+                        placeholder="Your Message"
+                        {...field}
+                        className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 min-h-[120px] resize-none"
+                        disabled={isSubmitting}
+                      />
                     </FormControl>
                     <FormMessage className="dark:text-red-400" />
                   </FormItem>
@@ -234,12 +270,14 @@ const Contact = () => {
 
               <Button
                 type="submit"
-                className="cursor-pointer bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 
+                disabled={isSubmitting}
+                className="cursor-pointer bg-linear-to-r from-sky-500 via-blue-600 to-indigo-600 
              hover:from-indigo-500 hover:via-blue-500 hover:to-sky-500 
              transition-all duration-500 ease-in-out transform hover:scale-105 
-             text-white font-semibold shadow-md hover:shadow-lg px-6 py-2 rounded-lg"
+             text-white font-semibold shadow-md hover:shadow-lg px-6 py-2 rounded-lg
+             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Submit
+                {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </form>
           </Form>

@@ -12,7 +12,6 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "../../providers/SignupProvider";
 
-// Zod schema: at least one must be true
 const formSchema = z
   .object({
     agreed_to_push_marketing: z.boolean(),
@@ -23,7 +22,7 @@ const formSchema = z
     (data) => data.agreed_to_push_marketing || data.agreed_to_email_marketing || data.agreed_to_sms_marketing,
     {
       message: "At least one option must be selected",
-      path: ["generalError"], // attach to a virtual field
+      path: ["generalError"],
     }
   );
 
@@ -50,17 +49,24 @@ const Register2 = () => {
   });
 
   const handleFormSubmit = (data) => {
-    data;
-    setSignupData((prev) => ({ ...prev, ...data }));
+    // Convert boolean checkboxes to array format for API
+    const marketing_preferences = [];
+    if (data.agreed_to_email_marketing) marketing_preferences.push("email");
+    if (data.agreed_to_push_marketing) marketing_preferences.push("push");
+    if (data.agreed_to_sms_marketing) marketing_preferences.push("sms");
+
+    setSignupData((prev) => ({ 
+      ...prev, 
+      marketing_preferences 
+    }));
+    
     router.push("/register/register2/register3");
   };
 
-  // General error message from virtual field
   const generalError = form.formState.errors?.generalError?.message;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      {/* Breadcrumb Navigation */}
       <motion.div
         className="max-w-[803px] mx-auto mb-6"
         variants={fadeUp}
@@ -88,7 +94,6 @@ const Register2 = () => {
           </span>
         </nav>
 
-        {/* Step Indicator */}
         <div className="mt-4 flex items-center justify-center space-x-2">
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
@@ -119,7 +124,6 @@ const Register2 = () => {
         </div>
       </motion.div>
 
-      {/* Main Form Card */}
       <motion.div
         className="w-full max-w-[803px] mx-auto mt-6 lg:shadow-2xl p-4 sm:p-6 md:p-8 bg-white dark:bg-gray-800 relative rounded-xl"
         variants={fadeUp}
@@ -148,7 +152,6 @@ const Register2 = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-            {/* Show general error above checkboxes */}
             {generalError && (
               <p className="text-red-600 dark:text-red-400 mb-4 font-medium text-center sm:text-left sm:ml-8">
                 {generalError}

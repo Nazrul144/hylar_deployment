@@ -39,7 +39,13 @@ const Register8 = () => {
 
   const handlePayment = async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      // ✅ FIXED: Use "access" instead of "access_token"
+      const token = localStorage.getItem("access");
+
+      if (!token) {
+        alert("Authentication token not found. Please log in again.");
+        return;
+      }
 
       const response = await fetch(
         "https://cestoid-uncoarsely-kayla.ngrok-free.dev/api/subscriptions/create-mandate/",

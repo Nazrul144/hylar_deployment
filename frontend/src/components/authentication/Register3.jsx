@@ -27,12 +27,11 @@ import { BASE_URL } from "../../config/config";
 const formSchema = z
   .object({
     agreed_to_terms_and_conditions: z.boolean().refine((val) => val === true, {
-      message:
-        "You must agree to the agreed_to_terms_and_conditions & Conditions",
+      message: "You must agree to the Terms & Conditions",
     }),
 
     agreed_to_policy: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the policy",
+      message: "You must agree to the Privacy Policy",
     }),
 
     password: z
@@ -59,10 +58,9 @@ const Register3 = () => {
   const router = useRouter();
   const { signupData } = useContext(SignupContext);
 
-  console.log("signupData", signupData)
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -84,7 +82,10 @@ const Register3 = () => {
   });
 
   const handleFormSubmit = async (data) => {
+    setIsLoading(true);
+    
     try {
+      // Format date properly
       const formattedDate =
         signupData.date_of_birth instanceof Date
           ? signupData.date_of_birth.toISOString().slice(0, 10)
@@ -92,34 +93,56 @@ const Register3 = () => {
             ? signupData.date_of_birth.slice(0, 10)
             : "";
 
-      const allData = {
-        ...signupData,
-        ...data,
+      // Extract only API fields (exclude checkbox fields)
+      const { agreed_to_terms_and_conditions, agreed_to_policy, ...passwordData } = data;
+
+      // Prepare final payload matching API requirements
+      const payload = {
+        first_name: signupData.first_name,
+        last_name: signupData.last_name,
+        email: signupData.email,
         date_of_birth: formattedDate,
+        mobile_number: signupData.mobile_number,
+        marketing_preferences: signupData.marketing_preferences || [],
+        password: passwordData.password,
+        confirm_password: passwordData.confirm_password,
       };
+
+      console.log("Sending payload:", payload);
 
       const res = await fetch(`${BASE_URL}/api/accounts/register/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(allData),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
-      if (result.status_code === 400) {
-        toast.error("User already exists!");
+      
+      console.log("API Response:", result);
+
+      // Handle response based on statusCode (not status_code)
+      if (result.statusCode === 400) {
+        toast.error(result.message || "User already exists!");
         return;
       }
-      if (result.status_code === 201 || result.status_code === 200) {
+      
+      if (result.statusCode === 201 || result.statusCode === 200) {
+        toast.success(result.message || "Registration successful!");
         router.push("/register/register2/register3/register4");
+      } else {
+        toast.error(result.message || "Something went wrong!");
       }
+      
     } catch (error) {
-      console.log(error);
+      console.error("Registration error:", error);
+      toast.error("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      {/* Breadcrumb Navigation */}
       <motion.div
         className="max-w-[803px] mx-auto mb-6"
         variants={fadeUp}
@@ -147,7 +170,6 @@ const Register3 = () => {
           </span>
         </nav>
 
-        {/* Step Indicator */}
         <div className="mt-4 flex items-center justify-center space-x-2 overflow-x-auto pb-2">
           <div className="flex items-center flex-shrink-0">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
@@ -178,7 +200,6 @@ const Register3 = () => {
         </div>
       </motion.div>
 
-      {/* Main Form Card */}
       <motion.div
         className="w-full max-w-[803px] mx-auto mt-6 lg:shadow-2xl bg-white dark:bg-gray-800 relative rounded-xl overflow-hidden"
         variants={fadeUp}
@@ -222,6 +243,7 @@ const Register3 = () => {
                           type={showPassword ? "text" : "password"}
                           {...field}
                           className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 pr-10 text-gray-900 dark:text-gray-100 dark:bg-gray-700"
+                          disabled={isLoading}
                         />
 
                         <span
@@ -250,6 +272,7 @@ const Register3 = () => {
                           type={showConfirm ? "text" : "password"}
                           {...field}
                           className="rounded-md border border-blue-400 dark:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 pr-10 text-gray-900 dark:text-gray-100 dark:bg-gray-700"
+                          disabled={isLoading}
                         />
 
                         <span
@@ -276,6 +299,7 @@ const Register3 = () => {
                             onCheckedChange={field.onChange}
                             checked={field.value}
                             className="mt-1"
+                            disabled={isLoading}
                           />
                           <Label 
                             htmlFor="agreed_to_terms_and_conditions"
@@ -308,6 +332,7 @@ const Register3 = () => {
                             onCheckedChange={field.onChange}
                             checked={field.value}
                             className="mt-1"
+                            disabled={isLoading}
                           />
                           <Label 
                             htmlFor="agreed_to_policy"
@@ -330,9 +355,10 @@ const Register3 = () => {
 
                 <Button
                   type="submit"
-                  className="mt-8 w-full bg-blue-900 dark:bg-blue-700 text-white hover:bg-blue-800 dark:hover:bg-blue-600 cursor-pointer"
+                  className="mt-8 w-full bg-blue-900 dark:bg-blue-700 text-white hover:bg-blue-800 dark:hover:bg-blue-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
                 >
-                  Submit
+                  {isLoading ? "Submitting..." : "Submit"}
                 </Button>
               </div>
             </form>

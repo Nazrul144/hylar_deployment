@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
@@ -50,6 +50,21 @@ const Register7 = () => {
   const { setUser } = useContext(UserContext);
   const countries = countryList().getData();
 
+  // Persist userProfile to localStorage
+  useEffect(() => {
+    if (Object.keys(userProfile).length > 0) {
+      localStorage.setItem("userProfile", JSON.stringify(userProfile));
+    }
+  }, [userProfile]);
+
+  // Restore userProfile from localStorage on mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem("userProfile");
+    if (savedProfile && Object.keys(userProfile).length === 0) {
+      setUserProfile(JSON.parse(savedProfile));
+    }
+  }, []);
+
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
     visible: (custom) => ({
@@ -72,46 +87,171 @@ const Register7 = () => {
 
   const handleFormSubmit = async (data) => {
     const finalProfileData = { ...userProfile, ...data };
-
     setUserProfile(finalProfileData);
 
+    // ✅ DEBUG: Log the complete profile data being sent
+    console.log("=== PROFILE DATA BEFORE SUBMISSION ===");
+    console.log("userProfile from context:", userProfile);
+    console.log("Address data from form:", data);
+    console.log("Final merged profile data:", finalProfileData);
+    console.log("=====================================");
+
     try {
-      const token = localStorage.getItem("access_token");
+      // ✅ FIXED: Changed from "access_token" to "access" to match what we stored in Register4
+      const token = localStorage.getItem("access");
+      console.log("token", token);
+
+      // Robust token check (reject 'null'/'undefined' strings too)
+      if (
+        !token ||
+        token === "undefined" ||
+        token === "null" ||
+        token.trim() === ""
+      ) {
+        toast.error(
+          "Authentication token not found or invalid. Please log in again.",
+        );
+        // Clean-up possibly invalid tokens and force re-login
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        router.push("/login");
+        return;
+      }
+
+      // Debug: show that token exists (do NOT print full token in production)
+      console.debug(
+        "Submitting profile with access token present:",
+        token ? token.substring(0, 20) + "..." : null,
+      );
 
       const formData = new FormData();
+
+      // Handle all fields properly
       Object.entries(finalProfileData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === "id_card_front" || key === "id_card_back") {
-            if (value instanceof FileList && value.length > 0) {
-              formData.append(key, value[0]);
-            }
-          } else {
+        // Skip null or undefined values
+        if (value === undefined || value === null) {
+          return;
+        }
+
+        // Handle file fields
+        if (key === "id_card_front" || key === "id_card_back") {
+          // Check if it's a File object
+          if (value instanceof File) {
             formData.append(key, value);
           }
+          // Check if it's a FileList
+          else if (value instanceof FileList && value.length > 0) {
+            formData.append(key, value[0]);
+          }
+          // Check if it's an array with File objects
+          else if (Array.isArray(value) && value[0] instanceof File) {
+            formData.append(key, value[0]);
+          }
+        }
+        // Handle regular fields
+        else {
+          formData.append(key, value.toString());
         }
       });
 
-      const res = await fetch(`${BASE_URL}/api/profiles/`, {
-        method: "PATCH",
+      // Debug: Log formData contents (REMOVE IN PRODUCTION)
+      console.log("FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      const res = await fetch(`${BASE_URL}/api/accounts/complete-profile/`, {
+        method: "POST", // ← changed from PATCH to POST
         headers: {
           Authorization: `Bearer ${token}`,
+          // Don't set Content-Type header - browser will set it with boundary
         },
         body: formData,
       });
 
       const result = await res.json();
+      // Debug: show response status and body for easier troubleshooting
+      console.debug("complete-profile response:", res.status, result);
 
       if (!res.ok) {
-        toast.error(result.detail || "Failed to update profile");
+        // Handle 401 (Unauthorized) specifically so we can force a re-login or show a helpful message
+        if (res.status === 401) {
+          const msg =
+            result.detail ||
+            result.message ||
+            "Session expired or unauthorized. Please log in again.";
+          toast.error(msg);
+          // ✅ FIXED: Clear tokens using correct key names
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          router.push("/login");
+          return;
+        }
+
+        // ── Improved & safe error handling for other statuses ─────────────
+        let errorMessages = [];
+
+        if (result.detail) {
+          errorMessages.push(result.detail);
+        }
+
+        if (result.errors) {
+          Object.entries(result.errors).forEach(([field, value]) => {
+            let message = value;
+            if (Array.isArray(value)) {
+              message = value.join(", ");
+            } else if (typeof value === "string") {
+              message = value;
+            } else if (value && typeof value === "object") {
+              message = JSON.stringify(value);
+            }
+            errorMessages.push(`${field}: ${message}`);
+          });
+          
+          // ✅ ADDED: Show which fields are missing for debugging
+          console.error("❌ Missing or invalid fields:", result.errors);
+        }
+
+        if (result.non_field_errors) {
+          const msg = Array.isArray(result.non_field_errors)
+            ? result.non_field_errors.join(", ")
+            : result.non_field_errors;
+          errorMessages.push(msg);
+        }
+
+        if (errorMessages.length === 0) {
+          errorMessages.push(
+            result.message ||
+              "Failed to update profile. Please check the information and try again.",
+          );
+        }
+
+        errorMessages.forEach((msg) => toast.error(msg));
         return;
       }
+
+      // Success
       setUser(result.data);
 
-      toast.success("Submited Successfully!");
-      router.push("/register/register2/register3/register4/register5/register6/register7/register8");
+      // Clear stored profile data
+      localStorage.removeItem("userProfile");
+      setUserProfile({});
+
+      toast.success("Profile completed successfully!");
+      
+      // ✅ ADDED: Fetch complete user profile after registration to auto-login
+      console.log("🔄 Fetching user profile after registration...");
+      if (typeof window !== 'undefined') {
+        // Trigger a refetch of user data
+        window.dispatchEvent(new Event('storage'));
+      }
+
+      router.push(
+        "/register/register2/register3/register4/register5/register6/register7/register8",
+      );
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Profile submission error:", error);
+      toast.error("Network error. Please check your connection and try again.");
     }
   };
 
@@ -147,33 +287,33 @@ const Register7 = () => {
 
         {/* Step Indicator */}
         <div className="mt-4 flex items-center justify-center space-x-1 overflow-x-auto pb-2">
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center shrink-0">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs">
               ✓
             </div>
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-green-600 flex-shrink-0"></div>
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-green-600 shrink-0"></div>
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs shrink-0">
             ✓
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-green-600 flex-shrink-0"></div>
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-green-600 shrink-0"></div>
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs shrink-0">
             ✓
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-green-600 flex-shrink-0"></div>
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-green-600 shrink-0"></div>
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs shrink-0">
             ✓
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-green-600 flex-shrink-0"></div>
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-green-600 shrink-0"></div>
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs shrink-0">
             ✓
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-green-600 flex-shrink-0"></div>
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-green-600 shrink-0"></div>
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs shrink-0">
             ✓
           </div>
-          <div className="w-3 sm:w-4 h-0.5 bg-blue-600 flex-shrink-0"></div>
-          <div className="flex items-center flex-shrink-0">
+          <div className="w-3 sm:w-4 h-0.5 bg-blue-600 shrink-0"></div>
+          <div className="flex items-center shrink-0">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs">
               7
             </div>
@@ -208,7 +348,8 @@ const Register7 = () => {
             Delivery Address
           </h1>
           <h3 className="text-center text-sm sm:text-base md:text-lg montserrat-text mb-6 text-gray-700 dark:text-gray-300 px-2">
-            We'll send your membership card here, check to make sure it's <br className="hidden sm:block" />
+            We'll send your membership card here, check to make sure it's{" "}
+            <br className="hidden sm:block" />
             correct.
           </h3>
 
@@ -223,8 +364,8 @@ const Register7 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address line 1" 
+                      <Input
+                        placeholder="Address line 1"
                         {...field}
                         className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:placeholder:text-gray-400"
                       />
@@ -239,8 +380,8 @@ const Register7 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address line 2 (Optional)" 
+                      <Input
+                        placeholder="Address line 2 (Optional)"
                         {...field}
                         className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:placeholder:text-gray-400"
                       />
@@ -254,7 +395,7 @@ const Register7 = () => {
                 name="country"
                 render={({ field }) => {
                   const selectedOption = countries.find(
-                    (c) => c.label === field.value
+                    (c) => c.label === field.value,
                   );
                   return (
                     <FormItem>
@@ -268,22 +409,28 @@ const Register7 = () => {
                           styles={{
                             control: (base, state) => ({
                               ...base,
-                              backgroundColor: 'var(--select-bg, white)',
-                              borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
-                              color: 'var(--select-text, black)',
+                              backgroundColor: "var(--select-bg, white)",
+                              borderColor: state.isFocused
+                                ? "#3b82f6"
+                                : "#d1d5db",
+                              color: "var(--select-text, black)",
                             }),
                             menu: (base) => ({
                               ...base,
-                              backgroundColor: 'var(--select-menu-bg, white)',
+                              backgroundColor: "var(--select-menu-bg, white)",
                             }),
                             option: (base, state) => ({
                               ...base,
-                              backgroundColor: state.isFocused ? '#3b82f6' : 'var(--select-option-bg, white)',
-                              color: state.isFocused ? 'white' : 'var(--select-option-text, black)',
+                              backgroundColor: state.isFocused
+                                ? "#3b82f6"
+                                : "var(--select-option-bg, white)",
+                              color: state.isFocused
+                                ? "white"
+                                : "var(--select-option-text, black)",
                             }),
                             singleValue: (base) => ({
                               ...base,
-                              color: 'var(--select-text, black)',
+                              color: "var(--select-text, black)",
                             }),
                           }}
                           className="dark:[--select-bg:#374151] dark:[--select-text:#f3f4f6] dark:[--select-menu-bg:#374151] dark:[--select-option-bg:#374151] dark:[--select-option-text:#f3f4f6]"
@@ -300,8 +447,8 @@ const Register7 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Town/City" 
+                      <Input
+                        placeholder="Town/City"
                         {...field}
                         className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:placeholder:text-gray-400"
                       />
@@ -316,8 +463,8 @@ const Register7 = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Postcode" 
+                      <Input
+                        placeholder="Postcode"
                         {...field}
                         className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:placeholder:text-gray-400"
                       />
@@ -335,11 +482,12 @@ const Register7 = () => {
                 >
                   Back
                 </Button>
-                <Button 
+                <Button
                   type="submit"
-                  className="w-full sm:w-auto common-bg dark:bg-blue-700 dark:hover:bg-blue-600 py-2.5 px-5 text-base sm:text-lg cursor-pointer rounded-lg text-white h-12 flex items-center justify-center gap-1"
+                  disabled={form.formState.isSubmitting}
+                  className="w-full sm:w-auto common-bg dark:bg-blue-700 dark:hover:bg-blue-600 py-2.5 px-5 text-base sm:text-lg cursor-pointer rounded-lg text-white h-12 flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit
+                  {form.formState.isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               </div>
             </form>

@@ -46,40 +46,60 @@ const Login = () => {
   });
 
   const router = useRouter();
-  const { setUser } = useContext(UserContext);
+  const { setUser, fetchUserProfile } = useContext(UserContext);
 
   const handleLoginSubmit = async (data) => {
-    const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(`${BASE_URL}/api/accounts/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (result.status_code === 400 || result.status === "failed") {
-      toast.error("Invalid email or password.");
-      return;
-    }
+      if (result.statusCode === 400 || result.status === "failed") {
+        toast.error("Invalid email or password.");
+        return;
+      }
 
-    if (result.status_code === 200 || result.status === 202) {
-      toast.success(`Welcome back, ${result.data.first_name || "User"}!`);
-      form.reset();
-      const userInfo = {
-        email: result.data.email,
-        first_name: result.data.first_name,
-        last_name: result.data.last_name,
-      };
-      // Save in localStorage
-      localStorage.setItem("access_token", result.data.access_token);
-      localStorage.setItem("refresh_token", result.data.refresh_token);
-      localStorage.setItem("user", JSON.stringify(userInfo));
+      if (result.statusCode === 200 || result.success === true) {
+        toast.success(`Welcome back, ${result.data.first_name || "User"}!`);
+        form.reset();
 
-      setUser(userInfo);
+        // ✅ FIXED: Use "access" and "refresh" instead of "access_token" and "refresh_token"
+        const tokens = result.data.tokens || result.data;
+        
+        if (tokens.access) {
+          localStorage.setItem("access", tokens.access);
+        }
+        if (tokens.refresh) {
+          localStorage.setItem("refresh", tokens.refresh);
+        }
 
-      router.push("/");
-    } else {
-      toast.error(result?.message || "Login failed");
+        // Save user info
+        const userInfo = {
+          email: result.data.email,
+          first_name: result.data.first_name,
+          last_name: result.data.last_name,
+          id: result.data.id,
+        };
+        
+        localStorage.setItem("user", JSON.stringify(userInfo));
+        setUser(userInfo);
+
+        // ✅ ADDED: Fetch complete user profile after login
+        if (fetchUserProfile) {
+          await fetchUserProfile();
+        }
+
+        router.push("/");
+      } else {
+        toast.error(result?.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Network error. Please try again.");
     }
   };
 
@@ -188,8 +208,9 @@ const Login = () => {
                 <Button
                   className="w-full bg-blue-900 dark:bg-blue-700 text-white hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors duration-200"
                   type="submit"
+                  disabled={form.formState.isSubmitting}
                 >
-                  Login
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </form>
             </Form>

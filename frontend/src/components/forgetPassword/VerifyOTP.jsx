@@ -57,8 +57,13 @@ const VerifyOTP = () => {
           confirmButtonText: "OK",
         });
 
-        localStorage.setItem("access_token", result.data?.access_token || "");
-        localStorage.setItem("refresh_token", result.data?.refresh_token || "");
+        // Only store tokens when they're actually present to avoid saving empty strings
+        if (result.data?.access_token) {
+          localStorage.setItem("access_token", result.data.access_token);
+        }
+        if (result.data?.refresh_token) {
+          localStorage.setItem("refresh_token", result.data.refresh_token);
+        }
 
         router.push("/forgotpass/verifyopt/createpass");
       } else {

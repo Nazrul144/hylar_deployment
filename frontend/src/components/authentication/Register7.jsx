@@ -50,14 +50,12 @@ const Register7 = () => {
   const { setUser } = useContext(UserContext);
   const countries = countryList().getData();
 
-  // Persist userProfile to localStorage
   useEffect(() => {
     if (Object.keys(userProfile).length > 0) {
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
     }
   }, [userProfile]);
 
-  // Restore userProfile from localStorage on mount
   useEffect(() => {
     const savedProfile = localStorage.getItem("userProfile");
     if (savedProfile && Object.keys(userProfile).length === 0) {
@@ -89,106 +87,71 @@ const Register7 = () => {
     const finalProfileData = { ...userProfile, ...data };
     setUserProfile(finalProfileData);
 
-    // ✅ DEBUG: Log the complete profile data being sent
-    console.log("=== PROFILE DATA BEFORE SUBMISSION ===");
-    console.log("userProfile from context:", userProfile);
-    console.log("Address data from form:", data);
-    console.log("Final merged profile data:", finalProfileData);
-    console.log("=====================================");
+    console.log("📤 Submitting profile data:", finalProfileData);
 
     try {
-      // ✅ FIXED: Changed from "access_token" to "access" to match what we stored in Register4
       const token = localStorage.getItem("access");
-      console.log("token", token);
+      console.log("🔑 Token:", token);
 
-      // Robust token check (reject 'null'/'undefined' strings too)
-      if (
-        !token ||
-        token === "undefined" ||
-        token === "null" ||
-        token.trim() === ""
-      ) {
-        toast.error(
-          "Authentication token not found or invalid. Please log in again.",
-        );
-        // Clean-up possibly invalid tokens and force re-login
+      if (!token || token === "undefined" || token === "null" || token.trim() === "") {
+        toast.error("Authentication token not found. Please log in again.");
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         router.push("/login");
         return;
       }
 
-      // Debug: show that token exists (do NOT print full token in production)
-      console.debug(
-        "Submitting profile with access token present:",
-        token ? token.substring(0, 20) + "..." : null,
-      );
-
       const formData = new FormData();
 
-      // Handle all fields properly
       Object.entries(finalProfileData).forEach(([key, value]) => {
-        // Skip null or undefined values
         if (value === undefined || value === null) {
           return;
         }
 
-        // Handle file fields
-        if (key === "id_card_front" || key === "id_card_back") {
-          // Check if it's a File object
+        if (key === "id_card_front_image" || key === "id_card_back_image") {
           if (value instanceof File) {
             formData.append(key, value);
-          }
-          // Check if it's a FileList
-          else if (value instanceof FileList && value.length > 0) {
+            console.log(`✅ Appended ${key} as File:`, value.name);
+          } else if (value instanceof FileList && value.length > 0) {
             formData.append(key, value[0]);
-          }
-          // Check if it's an array with File objects
-          else if (Array.isArray(value) && value[0] instanceof File) {
+            console.log(`✅ Appended ${key} from FileList:`, value[0].name);
+          } else if (Array.isArray(value) && value[0] instanceof File) {
             formData.append(key, value[0]);
+            console.log(`✅ Appended ${key} from Array:`, value[0].name);
+          } else {
+            console.warn(`⚠️ ${key} is not a valid file:`, value);
           }
-        }
-        // Handle regular fields
-        else {
+        } else {
           formData.append(key, value.toString());
         }
       });
 
-      // Debug: Log formData contents (REMOVE IN PRODUCTION)
-      console.log("FormData contents:");
+      console.log("📋 FormData contents:");
       for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+        console.log(`  ${key}:`, value);
       }
 
       const res = await fetch(`${BASE_URL}/api/accounts/complete-profile/`, {
-        method: "POST", // ← changed from PATCH to POST
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          // Don't set Content-Type header - browser will set it with boundary
         },
         body: formData,
       });
 
       const result = await res.json();
-      // Debug: show response status and body for easier troubleshooting
-      console.debug("complete-profile response:", res.status, result);
+      console.log("📥 Response:", res.status, result);
 
       if (!res.ok) {
-        // Handle 401 (Unauthorized) specifically so we can force a re-login or show a helpful message
         if (res.status === 401) {
-          const msg =
-            result.detail ||
-            result.message ||
-            "Session expired or unauthorized. Please log in again.";
+          const msg = result.detail || result.message || "Session expired. Please log in again.";
           toast.error(msg);
-          // ✅ FIXED: Clear tokens using correct key names
           localStorage.removeItem("access");
           localStorage.removeItem("refresh");
           router.push("/login");
           return;
         }
 
-        // ── Improved & safe error handling for other statuses ─────────────
         let errorMessages = [];
 
         if (result.detail) {
@@ -207,9 +170,7 @@ const Register7 = () => {
             }
             errorMessages.push(`${field}: ${message}`);
           });
-          
-          // ✅ ADDED: Show which fields are missing for debugging
-          console.error("❌ Missing or invalid fields:", result.errors);
+          console.error("❌ Field errors:", result.errors);
         }
 
         if (result.non_field_errors) {
@@ -221,8 +182,7 @@ const Register7 = () => {
 
         if (errorMessages.length === 0) {
           errorMessages.push(
-            result.message ||
-              "Failed to update profile. Please check the information and try again.",
+            result.message || "Failed to update profile. Please try again."
           );
         }
 
@@ -230,34 +190,26 @@ const Register7 = () => {
         return;
       }
 
-      // Success
       setUser(result.data);
-
-      // Clear stored profile data
       localStorage.removeItem("userProfile");
       setUserProfile({});
-
       toast.success("Profile completed successfully!");
+
+      console.log("✅ Profile completed, redirecting...");
       
-      // ✅ ADDED: Fetch complete user profile after registration to auto-login
-      console.log("🔄 Fetching user profile after registration...");
       if (typeof window !== 'undefined') {
-        // Trigger a refetch of user data
         window.dispatchEvent(new Event('storage'));
       }
 
-      router.push(
-        "/register/register2/register3/register4/register5/register6/register7/register8",
-      );
+      router.push("/register/register2/register3/register4/register5/register6/register7/register8");
     } catch (error) {
-      console.error("Profile submission error:", error);
+      console.error("❌ Profile submission error:", error);
       toast.error("Network error. Please check your connection and try again.");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      {/* Breadcrumb Navigation */}
       <motion.div
         className="max-w-[803px] mx-auto mb-6"
         variants={fadeUp}
@@ -285,7 +237,6 @@ const Register7 = () => {
           </span>
         </nav>
 
-        {/* Step Indicator */}
         <div className="mt-4 flex items-center justify-center space-x-1 overflow-x-auto pb-2">
           <div className="flex items-center shrink-0">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-[10px] sm:text-xs">
@@ -324,7 +275,6 @@ const Register7 = () => {
         </div>
       </motion.div>
 
-      {/* Main Form Card */}
       <motion.div
         className="w-full max-w-[803px] mx-auto mt-6 lg:shadow-2xl bg-white dark:bg-gray-800 relative rounded-xl overflow-hidden pb-8"
         variants={fadeUp}

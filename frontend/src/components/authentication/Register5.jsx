@@ -19,10 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { SignupContext } from "../../providers/SignupProvider";
 
+// ✅ FIXED: Schema field names match the form field names
 const formSchema = z.object({
-  employment_status: z.string().min(1, { message: "Select any one" }),
+  employer_status: z.string().min(1, { message: "Select any one" }),
   job_details: z.string().min(1, { message: "Select any one" }),
-  employer: z.string().min(1, { message: "Select any one" }),
+  employer_type: z.string().min(1, { message: "Select any one" }),
 });
 
 const Register5 = () => {
@@ -41,25 +42,18 @@ const Register5 = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      employment_status: "employed",
+      employer_status: "employed",
       job_details: "nhs",
-      employer: "education",
+      employer_type: "education",
     },
   });
 
   const handleFormSubmit = (data) => {
-    // ✅ FIXED: Map frontend field names to backend API field names
-    const mappedData = {
-      employer_status: data.employment_status,  // Backend expects "employer_status"
-      employer_type: data.employer,              // Backend expects "employer_type"
-      job_details: data.job_details,             // This stays the same
-    };
-
-    console.log("📤 Saving to userProfile:", mappedData);
+    console.log("📤 Form submitted with data:", data);
 
     setUserProfile((prev) => ({
       ...prev,
-      ...mappedData,
+      ...data,
     }));
     
     router.push("/register/register2/register3/register4/register5/register6");
@@ -97,7 +91,7 @@ const Register5 = () => {
 
         {/* Step Indicator */}
         <div className="mt-4 flex items-center justify-center space-x-2 overflow-x-auto pb-2">
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
               ✓
             </div>
@@ -105,8 +99,8 @@ const Register5 = () => {
               Personal
             </span>
           </div>
-          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 flex-shrink-0"></div>
-          <div className="flex items-center flex-shrink-0">
+          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 shrink-0"></div>
+          <div className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
               ✓
             </div>
@@ -114,8 +108,8 @@ const Register5 = () => {
               Marketing
             </span>
           </div>
-          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 flex-shrink-0"></div>
-          <div className="flex items-center flex-shrink-0">
+          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 shrink-0"></div>
+          <div className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
               ✓
             </div>
@@ -123,8 +117,8 @@ const Register5 = () => {
               Account
             </span>
           </div>
-          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 flex-shrink-0"></div>
-          <div className="flex items-center flex-shrink-0">
+          <div className="w-6 sm:w-8 h-0.5 bg-green-600 mx-1 shrink-0"></div>
+          <div className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold text-sm">
               ✓
             </div>
@@ -132,8 +126,8 @@ const Register5 = () => {
               Verify
             </span>
           </div>
-          <div className="w-6 sm:w-8 h-0.5 bg-blue-600 mx-1 flex-shrink-0"></div>
-          <div className="flex items-center flex-shrink-0">
+          <div className="w-6 sm:w-8 h-0.5 bg-blue-600 mx-1 shrink-0"></div>
+          <div className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm">
               5
             </div>
@@ -179,7 +173,7 @@ const Register5 = () => {
                 <div>
                   <FormField
                     control={form.control}
-                    name="employment_status"
+                    name="employer_status"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="common-text font-bold text-gray-900 dark:text-gray-100">
@@ -205,7 +199,7 @@ const Register5 = () => {
                 <div>
                   <FormField
                     control={form.control}
-                    name="employer"
+                    name="employer_type"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="common-text font-bold text-gray-900 dark:text-gray-100">

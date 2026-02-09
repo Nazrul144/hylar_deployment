@@ -273,7 +273,7 @@ const Register4 = () => {
             <Button
               onClick={handleOtpVerify}
               disabled={isVerifying || otp.length !== 6}
-              className="bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white px-6 sm:px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white px-6 sm:px-8 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isVerifying && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

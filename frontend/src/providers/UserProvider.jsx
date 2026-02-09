@@ -1,108 +1,81 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { BASE_URL } from "../config/config";
 
-// Provide default values in createContext
-export const UserContext = createContext({
-  user: null,
-  setUser: () => {},
-  loading: true,
-  fetchUserProfile: () => {},
-});
+export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
 
-  // ✅ ADDED: Reusable function to fetch user profile
+  
   const fetchUserProfile = async () => {
-    // Check if we're in the browser
-    if (typeof window === 'undefined') {
-      setLoading(false);
-      return;
-    }
-
     try {
-      // ✅ FIXED: Use "access" instead of "access_token"
       const token = localStorage.getItem("access");
       
-      if (!token) {
-        console.log("No access token found");
+      if (!token || token === "undefined" || token === "null") {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      console.log("🔍 Fetching user profile with token...");
-
-      const res = await fetch(`${BASE_URL}/api/accounts/complete-profile/`, {
+      const response = await fetch(`${BASE_URL}/api/accounts/profile/`, {
         method: "GET",
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
-      if (!res.ok) {
-        console.error("Profile fetch failed:", res.status);
-        
-        // If token is invalid (401), clear it
-        if (res.status === 401) {
+      if (!response.ok) {
+        // Token expired or invalid
+        if (response.status === 401) {
+          console.log("Token expired, clearing auth data");
           localStorage.removeItem("access");
           localStorage.removeItem("refresh");
           localStorage.removeItem("user");
+          setUser(null);
         }
-        
-        setUser(null);
-        setLoading(false);
-        return;
+        throw new Error("Failed to fetch user profile");
       }
 
-      const result = await res.json();
-      console.log("✅ User profile fetched:", result);
+      const result = await response.json();
       
-      if (result.statusCode === 200 && result.data) {
-        setUser(result.data);
-        // Also save to localStorage for quick access
-        localStorage.setItem("user", JSON.stringify(result.data));
-      } else if (result.data) {
-        // Handle different response structures
-        setUser(result.data);
-        localStorage.setItem("user", JSON.stringify(result.data));
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      console.error("Error fetching user profile:", err);
+      
+      const userData = result.data || result;
+      
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      console.log("✅ User profile fetched:", userData);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Fetch user profile on mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // ✅ ADDED: Listen for storage changes (when user logs in/out in another tab)
+  
   useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === "access" || e.key === "user") {
-        console.log("🔄 Token changed, refetching user...");
-        fetchUserProfile();
-      }
+    const handleStorageChange = () => {
+      fetchUserProfile();
     };
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  return (
-    <UserContext.Provider value={{ user, setUser, loading, fetchUserProfile }}>
-      {children}
-    </UserContext.Provider>
-  );
-};
+  const value = {
+    user,
+    setUser,
+    loading,
+    fetchUserProfile,
+  };
 
-export default UserProvider;
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};

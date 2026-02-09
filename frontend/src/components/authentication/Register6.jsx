@@ -23,10 +23,10 @@ import { SignupContext } from "../../providers/SignupProvider";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  id_card_front: z.any().refine((files) => files && files.length > 0, {
+  id_card_front_image: z.any().refine((files) => files && files.length > 0, {
     message: "Front part of ID is required",
   }),
-  id_card_back: z.any().refine((files) => files && files.length > 0, {
+  id_card_back_image: z.any().refine((files) => files && files.length > 0, {
     message: "Back part of ID is required",
   }),
 });
@@ -47,13 +47,15 @@ const Register6 = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id_card_front: undefined,
-      id_card_back: undefined,
+      id_card_front_image: undefined,
+      id_card_back_image: undefined,
     },
   });
 
   const handleFormSubmit = (data) => {
     console.log("Uploaded files:", data);
+    console.log("Front image:", data.id_card_front_image);
+    console.log("Back image:", data.id_card_back_image);
 
     // Merge new data into global context
     setUserProfile((prev) => ({ ...prev, ...data }));
@@ -220,7 +222,7 @@ const Register6 = () => {
                 <div className="w-full sm:w-1/2">
                   <FormField
                     control={form.control}
-                    name="id_card_front"
+                    name="id_card_front_image"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-red-700 dark:text-red-400 italic font-medium">
@@ -233,7 +235,7 @@ const Register6 = () => {
                             className="cursor-pointer dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
                             onChange={(e) => {
                               const file = e.target.files[0];
-                              const backFile = form.getValues("id_card_back");
+                              const backFile = form.getValues("id_card_back_image");
 
                               if (backFile && file?.name === backFile[0]?.name) {
                                 toast.error(
@@ -244,6 +246,7 @@ const Register6 = () => {
                               }
 
                               field.onChange(e.target.files);
+                              console.log("Front image selected:", file);
                             }}
                           />
                         </FormControl>
@@ -257,7 +260,7 @@ const Register6 = () => {
                 <div className="w-full sm:w-1/2">
                   <FormField
                     control={form.control}
-                    name="id_card_back"
+                    name="id_card_back_image"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-red-700 dark:text-red-400 italic font-medium">
@@ -270,7 +273,7 @@ const Register6 = () => {
                             className="cursor-pointer dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
                             onChange={(e) => {
                               const file = e.target.files[0];
-                              const frontFile = form.getValues("id_card_front");
+                              const frontFile = form.getValues("id_card_front_image");
 
                               if (frontFile && file?.name === frontFile[0]?.name) {
                                 toast.error(
@@ -281,6 +284,7 @@ const Register6 = () => {
                               }
 
                               field.onChange(e.target.files);
+                              console.log("Back image selected:", file);
                             }}
                           />
                         </FormControl>

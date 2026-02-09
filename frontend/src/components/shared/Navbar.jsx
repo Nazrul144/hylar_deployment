@@ -36,6 +36,7 @@ import { ModeToggle } from "../themeProvider/ModeToggle";
 import { UserContext } from "../../providers/UserProvider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
+import Swal from "sweetalert2";
 
 const navItems = [
   { title: "Home", path: "/" },
@@ -58,22 +59,20 @@ export default function Navbar({ montserrat }) {
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
 
- useEffect(() => {
-  console.log("🔔 Navbar: User changed", user);
-  
-  if (user && user.profile_picture) {
-    const fullUrl = user.profile_picture.startsWith("http")
-      ? user.profile_picture
-      : `${BASE_URL}${user.profile_picture}`;
-    const photoWithTimestamp = `${fullUrl}?t=${Date.now()}`;
-    setPhoto(photoWithTimestamp);
-    console.log("📸 Navbar photo updated:", photoWithTimestamp);
-  } else {
-    setPhoto("/profile.png");
-  }
-}, [user, user?.profile_picture, user?.first_name, user?.last_name]); 
+  useEffect(() => {
+    console.log("🔔 Navbar: User changed", user);
 
-
+    if (user && user.profile_picture) {
+      const fullUrl = user.profile_picture.startsWith("http")
+        ? user.profile_picture
+        : `${BASE_URL}${user.profile_picture}`;
+      const photoWithTimestamp = `${fullUrl}?t=${Date.now()}`;
+      setPhoto(photoWithTimestamp);
+      console.log("📸 Navbar photo updated:", photoWithTimestamp);
+    } else {
+      setPhoto("/profile.png");
+    }
+  }, [user, user?.profile_picture, user?.first_name, user?.last_name]);
 
   useEffect(() => {
     const handleScrolled = () => setScrolled(window.scrollY > 10);
@@ -84,34 +83,75 @@ export default function Navbar({ montserrat }) {
   const handleCloseClick = () => setOpen(false);
 
   const handleLogout = async () => {
+    console.log("🚀 Logout initiated");
+
     try {
-      const access_token = localStorage.getItem("access_token");
-      const refresh_token = localStorage.getItem("refresh_token");
+      const access = localStorage.getItem("access");
+      const refresh = localStorage.getItem("refresh");
 
-      const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify({ refresh_token }),
-      });
+      console.log("🔑 Access token:", access ? "EXISTS" : "NULL");
+      console.log("🔄 Refresh token:", refresh ? "EXISTS" : "NULL");
 
-      const result = await res.json();
+      // Only call API if we have valid tokens
+      if (access && refresh && refresh !== "undefined" && refresh !== "null") {
+        try {
+          const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${access}`,
+            },
+            body: JSON.stringify({
+              refresh_token: refresh, // ✅ FIXED: Use refresh_token, not refresh
+            }),
+          });
 
-      if (res.ok || result.status_code === 200) {
-        toast.success("You've been logged out successfully!");
+          const result = await res.json();
+          console.log("📡 Server response:", result);
+
+          if (res.ok && result.statusCode === 200) {
+            Swal.fire({
+              title: "Logged Out",
+              text: "You have been logged out successfully.", 
+              icon: "success",
+            }); 
+          } else if (res.status === 401) {
+            console.log("⚠️ Token expired, clearing locally");
+            toast.success("Logged out successfully!");
+          } else if (res.status === 400) {
+            console.log("⚠️ Token already blacklisted, clearing locally");
+            toast.success("Logged out successfully!");
+          } else {
+            console.warn("⚠️ Server logout failed:", result);
+            toast.success("Logged out locally");
+          }
+        } catch (apiError) {
+          console.error("❌ API error:", apiError);
+          toast.success("Logged out successfully!");
+        }
       } else {
-        toast.error(result?.detail || "Logout failed from server");
+        console.log("⚠️ No valid tokens, skipping server logout");
+        toast.success("Logged out successfully!");
       }
-
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user");
-      setUser(null);
-      router.push("/login");
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("❌ Logout error:", error);
+      toast.success("Logged out successfully!");
+    } finally {
+      // ✅ FIXED: Clear the CORRECT keys
+      console.log("🧹 Clearing authentication data...");
+      localStorage.removeItem("access"); 
+      localStorage.removeItem("refresh"); 
+      localStorage.removeItem("user"); 
+      localStorage.removeItem("userProfile"); 
+      sessionStorage.clear();
+
+      // Reset user context
+      setUser(null);
+
+      console.log("✅ Logout complete, redirecting...");
+
+      // Use hard redirect to prevent state issues
+      window.location.href = "/login";
     }
   };
 
@@ -121,7 +161,7 @@ export default function Navbar({ montserrat }) {
         "border-b px-4 md:px-6 sticky top-0 z-50 transition-colors duration-300",
         scrolled
           ? "bg-white/90 dark:bg-gray-900/90 shadow-md backdrop-blur-md"
-          : "bg-white dark:bg-gray-900"
+          : "bg-white dark:bg-gray-900",
       )}
     >
       <div className="flex h-16 items-center justify-between gap-4 lg:px-16">
@@ -165,12 +205,12 @@ export default function Navbar({ montserrat }) {
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2 ">
                   {navItems.map((navItem) =>
                     navItem.title === "Discover Savings" ? (
-                      <DropdownMenu 
+                      <DropdownMenu
                         key={navItem.title}
                         open={open}
                         onOpenChange={setOpen}
                       >
-                        <DropdownMenuTrigger asChild >
+                        <DropdownMenuTrigger asChild>
                           <Button
                             className="text-gray-900 dark:text-gray-100"
                             variant="ghost"
@@ -181,7 +221,7 @@ export default function Navbar({ montserrat }) {
 
                         <DropdownMenuContent className="w-56">
                           {loading ? (
-                            <DropdownMenuItem disabled >
+                            <DropdownMenuItem disabled>
                               Loading...
                             </DropdownMenuItem>
                           ) : (
@@ -191,7 +231,10 @@ export default function Navbar({ montserrat }) {
                                 className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
                                 asChild
                               >
-                                <Link href={`/category/${feature.slug}`} className="w-full">
+                                <Link
+                                  href={`/category/${feature.slug}`}
+                                  className="w-full"
+                                >
                                   {feature.name}
                                 </Link>
                               </DropdownMenuItem>
@@ -206,13 +249,13 @@ export default function Navbar({ montserrat }) {
                           className={cn(
                             pathName === navItem.path
                               ? "text-blue-800 underline font-bold dark:text-blue-400"
-                              : "text-gray-900 dark:text-gray-100"
+                              : "text-gray-900 dark:text-gray-100",
                           )}
                         >
                           {navItem.title}
                         </Link>
                       </NavigationMenuItem>
-                    )
+                    ),
                   )}
                 </NavigationMenuList>
               </NavigationMenu>
@@ -224,16 +267,14 @@ export default function Navbar({ montserrat }) {
               <Image
                 src={"/logo.png"}
                 alt="logo"
-                width={50} 
+                width={50}
                 height={50}
                 className="lg:mr-24"
               />
             </Link>
 
             <NavigationMenu viewport={false} className="max-md:hidden">
-              <NavigationMenuList
-                className="gap-6 flex-nowrap"
-              >
+              <NavigationMenuList className="gap-6 flex-nowrap">
                 {navItems.map((navItem) =>
                   navItem.title === "Discover Savings" ? (
                     <DropdownMenu
@@ -266,7 +307,10 @@ export default function Navbar({ montserrat }) {
                               className="dark:text-gray-100 whitespace-nowrap cursor-pointer"
                               asChild
                             >
-                              <Link href={`/category/${category.slug}`} className="w-full">
+                              <Link
+                                href={`/category/${category.slug}`}
+                                className="w-full"
+                              >
                                 {category.name}
                               </Link>
                             </DropdownMenuItem>
@@ -282,13 +326,13 @@ export default function Navbar({ montserrat }) {
                           pathName === navItem.path
                             ? "text-blue-800 underline font-bold dark:text-blue-400 "
                             : "text-gray-900 dark:text-gray-100",
-                          "whitespace-nowrap"
+                          "whitespace-nowrap",
                         )}
                       >
                         {navItem.title}
                       </Link>
                     </NavigationMenuItem>
-                  )
+                  ),
                 )}
               </NavigationMenuList>
             </NavigationMenu>
@@ -389,6 +433,3 @@ export default function Navbar({ montserrat }) {
     </header>
   );
 }
-
-
-

@@ -56,80 +56,94 @@ export function UserUpdate({
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    toast.error("⚠️ Please log in first.");
-    setLoading(false);
-    return;
-  }
+    const token = localStorage.getItem("access");
+    console.log("🔑 Token check:", token ? "Found" : "Not found");
 
-  try {
-    const formData = new FormData();
-    formData.append("first_name", firstName);
-    formData.append("last_name", lastName);
-    
-    if (photo && photo instanceof File) {
-      formData.append("profile_picture", photo);
-      console.log("📤 Uploading photo:", photo.name);
+    if (!token || token === "null" || token === "undefined") {
+      toast.error("⚠️ Please log in first.");
+      setLoading(false);
+      return;
     }
 
-    console.log("🔵 Sending update request...");
+    try {
+      const formData = new FormData();
+      formData.append("first_name", firstName);
+      formData.append("last_name", lastName);
 
-    const res = await fetch(`${BASE_URL}/api/profiles/update-profile/`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+      if (photo && photo instanceof File) {
+        formData.append("profile_picture", photo);
+        console.log("📤 Uploading photo:", photo.name);
+      }
 
-    const data = await res.json();
-    console.log("🟢 Server Response:", data);
+      console.log("🔵 Sending update request to:", `${BASE_URL}/api/accounts/profile/update/`);
+      console.log("📋 FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
 
-    if (!res.ok) throw new Error(data?.message || "Profile update failed");
+      const res = await fetch(`${BASE_URL}/api/accounts/profile/update/`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-    let newPhotoUrl = null;
-    if (data.data?.profile_picture) {
-      newPhotoUrl = data.data.profile_picture.startsWith("http")
-        ? data.data.profile_picture
-        : `${BASE_URL}${data.data.profile_picture}`;
-      console.log("📸 New photo URL from server:", newPhotoUrl);
-    } else if (photo) {
-     
-      newPhotoUrl = preview;
-      console.log("📸 Using preview URL:", newPhotoUrl);
+      const data = await res.json();
+      console.log("🟢 Server Response Status:", res.status);
+      console.log("🟢 Server Response Data:", data);
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          toast.error("⚠️ Session expired. Please log in again.");
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          window.location.href = "/login";
+          return;
+        }
+        throw new Error(data?.message || data?.detail || "Profile update failed");
+      }
+
+      let newPhotoUrl = null;
+      if (data.data?.profile_picture) {
+        newPhotoUrl = data.data.profile_picture.startsWith("http")
+          ? data.data.profile_picture
+          : `${BASE_URL}${data.data.profile_picture}`;
+        console.log("📸 New photo URL from server:", newPhotoUrl);
+      }
+
+      const updatedUser = {
+        ...user,
+        ...data.data,
+        first_name: data.data.first_name || firstName,
+        last_name: data.data.last_name || lastName,
+      };
+
+      if (newPhotoUrl) {
+        updatedUser.profile_picture = newPhotoUrl;
+      }
+
+      console.log("✅ Updating user context with:", updatedUser);
+      setUser(updatedUser);
+
+      toast.success("✅ Profile updated successfully!");
+
+      setTimeout(() => {
+        setOpen(false);
+        window.location.reload();
+      }, 1000);
+
+    } catch (err) {
+      console.error("❌ Profile update failed:", err);
+      toast.error(err.message || "Something went wrong. Try again!");
+    } finally {
+      setLoading(false);
     }
-
-    const updatedUser = {
-      ...user,
-      ...data.data,
-      first_name: firstName,
-      last_name: lastName,
-    };
-
-    if (newPhotoUrl) {
-      updatedUser.profile_picture = newPhotoUrl;
-    }
-
-    console.log("✅ Updating user context with:", updatedUser);
-    setUser(updatedUser);
-
-    toast.success("✅ Profile updated successfully!");
-    
-    setOpen(false);
-
-  } catch (err) {
-    console.error("❌ Profile update failed:", err);
-    toast.error(err.message || "Something went wrong. Try again!");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -188,6 +202,7 @@ export function UserUpdate({
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                required
               />
             </div>
 
@@ -198,6 +213,7 @@ export function UserUpdate({
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                required
               />
             </div>
           </div>

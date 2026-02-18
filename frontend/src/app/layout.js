@@ -6,12 +6,13 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "../components/shared/Navbar";
 import NavHeader from "../components/shared/NavHeader";
 import Footer from "../components/shared/Footer";
-import BookmarkProvider from "../providers/BookmarkProvider";
+
 import { CategoriesProvider } from "../providers/CategoriesProvider";
 import SignupProvider from "../providers/SignupProvider";
 import { ThemeProvider } from "../components/themeProvider/theme.provider";
 import PasswordProvider from "../providers/PasswordProvider";
 import { UserProvider } from "../providers/UserProvider";
+import { WishlistProvider } from "../providers/WishlistContext";
 
 
 const geistSans = Geist({
@@ -51,8 +52,8 @@ export default function RootLayout({ children }) {
             <UserProvider>
               <SignupProvider>
                 <CategoriesProvider>
-                  <BookmarkProvider>
-                    <NavHeader />
+                    <WishlistProvider>
+                        <NavHeader />
                     <Navbar montserrat={montserrat.className}/>
                     <Toaster position="top-center" reverseOrder={false} />
                     <PasswordProvider>
@@ -60,9 +61,8 @@ export default function RootLayout({ children }) {
                         {children}
                       </main>
                     </PasswordProvider>
-                    {/* <SubscribePopup/> */}
                     <Footer/>
-                  </BookmarkProvider>
+                    </WishlistProvider>
                 </CategoriesProvider>
               </SignupProvider>
             </UserProvider>

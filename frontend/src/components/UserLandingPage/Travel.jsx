@@ -1,11 +1,20 @@
 "use client";
-import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
 import { CategoriesContext } from "../../providers/CategoriesProvider";
-import { BookmarkContext } from "../../providers/BookmarkProvider";
+
+import { UserContext } from "../../providers/UserProvider";
 import { BASE_URL } from "../../config/config";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { WishlistContext } from "../../providers/WishlistContext";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -18,15 +27,14 @@ const montSerrat = Montserrat({
 
 const Travel = () => {
   const { categories } = useContext(CategoriesContext);
-  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const { savedProductIds, toggleSave } = useContext(WishlistContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter();
 
   const [travelOffers, setTravelOffers] = useState([]);
   const [totalTravelOffers, setTotalTravelOffers] = useState(0);
   const [travelCategoryId, setTravelCategoryId] = useState(null);
-
-  const bookmarkIds = useMemo(() => {
-    return new Set(bookmarks.map(b => b.id));
-  }, [bookmarks]);
+  const [savingId, setSavingId] = useState(null);
 
   useEffect(() => {
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
@@ -35,19 +43,22 @@ const Travel = () => {
 
     const normalize = (str) => str?.toLowerCase().replace(/[& ]/g, "") || "";
     const travelCategory = categories.find(
-      (cat) => normalize(cat?.category_name) === "travel"
+      (cat) => normalize(cat?.category_name) === "travel",
     );
 
     if (travelCategory) {
       setTravelCategoryId(travelCategory.id);
 
-      if (travelCategory.subcategories && Array.isArray(travelCategory.subcategories)) {
+      if (
+        travelCategory.subcategories &&
+        Array.isArray(travelCategory.subcategories)
+      ) {
         const allOffers = travelCategory.subcategories.flatMap(
-          (sub) => sub?.offers || []
+          (sub) => sub?.offers || [],
         );
 
-        setTotalTravelOffers(allOffers.length); 
-        setTravelOffers(allOffers.slice(0, 3)); 
+        setTotalTravelOffers(allOffers.length);
+        setTravelOffers(allOffers.slice(0, 3));
       } else {
         setTotalTravelOffers(0);
         setTravelOffers([]);
@@ -55,9 +66,32 @@ const Travel = () => {
     }
   }, [categories]);
 
-  const handleBookmarkClick = useCallback((offer) => {
-    toggleBookmark(offer);
-  }, [toggleBookmark]);
+  const handleBookmarkClick = useCallback(
+    async (offerId) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      if (savingId === offerId) return;
+      setSavingId(offerId);
+
+      const result = await toggleSave(offerId);
+
+      if (result.success) {
+        if (result.isSaved) {
+          toast.success("Saved to wishlist!");
+        } else {
+          toast.success("Removed from wishlist.");
+        }
+      } else {
+        toast.error(result.message || "Failed to update wishlist.");
+      }
+
+      setSavingId(null);
+    },
+    [toggleSave, user, router, savingId],
+  );
 
   if (!travelOffers.length) return null;
 
@@ -74,7 +108,9 @@ const Travel = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
+            imageName={
+              offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"
+            }
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
@@ -84,8 +120,9 @@ const Travel = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarkIds.has(offer.id)}
-            onBookmarkClick={() => handleBookmarkClick(offer)}
+            isBookmarked={savedProductIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer.id)}
+            isSaving={savingId === offer.id}
           />
         ))}
       </div>

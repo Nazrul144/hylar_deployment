@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useState, useEffect } from "react";
@@ -84,7 +84,7 @@ const ManswearCard = () => {
                 width={400}
                 height={400}
                 alt={item.product || "Menswear Image"}
-                style={{  width: "400px", height: "200px" }}
+                style={{ width: "400px", height: "200px" }}
                 className="object-contain"
               />
 
@@ -102,11 +102,16 @@ const ManswearCard = () => {
               <p className="mt-1">{item.product}</p>
 
               {/* Description */}
-              {item.description && <p className="text-sm mt-1">{item.description}</p>}
+              {item.description && (
+                <p className="text-sm mt-1">{item.description}</p>
+              )}
 
               {/* Buttons */}
               <div className="flex items-center gap-3 mt-3">
-                <Button className="border-2 rounded-none text-lg" variant="none">
+                <Button
+                  className="border-2 rounded-none text-lg"
+                  variant="none"
+                >
                   <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}</Link>
                 </Button>
                 <Button

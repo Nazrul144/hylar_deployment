@@ -1,5 +1,3 @@
-// --- FULL NAVBAR CODE WITH FIXES ---
-
 "use client";
 import { cn } from "../../lib/utils";
 import {
@@ -7,14 +5,11 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "../ui/navigation-menu";
-
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FaBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
-import { BookmarkContext } from "../../providers/BookmarkProvider";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -37,6 +32,7 @@ import { UserContext } from "../../providers/UserProvider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
 import Swal from "sweetalert2";
+import { WishlistContext } from "../../providers/WishlistContext";
 
 const navItems = [
   { title: "Home", path: "/" },
@@ -51,24 +47,20 @@ const navItems = [
 export default function Navbar({ montserrat }) {
   const [open, setOpen] = useState(false);
   const { categories, loading } = useContext(CategoriesContext);
-  const { bookmarks } = useContext(BookmarkContext);
   const { user, setUser } = useContext(UserContext);
+  // ✅ Get live count directly from shared WishlistContext
+  const { savedCount } = useContext(WishlistContext);
   const [photo, setPhoto] = useState("/profile.png");
-
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    console.log("🔔 Navbar: User changed", user);
-
     if (user && user.profile_picture) {
       const fullUrl = user.profile_picture.startsWith("http")
         ? user.profile_picture
         : `${BASE_URL}${user.profile_picture}`;
-      const photoWithTimestamp = `${fullUrl}?t=${Date.now()}`;
-      setPhoto(photoWithTimestamp);
-      console.log("📸 Navbar photo updated:", photoWithTimestamp);
+      setPhoto(`${fullUrl}?t=${Date.now()}`);
     } else {
       setPhoto("/profile.png");
     }
@@ -83,16 +75,10 @@ export default function Navbar({ montserrat }) {
   const handleCloseClick = () => setOpen(false);
 
   const handleLogout = async () => {
-    console.log("🚀 Logout initiated");
-
     try {
       const access = localStorage.getItem("access");
       const refresh = localStorage.getItem("refresh");
 
-      console.log("🔑 Access token:", access ? "EXISTS" : "NULL");
-      console.log("🔄 Refresh token:", refresh ? "EXISTS" : "NULL");
-
-      // Only call API if we have valid tokens
       if (access && refresh && refresh !== "undefined" && refresh !== "null") {
         try {
           const res = await fetch(`${BASE_URL}/api/accounts/logout/`, {
@@ -101,56 +87,35 @@ export default function Navbar({ montserrat }) {
               "Content-Type": "application/json",
               Authorization: `Bearer ${access}`,
             },
-            body: JSON.stringify({
-              refresh_token: refresh, // ✅ FIXED: Use refresh_token, not refresh
-            }),
+            body: JSON.stringify({ refresh_token: refresh }),
           });
 
           const result = await res.json();
-          console.log("📡 Server response:", result);
 
           if (res.ok && result.statusCode === 200) {
             Swal.fire({
               title: "Logged Out",
-              text: "You have been logged out successfully.", 
+              text: "You have been logged out successfully.",
               icon: "success",
-            }); 
-          } else if (res.status === 401) {
-            console.log("⚠️ Token expired, clearing locally");
-            toast.success("Logged out successfully!");
-          } else if (res.status === 400) {
-            console.log("⚠️ Token already blacklisted, clearing locally");
-            toast.success("Logged out successfully!");
+            });
           } else {
-            console.warn("⚠️ Server logout failed:", result);
-            toast.success("Logged out locally");
+            toast.success("Logged out successfully!");
           }
         } catch (apiError) {
-          console.error("❌ API error:", apiError);
           toast.success("Logged out successfully!");
         }
       } else {
-        console.log("⚠️ No valid tokens, skipping server logout");
         toast.success("Logged out successfully!");
       }
     } catch (error) {
-      console.error("❌ Logout error:", error);
       toast.success("Logged out successfully!");
     } finally {
-      // ✅ FIXED: Clear the CORRECT keys
-      console.log("🧹 Clearing authentication data...");
-      localStorage.removeItem("access"); 
-      localStorage.removeItem("refresh"); 
-      localStorage.removeItem("user"); 
-      localStorage.removeItem("userProfile"); 
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userProfile");
       sessionStorage.clear();
-
-      // Reset user context
       setUser(null);
-
-      console.log("✅ Logout complete, redirecting...");
-
-      // Use hard redirect to prevent state issues
       window.location.href = "/login";
     }
   };
@@ -166,6 +131,7 @@ export default function Navbar({ montserrat }) {
     >
       <div className="flex h-16 items-center justify-between gap-4 lg:px-16">
         <div className="flex items-center gap-2">
+          {/* Mobile hamburger */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -183,7 +149,6 @@ export default function Navbar({ montserrat }) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M4 12L20 12"
@@ -202,7 +167,7 @@ export default function Navbar({ montserrat }) {
             </PopoverTrigger>
             <PopoverContent align="start" className="w-64 p-1 md:hidden">
               <NavigationMenu className="max-w-none *:w-full">
-                <NavigationMenuList className="flex-col items-start gap-0 md:gap-2 ">
+                <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navItems.map((navItem) =>
                     navItem.title === "Discover Savings" ? (
                       <DropdownMenu
@@ -218,7 +183,6 @@ export default function Navbar({ montserrat }) {
                             {navItem.title}
                           </Button>
                         </DropdownMenuTrigger>
-
                         <DropdownMenuContent className="w-56">
                           {loading ? (
                             <DropdownMenuItem disabled>
@@ -262,6 +226,7 @@ export default function Navbar({ montserrat }) {
             </PopoverContent>
           </Popover>
 
+          {/* Logo + desktop nav */}
           <div className="flex items-center gap-6">
             <Link href={"/"} className="text-3xl font-bold italic">
               <Image
@@ -324,7 +289,7 @@ export default function Navbar({ montserrat }) {
                         href={navItem.path}
                         className={cn(
                           pathName === navItem.path
-                            ? "text-blue-800 underline font-bold dark:text-blue-400 "
+                            ? "text-blue-800 underline font-bold dark:text-blue-400"
                             : "text-gray-900 dark:text-gray-100",
                           "whitespace-nowrap",
                         )}
@@ -344,42 +309,45 @@ export default function Navbar({ montserrat }) {
           {user ? (
             <div className="flex items-center gap-8">
               <ModeToggle />
+
+              {/* ✅ Badge reads directly from WishlistContext — always in sync */}
               <div className="flex gap-3 items-center">
                 <div className="relative">
                   <Link href={"/store_item"}>
                     <FaBookmark className="text-2xl text-blue-600 dark:text-blue-400" />
                   </Link>
-                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                    {bookmarks.length}
-                  </span>
+                  {savedCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                      {savedCount}
+                    </span>
+                  )}
                 </div>
               </div>
 
+              {/* Profile dropdown */}
               <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button">
-                  <div className="w-10 rounded-full">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Image
-                            src={photo}
-                            width={40}
-                            height={40}
-                            alt="Profile Picture"
-                            className="w-10 h-10 rounded-full object-cover border-2 border-gray-500 shadow-md cursor-pointer"
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          className="dark:text-gray-300 dark:bg-gray-900"
-                        >
-                          <p>
-                            {user.first_name} {user.last_name}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Image
+                          src={photo}
+                          width={40}
+                          height={40}
+                          alt="Profile Picture"
+                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-500 shadow-md cursor-pointer"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="bottom"
+                        className="dark:text-gray-300 dark:bg-gray-900"
+                      >
+                        <p>
+                          {user.first_name} {user.last_name}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <ul
                   tabIndex={0}

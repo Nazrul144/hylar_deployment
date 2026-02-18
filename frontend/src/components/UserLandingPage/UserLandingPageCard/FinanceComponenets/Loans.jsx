@@ -6,7 +6,7 @@ import Link from "next/link";
 import React, { useContext } from "react";
 import { CiBookmark } from "react-icons/ci";
 import { motion } from "framer-motion";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const Loans = () => {
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);

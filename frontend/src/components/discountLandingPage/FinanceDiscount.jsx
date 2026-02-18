@@ -8,7 +8,7 @@ import CreditCards from "../UserLandingPage/UserLandingPageCard/FinanceComponene
 import Insurance from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/Insurance";
 import Loans from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/Loans";
 import BankAccounts from "../UserLandingPage/UserLandingPageCard/FinanceComponenets/BankAccounts";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const oleo = Oleo_Script({
   weight: ["400", "700"],
@@ -85,7 +85,9 @@ const FinanceDiscount = () => {
               size="sm"
               className="bg-[#00308F] px-6 py-5 font-semibold text-lg rounded
                hover:bg-[#002766] hover:text-gray-300 transition-colors"
-            >Sign up</Button>
+            >
+              Sign up
+            </Button>
           </Link>
         </div>
       </div>

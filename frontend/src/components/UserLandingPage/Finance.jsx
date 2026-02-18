@@ -1,11 +1,19 @@
 "use client";
-import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
 import { CategoriesContext } from "../../providers/CategoriesProvider";
-import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { UserContext } from "../../providers/UserProvider";
 import { BASE_URL } from "../../config/config";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { WishlistContext } from "../../providers/WishlistContext";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -18,15 +26,14 @@ const montSerrat = Montserrat({
 
 const Finance = () => {
   const { categories } = useContext(CategoriesContext);
-  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const { savedProductIds, toggleSave } = useContext(WishlistContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter();
 
   const [financeOffers, setFinanceOffers] = useState([]);
   const [totalFinanceOffers, setTotalFinanceOffers] = useState(0);
   const [financeCategoryId, setFinanceCategoryId] = useState(null);
-
-  const bookmarkIds = useMemo(() => {
-    return new Set(bookmarks.map(b => b.id));
-  }, [bookmarks]);
+  const [savingId, setSavingId] = useState(null);
 
   useEffect(() => {
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
@@ -35,19 +42,22 @@ const Finance = () => {
 
     const normalize = (str) => str?.toLowerCase().replace(/[& ]/g, "") || "";
     const financeCategory = categories.find(
-      (cat) => normalize(cat?.category_name) === "finance"
+      (cat) => normalize(cat?.category_name) === "finance",
     );
 
     if (financeCategory) {
       setFinanceCategoryId(financeCategory.id);
 
-      if (financeCategory.subcategories && Array.isArray(financeCategory.subcategories)) {
+      if (
+        financeCategory.subcategories &&
+        Array.isArray(financeCategory.subcategories)
+      ) {
         const allOffers = financeCategory.subcategories.flatMap(
-          (sub) => sub?.offers || []
+          (sub) => sub?.offers || [],
         );
 
-        setTotalFinanceOffers(allOffers.length); 
-        setFinanceOffers(allOffers.slice(0, 3)); 
+        setTotalFinanceOffers(allOffers.length);
+        setFinanceOffers(allOffers.slice(0, 3));
       } else {
         setTotalFinanceOffers(0);
         setFinanceOffers([]);
@@ -55,9 +65,32 @@ const Finance = () => {
     }
   }, [categories]);
 
-  const handleBookmarkClick = useCallback((offer) => {
-    toggleBookmark(offer);
-  }, [toggleBookmark]);
+  const handleBookmarkClick = useCallback(
+    async (offerId) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      if (savingId === offerId) return;
+      setSavingId(offerId);
+
+      const result = await toggleSave(offerId);
+
+      if (result.success) {
+        if (result.isSaved) {
+          toast.success("Saved to wishlist!");
+        } else {
+          toast.success("Removed from wishlist.");
+        }
+      } else {
+        toast.error(result.message || "Failed to update wishlist.");
+      }
+
+      setSavingId(null);
+    },
+    [toggleSave, user, router, savingId],
+  );
 
   if (!financeOffers.length) return null;
 
@@ -74,7 +107,9 @@ const Finance = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
+            imageName={
+              offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"
+            }
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
@@ -84,8 +119,9 @@ const Finance = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarkIds.has(offer.id)}
-            onBookmarkClick={() => handleBookmarkClick(offer)}
+            isBookmarked={savedProductIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer.id)}
+            isSaving={savingId === offer.id}
           />
         ))}
       </div>

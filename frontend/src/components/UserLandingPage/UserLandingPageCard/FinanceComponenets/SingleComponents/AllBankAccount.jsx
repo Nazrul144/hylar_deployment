@@ -6,21 +6,20 @@ import { CiBookmark } from "react-icons/ci";
 import CatagoriesSlider from "../../CatagoriesSlider";
 import Link from "next/link";
 import { useContext, useEffect } from "react";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const AllBankAccount = () => {
-   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-          const [allBankAccount, setAllBankAccount] = useState([])
-    
-           useEffect(()=>{
-                const getManswearData = async()=>{
-                  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-                  const data = await res.json()
-                  setAllBankAccount(data)
-               
-                }
-                getManswearData()
-              },[])
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const [allBankAccount, setAllBankAccount] = useState([]);
+
+  useEffect(() => {
+    const getManswearData = async () => {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const data = await res.json();
+      setAllBankAccount(data);
+    };
+    getManswearData();
+  }, []);
   return (
     <div>
       {/*Slider*/}
@@ -74,7 +73,7 @@ const AllBankAccount = () => {
                   <span className="font-bold">Paucek and Lage</span>{" "}
                   {item.description}
                 </h1>
-                 <div className="flex items-center gap-3 mt-3">
+                <div className="flex items-center gap-3 mt-3">
                   <Button
                     className="border-2 rounded-none text-lg"
                     variant="none"
@@ -184,5 +183,3 @@ const AllBankAccount = () => {
 };
 
 export default AllBankAccount;
-
-

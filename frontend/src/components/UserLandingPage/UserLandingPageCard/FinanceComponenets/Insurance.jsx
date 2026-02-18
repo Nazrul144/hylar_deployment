@@ -6,12 +6,11 @@ import Link from "next/link";
 import React, { useContext } from "react";
 import { CiBookmark } from "react-icons/ci";
 import { motion } from "framer-motion";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const Insurance = () => {
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
   const containerVariants = {
-      
     hidden: {},
     show: { transition: { staggerChildren: 0.2 } },
   };

@@ -1,12 +1,20 @@
 "use client";
-import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import UserLandingPageCard from "./UserLandingPageCard/UserLandingPageCard";
 import { Inter, Montserrat } from "next/font/google";
 import Link from "next/link";
-import { BookmarkContext } from "../../providers/BookmarkProvider";
+import { UserContext } from "../../providers/UserProvider";
 import { BASE_URL } from "../../config/config";
 import { CategoriesContext } from "../../providers/CategoriesProvider";
-
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { WishlistContext } from "../../providers/WishlistContext";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -19,17 +27,14 @@ const montSerrat = Montserrat({
 
 const Fashion = () => {
   const { categories } = useContext(CategoriesContext);
-  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-
-  console.log(categories)
+  const { savedProductIds, toggleSave } = useContext(WishlistContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter();
 
   const [fashionOffers, setFashionOffers] = useState([]);
   const [totalFashionOffers, setTotalFashionOffers] = useState(0);
   const [fashionCategoryId, setFashionCategoryId] = useState(null);
-
-  const bookmarkIds = useMemo(() => {
-    return new Set(bookmarks.map(b => b.id));
-  }, [bookmarks]);
+  const [savingId, setSavingId] = useState(null);
 
   useEffect(() => {
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
@@ -37,15 +42,18 @@ const Fashion = () => {
     }
 
     const fashionCategory = categories.find(
-      (cat) => cat?.category_name?.toLowerCase() === "fashion"
+      (cat) => cat?.category_name?.toLowerCase() === "fashion",
     );
 
     if (fashionCategory) {
       setFashionCategoryId(fashionCategory.id);
 
-      if (fashionCategory.subcategories && Array.isArray(fashionCategory.subcategories)) {
+      if (
+        fashionCategory.subcategories &&
+        Array.isArray(fashionCategory.subcategories)
+      ) {
         const allOffers = fashionCategory.subcategories.flatMap(
-          (sub) => sub?.offers || []
+          (sub) => sub?.offers || [],
         );
 
         setTotalFashionOffers(allOffers.length);
@@ -57,9 +65,32 @@ const Fashion = () => {
     }
   }, [categories]);
 
-  const handleBookmarkClick = useCallback((offer) => {
-    toggleBookmark(offer);
-  }, [toggleBookmark]);
+  const handleBookmarkClick = useCallback(
+    async (offerId) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      if (savingId === offerId) return;
+      setSavingId(offerId);
+
+      const result = await toggleSave(offerId);
+
+      if (result.success) {
+        if (result.isSaved) {
+          toast.success("Saved to wishlist!");
+        } else {
+          toast.success("Removed from wishlist.");
+        }
+      } else {
+        toast.error(result.message || "Failed to update wishlist.");
+      }
+
+      setSavingId(null);
+    },
+    [toggleSave, user, router, savingId],
+  );
 
   if (!fashionOffers?.length) return null;
 
@@ -76,7 +107,9 @@ const Fashion = () => {
           <UserLandingPageCard
             key={offer.id}
             id={offer.id}
-            imageName={offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"}
+            imageName={
+              offer.image ? `${BASE_URL}${offer.image}` : "/fallback.jpg"
+            }
             descriptionBoldText={offer.brand_name}
             descriptionLightText={`${offer.discount_percent || 0}% OFF`}
             descriptionFont={interFont}
@@ -86,8 +119,9 @@ const Fashion = () => {
             buttonFont={montSerrat}
             bookMarkIcon="bookmark"
             bookmarkColor="dark"
-            isBookmarked={bookmarkIds.has(offer.id)}
-            onBookmarkClick={() => handleBookmarkClick(offer)}
+            isBookmarked={savedProductIds.has(offer.id)}
+            onBookmarkClick={() => handleBookmarkClick(offer.id)}
+            isSaving={savingId === offer.id}
           />
         ))}
       </div>

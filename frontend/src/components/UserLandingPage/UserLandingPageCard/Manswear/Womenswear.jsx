@@ -6,24 +6,20 @@ import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { CiBookmark } from "react-icons/ci";
 import CatagoriesSlider from "../CatagoriesSlider";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const Womenswear = () => {
+  const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
+  const [womenswear, setWomenswear] = useState([]);
 
-    
-      const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
-      const [womenswear, setWomenswear] = useState([])
-
-       useEffect(()=>{
-            const getManswearData = async()=>{
-              const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-              const data = await res.json()
-              setWomenswear(data)
-           
-            }
-            getManswearData()
-          },[])
-      
+  useEffect(() => {
+    const getManswearData = async () => {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const data = await res.json();
+      setWomenswear(data);
+    };
+    getManswearData();
+  }, []);
 
   return (
     <div>
@@ -81,7 +77,8 @@ const Womenswear = () => {
                     className="border-2 rounded-none text-lg"
                     variant="none"
                   >
-                    <Link href={`/redeem_details/${item.id}`}>Redeem {">>"}
+                    <Link href={`/redeem_details/${item.id}`}>
+                      Redeem {">>"}
                     </Link>
                   </Button>
 
@@ -185,4 +182,3 @@ const Womenswear = () => {
 };
 
 export default Womenswear;
-

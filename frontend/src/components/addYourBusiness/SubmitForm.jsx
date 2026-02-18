@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
@@ -35,7 +35,7 @@ const formSchema = z.object({
       message: "Brand sector can only contain letters, spaces, and basic punctuation",
     }),
 
-  website_link: z
+  website_url: z
     .string()
     .min(1, { message: "Website link is required" })
     .url({ message: "Please enter a valid URL (e.g., https://example.com)" })
@@ -43,12 +43,12 @@ const formSchema = z.object({
       message: "URL must start with http:// or https://",
     }),
 
-  owner_name: z
+  contact_person_name: z
     .string()
-    .min(2, { message: "Owner name must be at least 2 characters" })
-    .max(100, { message: "Owner name must not exceed 100 characters" })
+    .min(2, { message: "Contact person name must be at least 2 characters" })
+    .max(100, { message: "Contact person name must not exceed 100 characters" })
     .regex(/^[A-Za-z\s'-]+$/, {
-      message: "Owner name can only contain letters, spaces, apostrophes, and hyphens",
+      message: "Name can only contain letters, spaces, apostrophes, and hyphens",
     }),
 
   contact_email: z
@@ -57,11 +57,11 @@ const formSchema = z.object({
     .email({ message: "Please enter a valid email address" })
     .toLowerCase(),
 
-  contact_phone: z
+  phone_number: z
     .string()
     .min(1, { message: "Phone number is required" })
-    .regex(/^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/, {
-      message: "Enter a valid UK phone number (e.g., +447911123456 or 07911123456)",
+    .regex(/^\+?[1-9]\d{6,14}$/, {
+      message: "Enter a valid phone number with country code (e.g., +12345678998)",
     }),
 
   document: z
@@ -97,12 +97,12 @@ const formSchema = z.object({
       }
     ),
 
-  address_line1: z
+  address_line_1: z
     .string()
     .min(5, { message: "Address must be at least 5 characters" })
     .max(200, { message: "Address must not exceed 200 characters" }),
 
-  address_line2: z
+  address_line_2: z
     .string()
     .min(3, { message: "Address Line 2 must be at least 3 characters" })
     .max(200, { message: "Address must not exceed 200 characters" })
@@ -110,21 +110,27 @@ const formSchema = z.object({
     .or(z.literal("")),
 });
 
+const defaultValues = {
+  brand_name: "",
+  brand_sector: "",
+  website_url: "",
+  contact_person_name: "",
+  contact_email: "",
+  phone_number: "",
+  document: undefined,
+  brand_logo: undefined,
+  address_line_1: "",
+  address_line_2: "",
+};
+
 const SubmitForm = () => {
+  // Incrementing this key forces the entire form to unmount and remount,
+  // which is the only reliable way to clear uncontrolled file inputs.
+  const [formKey, setFormKey] = useState(0);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      brand_name: "",
-      brand_sector: "",
-      website_link: "",
-      owner_name: "",
-      contact_email: "",
-      contact_phone: "",
-      document: undefined,
-      brand_logo: undefined,
-      address_line1: "",
-      address_line2: "",
-    },
+    defaultValues,
   });
 
   const handleFormSubmit = async (data) => {
@@ -132,43 +138,77 @@ const SubmitForm = () => {
 
     formData.append("brand_name", data.brand_name.trim());
     formData.append("brand_sector", data.brand_sector.trim());
-    formData.append("website_link", data.website_link.trim());
-    formData.append("owner_name", data.owner_name.trim());
+    formData.append("website_url", data.website_url.trim());
+    formData.append("contact_person_name", data.contact_person_name.trim());
     formData.append("contact_email", data.contact_email.trim().toLowerCase());
-    formData.append("contact_phone", data.contact_phone.trim());
-    formData.append("address_line1", data.address_line1.trim());
-    if (data.address_line2) {
-      formData.append("address_line2", data.address_line2.trim());
+    formData.append("phone_number", data.phone_number.trim());
+    formData.append("address_line_1", data.address_line_1.trim());
+    if (data.address_line_2) {
+      formData.append("address_line_2", data.address_line_2.trim());
     }
 
-    // Files
     formData.append("document", data.document[0]);
     formData.append("brand_logo", data.brand_logo[0]);
 
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/accounts/brand-account-request/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(`${BASE_URL}/api/brands/apply/`, {
+        method: "POST",
+        body: formData,
+      });
 
       const result = await res.json();
-      if (result.status_code === 201) {
+      console.log("API Response:", result);
+
+      if (result.success === true || result.statusCode === 201 || res.status === 201) {
+        // Reset react-hook-form state
+        form.reset(defaultValues);
+        // Remount the form to clear file inputs
+        setFormKey((prev) => prev + 1);
+
         Swal.fire({
-          title: "Submitted!",
-          text: "Your application has been submitted successfully!",
+          title: "Application Submitted!",
+          text:
+            result.message ||
+            "Your brand application has been submitted successfully. You will receive an email once it has been reviewed.",
           icon: "success",
           confirmButtonColor: "#1e40af",
+          confirmButtonText: "Got it!",
         });
-        form.reset();
       } else {
-        toast.error(result?.message || "Submission failed. Please try again.");
+        let errorMessage =
+          result?.message ||
+          result?.detail ||
+          "Submission failed. Please check your details and try again.";
+
+        if (result?.errors && typeof result.errors === "object") {
+          const fieldErrors = Object.entries(result.errors)
+            .map(([field, messages]) => {
+              const label = field.replace(/_/g, " ");
+              const msg = Array.isArray(messages) ? messages[0] : messages;
+              return `• ${label}: ${msg}`;
+            })
+            .join("\n");
+
+          if (fieldErrors) errorMessage = fieldErrors;
+        }
+
+        Swal.fire({
+          title: "Submission Failed",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonColor: "#1e40af",
+          confirmButtonText: "Try Again",
+        });
       }
     } catch (error) {
       console.error("Submission error:", error);
-      toast.error("An error occurred. Please try again later.");
+      Swal.fire({
+        title: "Network Error",
+        text: "A network error occurred. Please check your connection and try again.",
+        icon: "error",
+        confirmButtonColor: "#1e40af",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -184,7 +224,6 @@ const SubmitForm = () => {
           className="object-cover w-full h-[200px] md:h-[300px]"
           priority
         />
-
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
           <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-bold text-center drop-shadow-lg inter-text">
             Welcome To Exclusive Discounts & Savings
@@ -202,8 +241,13 @@ const SubmitForm = () => {
             Submit A Request
           </h1>
 
+          {/* key prop forces full remount on success, clearing all file inputs */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+            <form
+              key={formKey}
+              onSubmit={form.handleSubmit(handleFormSubmit)}
+              className="space-y-6"
+            >
               {/* Brand Name */}
               <FormField
                 control={form.control}
@@ -246,10 +290,10 @@ const SubmitForm = () => {
                 )}
               />
 
-              {/* Website Link */}
+              {/* Website URL */}
               <FormField
                 control={form.control}
-                name="website_link"
+                name="website_url"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
@@ -267,10 +311,10 @@ const SubmitForm = () => {
                 )}
               />
 
-              {/* Owner Name */}
+              {/* Contact Person Name */}
               <FormField
                 control={form.control}
-                name="owner_name"
+                name="contact_person_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
@@ -310,10 +354,10 @@ const SubmitForm = () => {
                 )}
               />
 
-              {/* Contact Phone */}
+              {/* Phone Number */}
               <FormField
                 control={form.control}
-                name="contact_phone"
+                name="phone_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
@@ -322,7 +366,7 @@ const SubmitForm = () => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="+447911123456"
+                        placeholder="+12345678998"
                         className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
                         onChange={(e) => {
                           let value = e.target.value;
@@ -413,7 +457,7 @@ const SubmitForm = () => {
               {/* Address Line 1 */}
               <FormField
                 control={form.control}
-                name="address_line1"
+                name="address_line_1"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
@@ -434,11 +478,12 @@ const SubmitForm = () => {
               {/* Address Line 2 */}
               <FormField
                 control={form.control}
-                name="address_line2"
+                name="address_line_2"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
-                      Address Line 2 <span className="text-gray-500 text-sm">(Optional)</span>
+                      Address Line 2{" "}
+                      <span className="text-gray-500 text-sm">(Optional)</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -455,8 +500,9 @@ const SubmitForm = () => {
               <Button
                 className="w-full mt-8 bg-blue-800 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-lg py-6 cursor-pointer transition-colors duration-200"
                 type="submit"
+                disabled={form.formState.isSubmitting}
               >
-                Submit Your Application
+                {form.formState.isSubmitting ? "Submitting..." : "Submit Your Application"}
               </Button>
             </form>
           </Form>

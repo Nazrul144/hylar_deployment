@@ -6,7 +6,7 @@ import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { CiBookmark } from "react-icons/ci";
 import CatagoriesSlider from "../CatagoriesSlider";
-import { BookmarkContext } from "@/providers/BookmarkProvider";
+import { BookmarkContext } from "@/providers/WishlistContext";
 
 const Childrenswear = () => {
   const { bookmarks, toggleBookmark } = useContext(BookmarkContext);
@@ -182,4 +182,3 @@ const Childrenswear = () => {
 };
 
 export default Childrenswear;
-

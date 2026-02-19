@@ -4,12 +4,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 const Hero = () => {
-  const router = useRouter()
-  const handeNavigate = ()=>{
-    router.push('/category/1')
-    
-  }
-  
+
   return (
     <div>
       <div className="relative w-full h-[550px] pt-8 flex flex-col items-center justify-center">
@@ -40,17 +35,7 @@ const Hero = () => {
           >
             Get access to curated deals across various categories
           </p>
-          <Button onClick={handeNavigate}
-            className={`
-    ring-2 ring-white 
-    rounded-lg px-4 py-2 mt-4 inter-text cursor-pointer
-    bg-transparent text-white
-    hover:bg-blue-500 hover:text-white
-    transition-colors duration-300 ease-in-out
-  `}
-          >
-            Discover savings
-          </Button>
+         
         </div>
       </div>
 

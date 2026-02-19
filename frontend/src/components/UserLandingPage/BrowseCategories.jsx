@@ -347,7 +347,7 @@ const OfferCard = ({ offer, index, isBookmarked, isSaving, onRedeem, onBookmark 
           {/* Redeem button — outlined style like screenshot 2 */}
           <button
             onClick={(e) => onRedeem(e, offer.id)}
-            className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium py-2 px-3 rounded-md text-sm transition-colors text-center"
+            className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium py-2 px-3 rounded-md text-sm transition-colors text-center cursor-pointer"
           >
             Redeem &gt;&gt;
           </button>

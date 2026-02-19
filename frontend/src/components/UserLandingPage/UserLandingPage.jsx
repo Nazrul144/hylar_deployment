@@ -15,7 +15,6 @@ const UserLandingPage = () => {
       <BrowseCategories/>
       <Fasion/>
       <Travel/>
-      <HomeAndLifeStyle/>
       <Finance/>
       <EmailSubscription/>
       <Faq/>
